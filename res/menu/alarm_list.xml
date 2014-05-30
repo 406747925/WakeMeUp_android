@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+ 
+    <item
+        android:id="@+id/add_alarm"
+        android:showAsAction="ifRoom"
+        android:title="@string/add_alarm"
+        android:titleCondensed="@string/add_alarm">
+    </item>
+
+</menu>

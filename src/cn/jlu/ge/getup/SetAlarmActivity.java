@@ -1,0 +1,410 @@
+package cn.jlu.ge.getup;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import android.app.AlarmManager;
+import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+import cn.jlu.ge.getup.tools.DBAdapter;
+import cn.jlu.ge.getup.tools.ForegroundService;
+
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+
+public class SetAlarmActivity extends SherlockActivity {
+	
+	int alarmTimeColumn;
+	int kindColumn;
+	int activeColumn;
+	int activeBool;
+	String alarmTimeStr;
+	String kindStr;
+	DBAdapter db;
+	Calendar calendar;
+	AlarmManager alarms;
+	ListView alarmList;
+	int[] time;
+	
+	private ArrayList<HashMap<String, Object>> listItem;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_alarm_list);
+		
+		listItem = new ArrayList<HashMap<String, Object>>();
+		
+		db = new DBAdapter(this);
+		
+		time =new int[2];
+		
+		AlarmsData alarmsData = new AlarmsData();
+		alarmsData.setAlarmDataList();
+		
+		calendar = Calendar.getInstance();
+        alarmList = (ListView) findViewById(R.id.alarmList);
+        MyAdapter listAdapter = new MyAdapter(this);
+        alarmList.setAdapter(listAdapter);
+        alarmList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> av, View v, int position, long arg3) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(SetAlarmActivity.this, ChangeAlarmActivity.class);
+				intent.putExtra("rowID", listItem.get(position).get("rowID").toString());
+				intent.putExtra("alarmTime", listItem.get(position).get("alarmTime").toString());
+				intent.putExtra("alarmKind", listItem.get(position).get("alarmKind").toString());
+				startActivity(intent);
+			}
+        	
+		});
+	}
+
+	// 获取闹钟数据并初始化
+	class AlarmsData {
+
+		Cursor cursor;
+
+		int pos;
+		HashMap<String, Object> map;
+		
+		public AlarmsData() {
+			// TODO Auto-generated constructor stub
+//			db.open();
+//			cursor = db.getAllRows();
+//			db.close();
+		}
+		
+		// 
+		public boolean setAlarmDataList() {
+			
+			db.open();
+			cursor = db.getAllRows();
+			
+			if (cursor.moveToFirst() == false) {
+				return false;
+			}
+			
+			alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
+			kindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
+			activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
+			
+			for (cursor.moveToFirst();!cursor.isLast(); cursor.moveToNext()) {
+				addHashMap(alarmTimeColumn, kindColumn, activeColumn, activeBool, alarmTimeStr, kindStr, map);
+			}
+			
+			addHashMap(alarmTimeColumn, kindColumn, activeColumn, activeBool, alarmTimeStr, kindStr, map);
+			db.close();
+			
+			return true;
+		}
+		
+		void addHashMap(int alarmTimeColumn, int kindColumn, int activeColumn, int activeBool, String alarmTimeStr, String kindStr, HashMap<String, Object> map) {
+			int rowID = 0;
+			map = new HashMap<String, Object>();
+			alarmTimeStr = cursor.getString(alarmTimeColumn);
+			rowID = cursor.getShort(cursor.getColumnIndex("_id"));
+			Log.v("AlarmTime:", alarmTimeStr);
+			kindStr = cursor.getString(kindColumn);
+			activeBool = cursor.getInt(activeColumn);
+			
+			map.put("rowID", rowID);
+			map.put("positon", pos++);
+			map.put("alarmTime", alarmTimeStr);
+			map.put("alarmKind", kindStr);
+			map.put("activeBool", activeBool);
+
+			listItem.add(map);
+		}
+
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		getSupportMenuInflater().inflate(R.menu.alarm_list, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+        switch(item.getItemId()){      
+        case R.id.add_alarm:
+			Log.d("set Alarm", "click the time button to set time");
+			
+			calendar.setTimeInMillis(System.currentTimeMillis());
+
+			final TimePickerDialog timePickerDialog = new TimePickerDialog(SetAlarmActivity.this,new TimePickerDialog.OnTimeSetListener() {
+				@Override
+				public void onTimeSet(TimePicker tp, int hour, int mins) {
+					// TODO Auto-generated method stub
+					if (calendar.get(Calendar.HOUR_OF_DAY) >= hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)) {
+						calendar.setTimeInMillis(System.currentTimeMillis() + 86400000);
+					} else {
+						Log.v("Second", "This is else");
+						calendar.setTimeInMillis(System.currentTimeMillis());
+					}
+					
+					time[0] = hour;
+					time[1] = mins;
+					
+					calendar.set(Calendar.HOUR_OF_DAY, hour);
+					calendar.set(Calendar.MINUTE, mins);
+					calendar.set(Calendar.SECOND, 0);
+					calendar.set(Calendar.MILLISECOND, 0);
+					
+//		            addHashMap(alarmTimeColumn, kindColumn, activeColumn, activeBool, alarmTimeStr, kindStr, map);
+				}
+			}, calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE),true);
+			
+			timePickerDialog.setButton(TimePickerDialog.BUTTON_POSITIVE, "添加闹钟", timePickerDialog);
+			timePickerDialog.setButton(TimePickerDialog.BUTTON_NEGATIVE, "取消闹钟", timePickerDialog);
+			
+			timePickerDialog.show();
+			
+			Button positiveBtn = timePickerDialog.getButton(TimePickerDialog.BUTTON_POSITIVE);
+			if (positiveBtn != null)
+				positiveBtn.setOnClickListener( new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						timePickerDialog.dismiss();
+						
+						insertAlarmInDb(time[0], time[1]);
+			            
+						// 闹钟状态修改，反馈程序进行重新定闹钟
+						ForegroundService.ALARM_CHANGE_STATE = 0;
+						
+					}
+				});
+			else 
+				Toast.makeText(this, "hehe", Toast.LENGTH_SHORT).show();
+			
+            break;
+            
+        }
+		return super.onOptionsItemSelected(item);
+	}
+	
+	int insertAlarmInDb(int hour, int mins) {
+		
+		int num = alarmSort(hour, mins);
+		db.open();
+		db.insertRow(hour + ":" + mins, "1 2 3 4 5 0 0", num , 0, true);
+		db.close();
+		
+		return 0;
+	}
+	
+	int alarmSort(int hour, int mins) {
+		
+		db.open();
+		
+		Cursor cursor = db.getAllRows();
+		
+		if (cursor.moveToFirst() == false) {
+			return 0;
+		}
+		
+		int alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
+		int alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
+		int activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
+		int keyRowIdColumn = cursor.getColumnIndex(DBAdapter.KEY_ROWID);
+		int numColumn = cursor.getColumnIndex(DBAdapter.KEY_NUM);
+		
+		String alarmTimeStr = "";
+		
+		int num_id = 0;
+		int num = 0;
+		
+		int hour_compared = 0;
+		int mins_compared = 0;
+		
+		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
+			alarmTimeStr = cursor.getString(alarmTimeColumn);
+			String[] time = alarmTimeStr.split(":");
+			int numInDb = cursor.getInt(numColumn);
+			hour_compared = Integer.parseInt(time[0]);
+			mins_compared = Integer.parseInt(time[1]);
+			if (hour_compared > hour) {
+				Log.v("sort_num and num: ", numInDb+1 + "," + num_id);
+				db.updateNum(cursor.getInt(keyRowIdColumn), numInDb+1);
+			}
+			else if (hour_compared == hour && mins_compared > mins) {
+				Log.v("sort_num and num: ", numInDb+1 + "," + num_id);
+				db.updateNum(cursor.getInt(keyRowIdColumn), numInDb+1);
+			}
+			else
+				num_id++;
+			if (cursor.isLast()) {
+				break;
+			}
+		}
+
+		db.close();
+		
+		return num_id;
+	}
+	
+	public class MyAdapter extends BaseAdapter {
+		
+		LayoutInflater inflater;
+	    public Context context;
+	    public MyAdapter (Context c) {
+	    	context = c;
+	    	inflater = LayoutInflater.from(c);
+	    }
+	    
+		class ListClickGroup {  
+			public Button[] btnGroup;
+		    public ImageButton changeActive;
+		    public TextView alarmTime;
+		    public TextView upTimes;
+		    public boolean active;
+		    public int position;
+		}
+		
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return listItem.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			ListClickGroup clickViews = null;
+			if(convertView != null) {
+				
+				clickViews = (ListClickGroup) convertView.getTag();
+				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
+				
+			}else {
+
+				clickViews = new ListClickGroup();
+				convertView = inflater.inflate(R.layout.alarm_item, null);
+				Log.v("tag", "positon " + position + " convertView is null, "  + convertView); 
+				clickViews.alarmTime = (TextView) convertView.findViewById(R.id.alarmTime);
+				clickViews.changeActive = (ImageButton) convertView.findViewById(R.id.changeActive);
+				clickViews.btnGroup = setBtnGroup(convertView);
+				convertView.setTag(clickViews);
+			}
+		        
+				clickViews.position = position;
+
+				Log.v("tag", "positon " + position + " convertView is not null now, "  + convertView); 
+				
+				String[] weeks = listItem.get(position).get("alarmKind").toString().split(" ");
+				
+				for (int i = 1; i <= 7 ;i++) {
+					Log.v("the week num: " , "" + i);
+					if (weeks[i-1].equals(""+i)) {
+						clickViews.btnGroup[i-1].setBackgroundResource(R.drawable.enable_button_shape_circle);
+						clickViews.btnGroup[i-1].setTextColor(Color.parseColor("#FFFFFF"));
+					} else {
+						clickViews.btnGroup[i-1].setBackgroundResource(R.drawable.disable_button_shape_circle);
+						clickViews.btnGroup[i-1].setTextColor(Color.parseColor("#2087FC"));
+					}
+				}
+				
+				Log.v("What the Fuck!", listItem.get(position).toString());
+				
+				clickViews.alarmTime.setText(listItem.get(position).get("alarmTime").toString());
+				
+				if (listItem.get(position).get("activeBool").toString().equals("1")) {
+					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_on);
+				} else {
+					convertView.setBackgroundColor(Color.parseColor("#E5E5E5"));
+					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_off);
+				}
+				
+				final int listPos = position;
+				
+				OnClickListener activeListener = new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+
+						db.open();
+						
+						if (listItem.get(listPos).get("activeBool").toString().equals("0")) {
+					
+							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
+							db.enableRow(listPos + 1);
+							listItem.get(listPos).put("activeBool", 1);
+							v.setBackgroundResource(R.drawable.alarm_on);
+						} else {
+						
+							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
+							db.disableRow(listPos + 1);
+							listItem.get(listPos).put("activeBool", 0);
+							v.setBackgroundResource(R.drawable.alarm_off);
+
+						}
+
+						db.close();
+						
+						// 闹钟状态修改，反馈程序进行重新定闹钟
+						ForegroundService.ALARM_CHANGE_STATE = 0;
+					}
+					
+				};
+				
+				clickViews.changeActive.setOnClickListener(activeListener);
+			
+			return convertView;
+
+		}
+		
+		Button[] setBtnGroup(View convertView) {
+			Button []btnGroup = new Button[7];
+			
+	        btnGroup[0] = (Button)convertView.findViewById(R.id.monday);
+	        btnGroup[1] = (Button)convertView.findViewById(R.id.tuesday);
+	        btnGroup[2] = (Button)convertView.findViewById(R.id.wednesday);
+	        btnGroup[3] = (Button)convertView.findViewById(R.id.thursday);
+	        btnGroup[4] = (Button)convertView.findViewById(R.id.friday);
+	        btnGroup[5] = (Button)convertView.findViewById(R.id.saturday);
+	        btnGroup[6] = (Button)convertView.findViewById(R.id.sunday);
+	        
+	        return btnGroup;
+		}
+
+	}
+	
+}

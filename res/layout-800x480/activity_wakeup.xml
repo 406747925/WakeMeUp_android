@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E5E5E5"
+    android:orientation="vertical" >
+
+    <RelativeLayout 
+        android:layout_alignParentTop="true"
+        android:id="@+id/WakeUpMainLayout"
+        android:layout_height="200dp"
+        android:layout_width="fill_parent"
+        android:background="#C42B2D"
+        >
+    </RelativeLayout>
+
+	<LinearLayout 
+	    android:id="@+id/WakeUpTextLayout"
+	    android:layout_below="@id/WakeUpMainLayout"
+	    android:layout_height="wrap_content"
+	    android:layout_width="fill_parent"
+	    android:background="#E5E5E5"
+	    >
+
+        <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:id="@+id/tv"
+	        android:textSize="25sp"
+       	/>
+
+	</LinearLayout>
+
+	<LinearLayout
+	    android:id="@+id/SignInLayout"
+	    android:layout_alignParentBottom="true"
+	    android:layout_width="fill_parent"
+	    android:layout_height="65dp"
+	    android:orientation="vertical"
+	    android:background="#6DB8BB"
+	    >
+	    <TextView 
+	    android:id="@+id/signInText"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_horizontal"
+	    android:textSize="25sp"
+	    android:text="点击签到"
+		/>
+	</LinearLayout>
+
+</RelativeLayout>
