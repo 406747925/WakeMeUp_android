@@ -131,7 +131,6 @@ public class ForegroundService extends Service {
      * APIs if it is not available.
      */
     void startForegroundCompat(int id, Notification notification) {
-
         if (mReflectFlg) {
             // If we have the new startForeground API, then use it.
             if (mStartForeground != null) {

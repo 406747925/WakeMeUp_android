@@ -788,6 +788,16 @@ containing a value of this type.
         /**  Minimum width of the search view text entry area. 
          */
         public static final int abs__search_view_text_min_width=0x7f07000b;
+        public static final int activity_change_alarm_day_btn_margin_left_max=0x7f070018;
+        public static final int activity_change_alarm_day_btn_margin_left_min=0x7f070019;
+        public static final int activity_change_alarm_day_btn_size=0x7f070016;
+        public static final int activity_change_alarm_day_btn_text_size=0x7f070017;
+        /**  ChangeAlarmActivity 
+ ChangeAlarmActivity 
+         */
+        public static final int activity_change_alarm_min_padding=0x7f070013;
+        public static final int activity_change_alarm_timepicker_bar_size=0x7f070015;
+        public static final int activity_change_alarm_timepicker_height=0x7f070014;
         /**  Default screen margins, per the Android Design guidelines. 
 
          Customize dimensions originally defined in res/values/dimens.xml (such as
@@ -795,7 +805,26 @@ containing a value of this type.
     
          */
         public static final int activity_horizontal_margin=0x7f07000f;
+        /**  MainActivity 
+
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    
+         */
+        public static final int activity_main_big_title=0x7f070011;
+        public static final int activity_main_margin_top_mid=0x7f070012;
         public static final int activity_vertical_margin=0x7f070010;
+        public static final int alarm_item_day_btn_size=0x7f070020;
+        public static final int alarm_item_day_text_size=0x7f070021;
+        /**  SetAlarmActivity alarm_item 
+ SetAlarmActivity alarm_item 
+         */
+        public static final int alarm_item_height=0x7f07001a;
+        public static final int alarm_item_mid_margin_left=0x7f07001d;
+        public static final int alarm_item_min_margin_left=0x7f07001e;
+        public static final int alarm_item_min_margin_top=0x7f07001c;
+        public static final int alarm_item_set_alarm_btn_size=0x7f07001f;
+        public static final int alarm_item_time_text_size=0x7f07001b;
     }
     public static final class drawable {
         public static final int abs__ab_bottom_solid_dark_holo=0x7f020000;

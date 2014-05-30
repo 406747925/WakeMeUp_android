@@ -3,9 +3,14 @@ package cn.jlu.ge.getup;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -17,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -36,6 +42,7 @@ public class SetAlarmActivity extends SherlockActivity {
 	int alarmTimeColumn;
 	int kindColumn;
 	int activeColumn;
+	int welcomeColumn;
 	int activeBool;
 	String alarmTimeStr;
 	String kindStr;
@@ -52,12 +59,28 @@ public class SetAlarmActivity extends SherlockActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_alarm_list);
+		// 设置闹钟
+		db = new DBAdapter(this);
+		
+		setAlarmList();
+		
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		setAlarmList();
+		Toast.makeText(getApplicationContext(), "SetAlarmActivity onResume()", Toast.LENGTH_SHORT).show();
+		super.onResume();
+	}
+
+
+	// 设置闹钟
+	boolean setAlarmList() {
 		
 		listItem = new ArrayList<HashMap<String, Object>>();
 		
-		db = new DBAdapter(this);
-		
-		time =new int[2];
+		time = new int[2];
 		
 		AlarmsData alarmsData = new AlarmsData();
 		alarmsData.setAlarmDataList();
@@ -75,10 +98,49 @@ public class SetAlarmActivity extends SherlockActivity {
 				intent.putExtra("rowID", listItem.get(position).get("rowID").toString());
 				intent.putExtra("alarmTime", listItem.get(position).get("alarmTime").toString());
 				intent.putExtra("alarmKind", listItem.get(position).get("alarmKind").toString());
+				intent.putExtra("welcome", listItem.get(position).get("welcome").toString());
 				startActivity(intent);
 			}
         	
 		});
+        
+        alarmList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adpterView, View view,
+					int position, long arg3) {
+				// TODO Auto-generated method stub
+				Builder delAlarmDialogBuilder = new AlertDialog.Builder(SetAlarmActivity.this);
+				delAlarmDialogBuilder.create();
+				
+				String delAlarmStr = "删除闹钟";
+				final int pos = position;
+				delAlarmDialogBuilder.setPositiveButton(delAlarmStr, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						db.open();
+						db.deleteRow(Long.parseLong(listItem.get(pos).get("rowID").toString()));
+						db.close();
+						ForegroundService.ALARM_CHANGE_STATE = 0;
+						
+						// 重新排列闹钟列表
+						setAlarmList();
+					}
+
+					
+				});
+				
+				delAlarmDialogBuilder.show();
+				
+				return true;
+			}
+
+
+        	
+		});
+		return true;
 	}
 
 	// 获取闹钟数据并初始化
@@ -109,18 +171,19 @@ public class SetAlarmActivity extends SherlockActivity {
 			alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
 			kindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
 			activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
+			welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
 			
 			for (cursor.moveToFirst();!cursor.isLast(); cursor.moveToNext()) {
-				addHashMap(alarmTimeColumn, kindColumn, activeColumn, activeBool, alarmTimeStr, kindStr, map);
+				addHashMap(alarmTimeColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
 			}
 			
-			addHashMap(alarmTimeColumn, kindColumn, activeColumn, activeBool, alarmTimeStr, kindStr, map);
+			addHashMap(alarmTimeColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
 			db.close();
 			
 			return true;
 		}
 		
-		void addHashMap(int alarmTimeColumn, int kindColumn, int activeColumn, int activeBool, String alarmTimeStr, String kindStr, HashMap<String, Object> map) {
+		void addHashMap(int alarmTimeColumn, int kindColumn, int activeColumn, int welcomeColumn, int activeBool, String alarmTimeStr, String kindStr, HashMap<String, Object> map) {
 			int rowID = 0;
 			map = new HashMap<String, Object>();
 			alarmTimeStr = cursor.getString(alarmTimeColumn);
@@ -128,12 +191,14 @@ public class SetAlarmActivity extends SherlockActivity {
 			Log.v("AlarmTime:", alarmTimeStr);
 			kindStr = cursor.getString(kindColumn);
 			activeBool = cursor.getInt(activeColumn);
+			String welcomeStr = cursor.getString(welcomeColumn);
 			
 			map.put("rowID", rowID);
 			map.put("positon", pos++);
 			map.put("alarmTime", alarmTimeStr);
 			map.put("alarmKind", kindStr);
 			map.put("activeBool", activeBool);
+			map.put("welcome", welcomeStr);
 
 			listItem.add(map);
 		}
@@ -197,6 +262,9 @@ public class SetAlarmActivity extends SherlockActivity {
 						// 闹钟状态修改，反馈程序进行重新定闹钟
 						ForegroundService.ALARM_CHANGE_STATE = 0;
 						
+						// 因为添加闹钟，所以刷新闹钟列表
+						setAlarmList();
+						
 					}
 				});
 			else 
@@ -212,7 +280,7 @@ public class SetAlarmActivity extends SherlockActivity {
 		
 		int num = alarmSort(hour, mins);
 		db.open();
-		db.insertRow(hour + ":" + mins, "1 2 3 4 5 0 0", num , 0, true);
+		db.insertRow(hour + ":" + mins, "1 2 3 4 5 0 0", num , 0, true, "叫醒你起床的不是闹钟，而是梦想");
 		db.close();
 		
 		return 0;

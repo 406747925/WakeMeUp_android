@@ -16,9 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.jlu.ge.getup.tools.AlarmReceiver;
 import cn.jlu.ge.getup.tools.DBAdapter;
 import cn.jlu.ge.getup.tools.FileIOTools;
 import cn.jlu.ge.getup.tools.ForegroundService;

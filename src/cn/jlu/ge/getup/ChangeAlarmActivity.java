@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import cn.jlu.ge.getup.tools.AlarmReceiver;
@@ -28,11 +29,14 @@ public class ChangeAlarmActivity extends Activity {
 	private String alarmTimeStr;
 	private String rowID;
 	private String alarmKindStr;
+	private String welcomeStr;
 	private DayBtn[] btnGroup;
 	private DBAdapter db;
 	private HashMap<Integer, Integer> weeksMap;
 	Calendar calendar;
 	String[] time;
+	
+	EditText editWelcome;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class ChangeAlarmActivity extends Activity {
         alarmTimeStr = getBundle.getString("alarmTime");
         rowID = getBundle.getString("rowID");
         alarmKindStr = getBundle.getString("alarmKind");
+        welcomeStr = getBundle.getString("welcome");
         time = alarmTimeStr.split(":");
         
         setAlarmDay();
@@ -59,11 +64,11 @@ public class ChangeAlarmActivity extends Activity {
         timePicker.setCurrentHour(Integer.parseInt(time[0]));
         timePicker.setCurrentMinute(Integer.parseInt(time[1]));
         
-        TextView tv1 = (TextView) findViewById(R.id.welcomeText);
-        tv1.setText("和明天的自己说些什么呢？");
+        editWelcome = (EditText) findViewById(R.id.welcomeText);
+        editWelcome.setText(welcomeStr);
         
-        TextView tv2 = (TextView) findViewById(R.id.alarmSongText);
-        tv2.setText("铃声:早上好");
+        TextView choiceSong = (TextView) findViewById(R.id.alarmSongText);
+        choiceSong.setText("铃声:早上好");
         
         
         
@@ -177,11 +182,15 @@ public class ChangeAlarmActivity extends Activity {
     	// TODO save the data in db.
     	Log.v("todo", "save the data in db." + alarmKindStr);
     	alarmTimeStr = timePicker.getCurrentHour() + ":" + timePicker.getCurrentMinute();
-    	db.updateRowKind(Long.parseLong(rowID), alarmTimeStr, alarmKindStr);
+    	welcomeStr = editWelcome.getText().toString();
+    	db.updateRowKind(Long.parseLong(rowID), alarmTimeStr, alarmKindStr, welcomeStr);
     	db.close();
 		
     	// 闹钟状态修改，反馈程序进行重新定闹钟
 		ForegroundService.ALARM_CHANGE_STATE = 0;
+		
+		// 退出
+		this.finish();
 		
     	return true;
 	}

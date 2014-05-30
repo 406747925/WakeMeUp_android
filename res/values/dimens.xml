@@ -3,5 +3,26 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_main_big_title">200dp</dimen>
+    <dimen name="activity_main_margin_top_mid">20dp</dimen>
+    
+    <!-- ChangeAlarmActivity -->
+    <dimen name="activity_change_alarm_min_padding">10dp</dimen>
+    <dimen name="activity_change_alarm_timepicker_height">150dp</dimen>
+    <dimen name="activity_change_alarm_timepicker_bar_size">130dp</dimen>
+    <dimen name="activity_change_alarm_day_btn_size">40dp</dimen>
+    <dimen name="activity_change_alarm_day_btn_text_size">16dp</dimen>
+    <dimen name="activity_change_alarm_day_btn_margin_left_max">8dp</dimen>
+    <dimen name="activity_change_alarm_day_btn_margin_left_min">4dp</dimen>
+    
+    <!-- SetAlarmActivity alarm_item -->
+	<dimen name="alarm_item_height">100dp</dimen>
+	<dimen name="alarm_item_time_text_size">38sp</dimen>
+	<dimen name="alarm_item_min_margin_top">10dp</dimen>
+	<dimen name="alarm_item_mid_margin_left">20dp</dimen>
+	<dimen name="alarm_item_min_margin_left">10dp</dimen>
+	<dimen name="alarm_item_set_alarm_btn_size">40dp</dimen>
+	<dimen name="alarm_item_day_btn_size">25dp</dimen>
+	<dimen name="alarm_item_day_text_size">12dp</dimen>
 
 </resources>
