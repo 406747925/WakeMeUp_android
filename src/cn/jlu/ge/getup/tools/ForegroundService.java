@@ -50,6 +50,9 @@ public class ForegroundService extends Service {
 	int alarmKindColumn;
 	int activeColumn;
 	int upTimesColumn;
+	int welcomeColumn;
+
+	AlarmManager alarmManager;
 	
     @Override
     public void onCreate() {
@@ -58,6 +61,9 @@ public class ForegroundService extends Service {
         
         // 数据初始化
         db = new DBAdapter(this);
+        
+        setDBColumn();
+        
         calendar = Calendar.getInstance();
         handler.post(alarmUpdateThread);
         
@@ -193,6 +199,18 @@ public class ForegroundService extends Service {
         }
     }
     
+    void setDBColumn() {
+    	db.open();
+    	Cursor cursor = db.getAllRows();
+		alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
+		alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
+		activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
+		upTimesColumn = cursor.getColumnIndex(DBAdapter.KEY_UP_TIMES);
+		welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
+		cursor.close();
+		db.close();
+    }
+    
 	// 刷新时间
 	Handler handler = new Handler();
 	Runnable alarmUpdateThread = new Runnable() {
@@ -218,18 +236,6 @@ public class ForegroundService extends Service {
 		return true;
 	}
     
-    boolean addOneAlarmToAM (int activeBool, int hour, int mins, String kindStr, int upTimes, int rowId) {
-    	
-		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
-			Toast.makeText(getApplicationContext(), "reSetAlarm: " + hour + ":" + mins, Toast.LENGTH_SHORT).show();
-			reSetAlarm(hour , mins, rowId);
-		} else {
-			Toast.makeText(getApplicationContext(), "Needn't ReSet Alarm: " + hour + ":" + mins, Toast.LENGTH_SHORT).show();				
-		}
-    	return true;
-    	
-    }
-    
     boolean cancelAlarmsFromAM () {
 		
 		Intent intent = new Intent(this,AlarmReceiver.class);
@@ -240,7 +246,6 @@ public class ForegroundService extends Service {
     	
     }
     
-    
     // 判断是否应该设置Alarm
 	boolean setAlarmOrNot (int hour, int mins, String kindStr, int upTimes) {
 		
@@ -248,10 +253,18 @@ public class ForegroundService extends Service {
 		calendar = Calendar.getInstance();
 		// 如果当前已经响铃过的闹钟，则不进行重新设置
 		if (upTimes == 1) {
+			Toast.makeText(getApplicationContext(), hour + ":" + mins + " uptimes: " + upTimes, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		// 否则如果是同一天，并且小于等于当前时间的 Alarm 则设置它在第二天触发
-		else if (calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)) {
+		// 方便闹钟测试，这里设置为允许当前时间设置为立即触发的闹钟
+		/*************************************************************************
+		 * 
+		 * 此处为正确触发闹钟的判断条件
+		 * calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)\
+		 * 
+		 *************************************************************************/
+		else if (calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) > mins)) {
 			if ( weekNum == 7 ) weekNumAlarm = 1;
 			else weekNumAlarm = weekNum + 1;
 			// 一天 86400000 毫秒
@@ -283,28 +296,24 @@ public class ForegroundService extends Service {
 			return false;
 		}
 		
-		alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-		alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
-		activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
-		upTimesColumn = cursor.getColumnIndex(DBAdapter.KEY_UP_TIMES);
-		
 		for (cursor.moveToFirst(); !cursor.isLast(); cursor.moveToNext()) {
-			doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn);
+			doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
 		}
 
-		doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn);
+		doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
 		
 		db.close();
 		return true;
 	}
 	
 	// 查找所有的Alarm并判断是否需要重置
-	int doReSetAlarm(Cursor cursor, int kindColumn, int activeColumn, int alarmTimeColumn, int upTimesColumn) {
+	int doReSetAlarm(Cursor cursor, int kindColumn, int activeColumn, int alarmTimeColumn, int upTimesColumn, int welcomeColumn) {
 		
 		String kindStr = cursor.getString(kindColumn);
 		int activeBool = cursor.getInt(activeColumn);
 		String alarmTimeStr = cursor.getString(alarmTimeColumn);
 		int upTimes = cursor.getInt(upTimesColumn);
+		String welcomeStr = cursor.getString(welcomeColumn);
 		int rowId = cursor.getPosition();
 		
 		Log.v("kindStr: ", kindStr);
@@ -312,7 +321,8 @@ public class ForegroundService extends Service {
 		Log.v("alarmTimeStr: ", alarmTimeStr);
 		Log.v("week", "" + weekNum);
 		Log.v("upTimes", "" + upTimes);
-
+		Log.v("welcome", welcomeStr);
+		
 		String[] time = alarmTimeStr.split(":");
 		int hour = Integer.parseInt(time[0]);
 		int mins = Integer.parseInt(time[1]);
@@ -320,7 +330,7 @@ public class ForegroundService extends Service {
 		// 如果闹钟没有被取消，并且需要在今天提醒
 		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
 			Toast.makeText(getApplicationContext(), "reSetAlarm: " + alarmTimeStr, Toast.LENGTH_SHORT).show();
-			reSetAlarm(hour , mins, rowId);
+			reSetAlarm(hour , mins, rowId, welcomeStr);
 		}
 		// 否则不做处理
 		else {
@@ -331,7 +341,7 @@ public class ForegroundService extends Service {
 	}
 	
 	// 重新设置闹钟，设置广播
-	int reSetAlarm(int hour, int mins, int rowId) {
+	int reSetAlarm(int hour, int mins, int rowId, String welcomeStr) {
 
 		calendar.set(Calendar.HOUR_OF_DAY, hour);
 		calendar.set(Calendar.MINUTE, mins);
@@ -340,8 +350,9 @@ public class ForegroundService extends Service {
 		
 		Intent intent = new Intent(this,AlarmReceiver.class);
 		intent.putExtra("rowId", rowId);
+		intent.putExtra("welcomeStr", welcomeStr);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Intent serviceIntent = new Intent(this, ForegroundService.class);
         startService(serviceIntent);

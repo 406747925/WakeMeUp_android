@@ -81,7 +81,7 @@
 	<RelativeLayout 
 	    android:id="@+id/weather"
 	    android:layout_width="fill_parent"
-	    android:layout_height="80dp"
+	    android:layout_height="@dimen/activity_main_block_height"
 	    android:background="#D7D7D7"
 	    >
 	    <ImageButton
@@ -204,6 +204,7 @@
 	    >
 	    <TextView 
 	        android:layout_centerVertical="true"
+	        android:layout_centerHorizontal="true"
 	        android:id="@+id/signInText"
 	        android:textColor="#000000"
 	        android:textSize="20sp"
@@ -221,6 +222,7 @@
 	    >
 	    <TextView 
 	        android:layout_centerVertical="true"
+	        android:layout_centerHorizontal="true"
 	        android:id="@+id/positiveText"
 	        android:textColor="#000000"
 	        android:textSize="20sp"

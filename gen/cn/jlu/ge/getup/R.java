@@ -788,16 +788,16 @@ containing a value of this type.
         /**  Minimum width of the search view text entry area. 
          */
         public static final int abs__search_view_text_min_width=0x7f07000b;
-        public static final int activity_change_alarm_day_btn_margin_left_max=0x7f070018;
-        public static final int activity_change_alarm_day_btn_margin_left_min=0x7f070019;
-        public static final int activity_change_alarm_day_btn_size=0x7f070016;
-        public static final int activity_change_alarm_day_btn_text_size=0x7f070017;
+        public static final int activity_change_alarm_day_btn_margin_left_max=0x7f070019;
+        public static final int activity_change_alarm_day_btn_margin_left_min=0x7f07001a;
+        public static final int activity_change_alarm_day_btn_size=0x7f070017;
+        public static final int activity_change_alarm_day_btn_text_size=0x7f070018;
         /**  ChangeAlarmActivity 
  ChangeAlarmActivity 
          */
-        public static final int activity_change_alarm_min_padding=0x7f070013;
-        public static final int activity_change_alarm_timepicker_bar_size=0x7f070015;
-        public static final int activity_change_alarm_timepicker_height=0x7f070014;
+        public static final int activity_change_alarm_min_padding=0x7f070014;
+        public static final int activity_change_alarm_timepicker_bar_size=0x7f070016;
+        public static final int activity_change_alarm_timepicker_height=0x7f070015;
         /**  Default screen margins, per the Android Design guidelines. 
 
          Customize dimensions originally defined in res/values/dimens.xml (such as
@@ -806,25 +806,27 @@ containing a value of this type.
          */
         public static final int activity_horizontal_margin=0x7f07000f;
         /**  MainActivity 
+ MainActivity 
 
          Customize dimensions originally defined in res/values/dimens.xml (such as
          screen margins) for sw600dp devices (e.g. 7" tablets) here.
     
          */
         public static final int activity_main_big_title=0x7f070011;
+        public static final int activity_main_block_height=0x7f070013;
         public static final int activity_main_margin_top_mid=0x7f070012;
         public static final int activity_vertical_margin=0x7f070010;
-        public static final int alarm_item_day_btn_size=0x7f070020;
-        public static final int alarm_item_day_text_size=0x7f070021;
-        /**  SetAlarmActivity alarm_item 
+        public static final int alarm_item_day_btn_size=0x7f070021;
+        public static final int alarm_item_day_text_size=0x7f070022;
+        /**  SetAlarmActivity ( alarm_item ) 
  SetAlarmActivity alarm_item 
          */
-        public static final int alarm_item_height=0x7f07001a;
-        public static final int alarm_item_mid_margin_left=0x7f07001d;
-        public static final int alarm_item_min_margin_left=0x7f07001e;
-        public static final int alarm_item_min_margin_top=0x7f07001c;
-        public static final int alarm_item_set_alarm_btn_size=0x7f07001f;
-        public static final int alarm_item_time_text_size=0x7f07001b;
+        public static final int alarm_item_height=0x7f07001b;
+        public static final int alarm_item_mid_margin_left=0x7f07001e;
+        public static final int alarm_item_min_margin_left=0x7f07001f;
+        public static final int alarm_item_min_margin_top=0x7f07001d;
+        public static final int alarm_item_set_alarm_btn_size=0x7f070020;
+        public static final int alarm_item_time_text_size=0x7f07001c;
     }
     public static final class drawable {
         public static final int abs__ab_bottom_solid_dark_holo=0x7f020000;
@@ -970,9 +972,9 @@ containing a value of this type.
         public static final int AlarmSong=0x7f04003e;
         public static final int AlarmVoicepower=0x7f040040;
         public static final int AlarmWelcome=0x7f04003c;
-        public static final int SignInLayout=0x7f04005f;
+        public static final int SignInLayout=0x7f040060;
         public static final int WakeUpMainLayout=0x7f04005c;
-        public static final int WakeUpTextLayout=0x7f04005d;
+        public static final int WakeUpTextLayout=0x7f04005e;
         public static final int abs__action_bar=0x7f040020;
         public static final int abs__action_bar_container=0x7f04001f;
         public static final int abs__action_bar_subtitle=0x7f040011;
@@ -1012,15 +1014,15 @@ containing a value of this type.
         public static final int abs__textButton=0x7f040013;
         public static final int abs__title=0x7f04001b;
         public static final int abs__up=0x7f04000b;
-        public static final int add_alarm=0x7f040064;
+        public static final int add_alarm=0x7f040065;
         public static final int alarm=0x7f040045;
         public static final int alarmList=0x7f040032;
         public static final int alarmSongText=0x7f04003f;
-        public static final int alarmTime=0x7f040061;
-        public static final int alarm_item=0x7f040060;
+        public static final int alarmTime=0x7f040062;
+        public static final int alarm_item=0x7f040061;
         public static final int alarm_setting=0x7f040034;
-        public static final int changeActive=0x7f040062;
-        public static final int change_alarm=0x7f040065;
+        public static final int changeActive=0x7f040063;
+        public static final int change_alarm=0x7f040066;
         public static final int disableHome=0x7f040009;
         public static final int edit_query=0x7f040026;
         public static final int friday=0x7f040039;
@@ -1054,8 +1056,8 @@ containing a value of this type.
         public static final int thursday=0x7f040038;
         public static final int timePicker=0x7f040033;
         public static final int tuesday=0x7f040036;
-        public static final int tv=0x7f04005e;
-        public static final int upTimes=0x7f040063;
+        public static final int tv=0x7f04005f;
+        public static final int upTimes=0x7f040064;
         public static final int useLogo=0x7f040004;
         public static final int uvValue=0x7f040050;
         public static final int uvValueText=0x7f040055;
@@ -1065,6 +1067,7 @@ containing a value of this type.
         public static final int weatherLike=0x7f04004e;
         public static final int weatherLikeText=0x7f040053;
         public static final int wednesday=0x7f040037;
+        public static final int welcome=0x7f04005d;
         public static final int welcomeText=0x7f04003d;
         public static final int wind=0x7f04004f;
         public static final int windText=0x7f040054;

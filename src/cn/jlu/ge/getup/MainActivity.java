@@ -123,10 +123,9 @@ public class MainActivity extends SherlockActivity {
         tempText = (TextView) findViewById(R.id.tempText);
         uvValueText = (TextView) findViewById(R.id.uvValueText);
         
-        
         // 主界面第三条：早期签到，入口
         signInText = (TextView) findViewById(R.id.signInText);
-        signInText.setText("早起签到");
+        signInText.setText("早起签到,为每一天加油");
         
         // 主界面第四条：正能量站
         positiveText = (TextView) findViewById(R.id.positiveText);
