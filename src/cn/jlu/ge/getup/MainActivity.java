@@ -88,6 +88,7 @@ public class MainActivity extends SherlockActivity {
         setContentView(R.layout.activity_main);
         
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
+        foregroundServiceIntent.putExtra("doSth", ForegroundService.CREATE_STATE);
         startService(foregroundServiceIntent);
         
         Locale.setDefault(Locale.SIMPLIFIED_CHINESE);

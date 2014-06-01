@@ -188,6 +188,9 @@ public class ChangeAlarmActivity extends Activity {
 		
     	// 闹钟状态修改，反馈程序进行重新定闹钟
 		ForegroundService.ALARM_CHANGE_STATE = 0;
+        Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
+        foregroundServiceIntent.putExtra("doSth",ForegroundService.CHANGE_STATE);
+        startService(foregroundServiceIntent);
 		
 		// 退出
 		this.finish();

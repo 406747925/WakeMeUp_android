@@ -3,12 +3,15 @@ package cn.jlu.ge.getup;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import cn.jlu.ge.getup.tools.ForegroundService;
 import cn.jlu.ge.getup.tools.GetUpMediaPlayer;
 import cn.jlu.ge.getup.tools.GetUpVibrator;
 import cn.jlu.ge.getup.tools.ShakeDetector;
@@ -54,6 +57,8 @@ public class WakeUpActivity extends Activity {
         String welcomeStr = bundle.getString("welcomeStr");
         int rowId = bundle.getInt("rowId");
         welcome = (TextView)findViewById(R.id.welcome);
+        Log.v("WakeUpActivity welcomeStr", "" + welcomeStr);
+        Log.v("WakeUpActivity rowId", "" + rowId);
         welcome.setText(welcomeStr);
         
         // ƒ÷¡Âƒ£øÈ
@@ -82,6 +87,11 @@ public class WakeUpActivity extends Activity {
 				tv.setText("ƒ÷÷”Ω‚À¯ £”‡“°ªŒ¥Œ ˝£∫" + shakeTimes);
 			}
         });
+        
+        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+        foregroundServiceIntent.putExtra("doSth", ForegroundService.SHOW_NEXT_ALARM);
+        startService(foregroundServiceIntent);
+        
 	}
 	
 	public void setScreenBrightAndShowWindow() {

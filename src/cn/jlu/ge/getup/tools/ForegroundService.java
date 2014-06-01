@@ -22,6 +22,11 @@ import cn.jlu.ge.getup.R;
 public class ForegroundService extends Service {
     private static final String TAG = "ForegroundService";
     
+    public static final String CREATE_STATE = "Create_MainActivity";
+    public static final String NEW_ALRM_STATE = "New_Alarm_SetAlarmActivity";
+    public static final String CHANGE_STATE = "Change_State";
+    public static final String SHOW_NEXT_ALARM = "Next_Alarm_State";
+    
     public static int ALARM_CHANGE_STATE = 0;
     
     private boolean mReflectFlg = false;
@@ -36,7 +41,7 @@ public class ForegroundService extends Service {
 
     private NotificationManager mNM;  
     private Method mSetForeground;
-    private Method mStartForeground;  
+    private Method mStartForeground;
     private Method mStopForeground;
     private Object[] mSetForegroundArgs = new Object[1];
     private Object[] mStartForegroundArgs = new Object[2];
@@ -73,7 +78,7 @@ public class ForegroundService extends Service {
             mStartForeground = ForegroundService.class.getMethod("startForeground", mStartForegroundSignature);  
             mStopForeground = ForegroundService.class.getMethod("stopForeground", mStopForegroundSignature);  
         } catch (NoSuchMethodException e) {
-            mStartForeground = mStopForeground = null;  
+            mStartForeground = mStopForeground = null;
         }
         
         try {
@@ -84,26 +89,59 @@ public class ForegroundService extends Service {
                     "OS doesn't have Service.startForeground OR Service.setForeground!");
         }
 
-        Notification.Builder builder = new Notification.Builder(this);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  
-                new Intent(this, MainActivity.class), 0); 
-        builder.setContentIntent(contentIntent);
-        builder.setSmallIcon(R.drawable.clock);
-        builder.setTicker("同学,别闹了!");
-        builder.setContentTitle("同学,别闹了!");
-        builder.setContentText("同学,别闹了!快点起来学习啦!");
-    	notification = builder.getNotification();
-        
-        startForegroundCompat(NOTIFICATION_ID, notification);
+        setNotificationAndAlarm();
     }  
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "onStartCommand");
+        String doWhatStr = intent.getStringExtra("doSth");
+        if (doWhatStr == null) {
+        	Log.v("None", "NO STATE， Wrong Start.");
+        }
+        else if (doWhatStr.equals(CREATE_STATE)) {
+			if (ALARM_CHANGE_STATE != 1) {
+				
+				Log.v("Create State", "Create State.");
+//				cancelAlarmsFromAM ();
+//				addAllAlarmsToAM ();
+				setNotificationAndAlarm();
+				
+			}
+			
+			ALARM_CHANGE_STATE = 1;
+        } else if (doWhatStr.equals(NEW_ALRM_STATE)) {
+			if (ALARM_CHANGE_STATE != 1) {
+				
+				Log.v("New State", "A New Alarm Insert.");
+//				cancelAlarmsFromAM ();
+//				addAllAlarmsToAM ();
+				setNotificationAndAlarm();
+				
+			}
+			
+			ALARM_CHANGE_STATE = 1;
+        } else if (doWhatStr.equals(CHANGE_STATE)) {
+			if (ALARM_CHANGE_STATE != 1) {
+				
+				Log.v("Change State", "Having Some Change.");
+//				cancelAlarmsFromAM ();
+//				addAllAlarmsToAM ();
+				setNotificationAndAlarm();
+				
+			}
+			
+			ALARM_CHANGE_STATE = 1;
+        } else if (doWhatStr.equals(SHOW_NEXT_ALARM)) {
+        	
+        	setNotificationAndAlarm();
+        	
+        }
+        
         
         return START_STICKY;
-    } 
+    }
     
     @Override  
     public IBinder onBind(Intent intent) {  
@@ -199,6 +237,25 @@ public class ForegroundService extends Service {
         }
     }
     
+    void setNotificationAndAlarm() {
+    	
+    	String []stateBarStr = checkRecentAlarmAndSetIt();
+    	Log.v("Next Alarm State", SHOW_NEXT_ALARM);
+    	
+        Notification.Builder builder = new Notification.Builder(this);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  
+                new Intent(this, MainActivity.class), 0); 
+        builder.setContentIntent(contentIntent);
+        builder.setSmallIcon(R.drawable.clock);
+        builder.setTicker("小闹在这里");
+        builder.setContentTitle(stateBarStr[0]);
+        builder.setContentText(stateBarStr[1]);
+    	notification = builder.getNotification();
+        
+        startForegroundCompat(NOTIFICATION_ID, notification);
+        
+    }
+    
     void setDBColumn() {
     	db.open();
     	Cursor cursor = db.getAllRows();
@@ -218,10 +275,12 @@ public class ForegroundService extends Service {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			handler.postDelayed(alarmUpdateThread, 10000);
+			handler.postDelayed(alarmUpdateThread, 9633);
 			if (ALARM_CHANGE_STATE != 1) {
-				cancelAlarmsFromAM ();
-				addAllAlarmsToAM ();
+//				cancelAlarmsFromAM ();
+//				addAllAlarmsToAM ();
+				
+				setNotificationAndAlarm();
 			}
 			
 			ALARM_CHANGE_STATE = 1;
@@ -264,7 +323,7 @@ public class ForegroundService extends Service {
 		 * calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)\
 		 * 
 		 *************************************************************************/
-		else if (calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) > mins)) {
+		else if (calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)) {
 			if ( weekNum == 7 ) weekNumAlarm = 1;
 			else weekNumAlarm = weekNum + 1;
 			// 一天 86400000 毫秒
@@ -329,7 +388,6 @@ public class ForegroundService extends Service {
 		
 		// 如果闹钟没有被取消，并且需要在今天提醒
 		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
-			Toast.makeText(getApplicationContext(), "reSetAlarm: " + alarmTimeStr, Toast.LENGTH_SHORT).show();
 			reSetAlarm(hour , mins, rowId, welcomeStr);
 		}
 		// 否则不做处理
@@ -338,6 +396,7 @@ public class ForegroundService extends Service {
 		}
 		
 		return 0;
+		
 	}
 	
 	// 重新设置闹钟，设置广播
@@ -349,32 +408,108 @@ public class ForegroundService extends Service {
 		calendar.set(Calendar.MILLISECOND, 0);
 		
 		Intent intent = new Intent(this,AlarmReceiver.class);
-		intent.putExtra("rowId", rowId);
-		intent.putExtra("welcomeStr", welcomeStr);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+		
+//		Log.v("ForegroundService", "" + rowId);
+//		Log.v("ForegroundService", "" + welcomeStr);
+//		intent.putExtra("rowId", rowId);
+//		intent.putExtra("welcomeStr", welcomeStr);
+		
+		Toast.makeText(getApplicationContext(), ">>>> reSetAlarm:" + hour + ":" + mins, Toast.LENGTH_SHORT).show();
+		
+		PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        Intent serviceIntent = new Intent(this, ForegroundService.class);
-        startService(serviceIntent);
-        
         return 0;
 	}
 	
-	String checkRecentAlarm() {
+	String[] checkRecentAlarmAndSetIt() {
+		
 		// 查找离当前时间最近的闹钟
 		db.open();
 		Cursor cursor = db.getActiveRow();
 		
 		alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-		alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
-		activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
+		int numColumn = cursor.getColumnIndex(DBAdapter.KEY_NUM);
+		int welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
+		int alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
 		
-		for (cursor.moveToFirst(); !cursor.isLast(); cursor.moveToNext()) {
+		String alarmTimeStr = "";
+		String welcomeStr = "";
+		String alarmKindStr = "";
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		int nowHour = calendar.get(Calendar.HOUR_OF_DAY);
+		int nowMins = calendar.get(Calendar.MINUTE);
+		
+		Toast.makeText(getApplicationContext(), "Now Time: " + nowHour + ":" + nowMins, Toast.LENGTH_SHORT).show();
+		
+		int comparedHour = 0;
+		int comparedMins = 0;
+		
+		int subCompareMins = 8400;
+		String minAlarmTimeStr = "";
+		String minWelcomeStr = "";
+		
+		int weekNum = setWeekNum();
+		boolean todayOrNot = true;
+		int minRowId = 0;
 			
+		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
+			
+			alarmTimeStr = cursor.getString(alarmTimeColumn);
+			welcomeStr = cursor.getString(welcomeColumn);
+			alarmKindStr = cursor.getString(alarmKindColumn);
+			
+			String[] time = alarmTimeStr.split(":");
+			comparedHour = Integer.parseInt(time[0]);
+			comparedMins = Integer.parseInt(time[1]);
+			
+			if (alarmKindStr.indexOf("" + weekNum) == -1) {
+				
+				todayOrNot = false;
+				Log.v("Recent Alarm", "alarm time : " + alarmTimeStr + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
+				
+			} else {
+				Log.v("Recent Alarm", "alarm time : " + alarmTimeStr + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
+				todayOrNot = true;
+			}
+			
+			if (todayOrNot) {
+				
+				if (comparedHour < nowHour || (comparedHour == nowHour && comparedMins < nowMins)) {
+
+				} else {
+					
+					if ( (((comparedHour - nowHour) * 60 + (comparedMins - nowMins)) < subCompareMins) && 
+							(((comparedHour - nowHour) * 60 + (comparedMins - nowMins)) > 0) ) {
+						
+						subCompareMins = ((comparedHour - nowHour)*60 + (comparedMins - nowMins));
+						minAlarmTimeStr = alarmTimeStr;
+						minWelcomeStr = welcomeStr;
+						minRowId = cursor.getInt(cursor.getColumnIndex(DBAdapter.KEY_ROWID));
+					}
+				}
+			}
+			
+			if (cursor.isLast()) {
+				
+				break;
+				
+			}
 		}
 
 		db.close();
-		return "";
+		
+		if (subCompareMins != 8400 ) {
+			String time[] = minAlarmTimeStr.split(":");
+			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr);
+			String[] returnStr = {"下个闹钟" + minAlarmTimeStr, "小闹提醒," + minWelcomeStr};
+			return returnStr;
+		} else {
+			String[] returnStr = {"小闹没得闹啦", "小闹提醒,今天的闹钟已售罄T-T"};
+			return returnStr;
+		}
 	}
 	
 	String timeReturn (Cursor cursor) {

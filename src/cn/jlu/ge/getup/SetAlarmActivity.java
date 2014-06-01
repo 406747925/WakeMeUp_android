@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -123,10 +122,15 @@ public class SetAlarmActivity extends SherlockActivity {
 						db.open();
 						db.deleteRow(Long.parseLong(listItem.get(pos).get("rowID").toString()));
 						db.close();
-						ForegroundService.ALARM_CHANGE_STATE = 0;
-						
 						// 重新排列闹钟列表
 						setAlarmList();
+						
+						ForegroundService.ALARM_CHANGE_STATE = 0;
+						
+				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+				        foregroundServiceIntent.putExtra("doSth", ForegroundService.NEW_ALRM_STATE);
+				        startService(foregroundServiceIntent);
+				        
 					}
 
 					
@@ -264,6 +268,10 @@ public class SetAlarmActivity extends SherlockActivity {
 						
 						// 因为添加闹钟，所以刷新闹钟列表
 						setAlarmList();
+						
+				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+				        foregroundServiceIntent.putExtra("doSth", ForegroundService.NEW_ALRM_STATE);
+				        startService(foregroundServiceIntent);
 						
 					}
 				});
@@ -433,13 +441,13 @@ public class SetAlarmActivity extends SherlockActivity {
 						if (listItem.get(listPos).get("activeBool").toString().equals("0")) {
 					
 							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
-							db.enableRow(listPos + 1);
+							db.enableRow(Integer.parseInt(listItem.get(listPos).get("rowID").toString()));
 							listItem.get(listPos).put("activeBool", 1);
 							v.setBackgroundResource(R.drawable.alarm_on);
 						} else {
 						
 							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
-							db.disableRow(listPos + 1);
+							db.disableRow(Integer.parseInt(listItem.get(listPos).get("rowID").toString()));
 							listItem.get(listPos).put("activeBool", 0);
 							v.setBackgroundResource(R.drawable.alarm_off);
 
@@ -449,6 +457,10 @@ public class SetAlarmActivity extends SherlockActivity {
 						
 						// 闹钟状态修改，反馈程序进行重新定闹钟
 						ForegroundService.ALARM_CHANGE_STATE = 0;
+						
+				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+				        foregroundServiceIntent.putExtra("doSth", ForegroundService.CHANGE_STATE);
+				        startService(foregroundServiceIntent);
 					}
 					
 				};
