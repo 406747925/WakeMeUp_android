@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	public void onReceive(Context context, Intent intent) {
 
-		Toast.makeText(context , "闹钟时间到了！", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context , "小闹提醒！闹钟时间到了！", Toast.LENGTH_SHORT).show();
     	Intent newIntent = new Intent(context, WakeUpActivity.class);
     	newIntent.putExtra("rowId", rowId);
     	newIntent.putExtra("welcomeStr", welcomeStr);

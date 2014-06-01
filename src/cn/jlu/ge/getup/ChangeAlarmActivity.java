@@ -4,8 +4,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,10 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import cn.jlu.ge.getup.tools.AlarmReceiver;
-import cn.jlu.ge.getup.tools.DBAdapter;
+import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.ForegroundService;
-import cn.jlu.ge.getup.SetAlarmActivity;
 
 public class ChangeAlarmActivity extends Activity {
 
@@ -31,7 +27,7 @@ public class ChangeAlarmActivity extends Activity {
 	private String alarmKindStr;
 	private String welcomeStr;
 	private DayBtn[] btnGroup;
-	private DBAdapter db;
+	private AlarmDBAdapter db;
 	private HashMap<Integer, Integer> weeksMap;
 	Calendar calendar;
 	String[] time;
@@ -45,7 +41,7 @@ public class ChangeAlarmActivity extends Activity {
 		setContentView(R.layout.activity_change_alarm);
 		
 		// 数据库初始化
-		db = new DBAdapter(this);
+		db = new AlarmDBAdapter(this);
 		
 		setWeeksMap();
 

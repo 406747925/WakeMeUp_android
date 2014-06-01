@@ -15,8 +15,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.AlarmManager;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -27,9 +27,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.jlu.ge.getup.tools.DBAdapter;
 import cn.jlu.ge.getup.tools.FileIOTools;
 import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.WeatherCitiesDBAdapter;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -39,10 +39,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class MainActivity extends SherlockActivity {
 	
-//	GetUpVibrator vibrator;
-//	ShakeDetector shakeDetector;
 	static FileIOTools fileIO;
-	private DBAdapter db;
 	private AsyncHttpClient client;
 	
 	private Calendar calendar;
@@ -50,7 +47,6 @@ public class MainActivity extends SherlockActivity {
 	private RelativeLayout weatherLayout;
 	private RelativeLayout signInLayout;
 	private RelativeLayout positiveLayout;
-	private AlarmManager alarms;
 	int shakeTimes;
 	
 	private TextView rowOne;
@@ -74,7 +70,7 @@ public class MainActivity extends SherlockActivity {
 	private TextView positiveText;
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");;
-	String ALARM_FILE_NAME = "Alarm_File";
+	
 	final String SNOW_AND_RAIN = "雨夹雪";
 	final String SUNNY = "晴";
 	final String CLOUD_LITTLE_RAIN = "多云转小雨";
@@ -148,21 +144,6 @@ public class MainActivity extends SherlockActivity {
         // 用来临时测试使用
 		positiveText.setText("MATLAB创始人来吉大啦");
 		
-        client.get("", new AsyncHttpResponseHandler() {
-
-			@Override
-			public void onFailure(Throwable throwable, String response) {
-				// TODO Auto-generated method stub
-				super.onFailure(throwable, response);
-			}
-
-			@Override
-			public void onSuccess(int throwable, String response) {
-				// TODO Auto-generated method stub
-				super.onSuccess(throwable, response);
-			}
-        	
-        });
     }
     
     void internetConnect() {
@@ -252,7 +233,7 @@ public class MainActivity extends SherlockActivity {
 					String temp1Str = weatherObject.getString("temp1");
 					String temp2Str = weatherObject.getString("temp2");
 					String weatherStr = weatherObject.getString("weather");
-					String ptimeStr = weatherObject.getString("ptime");
+					weatherObject.getString("ptime");
 					
 					rowTwo.setText(cityStr);
 					rowThree.setText(temp2Str + "~" + temp1Str + "\n" + weatherStr);

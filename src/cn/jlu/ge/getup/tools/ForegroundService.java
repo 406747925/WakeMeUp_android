@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 import cn.jlu.ge.getup.MainActivity;
 import cn.jlu.ge.getup.R;
+import cn.jlu.ge.getup.WakeUpActivity;
 
 public class ForegroundService extends Service {
     private static final String TAG = "ForegroundService";
@@ -48,7 +49,7 @@ public class ForegroundService extends Service {
     private Object[] mStopForegroundArgs = new Object[1];
     private Notification notification;
     
-    private DBAdapter db;
+    private AlarmDBAdapter db;
     private Calendar calendar;
 	int weekNum = -1;
 	int alarmTimeColumn;
@@ -65,7 +66,7 @@ public class ForegroundService extends Service {
         Log.d(TAG, "onCreate");
         
         // 数据初始化
-        db = new DBAdapter(this);
+        db = new AlarmDBAdapter(this);
         
         setDBColumn();
         
@@ -259,11 +260,11 @@ public class ForegroundService extends Service {
     void setDBColumn() {
     	db.open();
     	Cursor cursor = db.getAllRows();
-		alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-		alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
-		activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
-		upTimesColumn = cursor.getColumnIndex(DBAdapter.KEY_UP_TIMES);
-		welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
+		alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+		alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
+		activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
+		upTimesColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_UP_TIMES);
+		welcomeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_WELCOME);
 		cursor.close();
 		db.close();
     }
@@ -281,6 +282,7 @@ public class ForegroundService extends Service {
 //				addAllAlarmsToAM ();
 				
 				setNotificationAndAlarm();
+
 			}
 			
 			ALARM_CHANGE_STATE = 1;
@@ -288,22 +290,7 @@ public class ForegroundService extends Service {
 		
 	};
     
-	boolean addAllAlarmsToAM() {
-		calendar = Calendar.getInstance();
-		setWeekNum();
-		setAllAlarm();
-		return true;
-	}
-    
-    boolean cancelAlarmsFromAM () {
-		
-		Intent intent = new Intent(this,AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-    	return true;
-    	
-    }
+
     
     // 判断是否应该设置Alarm
 	boolean setAlarmOrNot (int hour, int mins, String kindStr, int upTimes) {
@@ -345,60 +332,6 @@ public class ForegroundService extends Service {
 		
 	}
 	
-	boolean setAllAlarm() {
-		
-		db.open();
-		Cursor cursor = db.getActiveRow();
-		if (cursor.moveToFirst() == false) {
-			cursor.close();
-			db.close();
-			return false;
-		}
-		
-		for (cursor.moveToFirst(); !cursor.isLast(); cursor.moveToNext()) {
-			doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
-		}
-
-		doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
-		
-		db.close();
-		return true;
-	}
-	
-	// 查找所有的Alarm并判断是否需要重置
-	int doReSetAlarm(Cursor cursor, int kindColumn, int activeColumn, int alarmTimeColumn, int upTimesColumn, int welcomeColumn) {
-		
-		String kindStr = cursor.getString(kindColumn);
-		int activeBool = cursor.getInt(activeColumn);
-		String alarmTimeStr = cursor.getString(alarmTimeColumn);
-		int upTimes = cursor.getInt(upTimesColumn);
-		String welcomeStr = cursor.getString(welcomeColumn);
-		int rowId = cursor.getPosition();
-		
-		Log.v("kindStr: ", kindStr);
-		Log.v("activeBool: ", "" + activeBool);
-		Log.v("alarmTimeStr: ", alarmTimeStr);
-		Log.v("week", "" + weekNum);
-		Log.v("upTimes", "" + upTimes);
-		Log.v("welcome", welcomeStr);
-		
-		String[] time = alarmTimeStr.split(":");
-		int hour = Integer.parseInt(time[0]);
-		int mins = Integer.parseInt(time[1]);
-		
-		// 如果闹钟没有被取消，并且需要在今天提醒
-		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
-			reSetAlarm(hour , mins, rowId, welcomeStr);
-		}
-		// 否则不做处理
-		else {
-			Toast.makeText(getApplicationContext(), "Needn't ReSet Alarm: " + alarmTimeStr, Toast.LENGTH_SHORT).show();				
-		}
-		
-		return 0;
-		
-	}
-	
 	// 重新设置闹钟，设置广播
 	int reSetAlarm(int hour, int mins, int rowId, String welcomeStr) {
 
@@ -428,10 +361,17 @@ public class ForegroundService extends Service {
 		db.open();
 		Cursor cursor = db.getActiveRow();
 		
-		alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-		int numColumn = cursor.getColumnIndex(DBAdapter.KEY_NUM);
-		int welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
-		int alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
+		if (cursor.moveToFirst() == false) {
+			cursor.close();
+			db.close();
+			String[] returnStr = {"小闹没得闹啦", "小闹提醒,今天的闹钟已售罄T-T"};
+			return returnStr;
+		}
+		
+		alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
+		int welcomeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_WELCOME);
+		int alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
 		
 		String alarmTimeStr = "";
 		String welcomeStr = "";
@@ -454,7 +394,7 @@ public class ForegroundService extends Service {
 		int weekNum = setWeekNum();
 		boolean todayOrNot = true;
 		int minRowId = 0;
-			
+		
 		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
 			
 			alarmTimeStr = cursor.getString(alarmTimeColumn);
@@ -487,7 +427,7 @@ public class ForegroundService extends Service {
 						subCompareMins = ((comparedHour - nowHour)*60 + (comparedMins - nowMins));
 						minAlarmTimeStr = alarmTimeStr;
 						minWelcomeStr = welcomeStr;
-						minRowId = cursor.getInt(cursor.getColumnIndex(DBAdapter.KEY_ROWID));
+						minRowId = cursor.getInt(cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID));
 					}
 				}
 			}
@@ -505,28 +445,12 @@ public class ForegroundService extends Service {
 			String time[] = minAlarmTimeStr.split(":");
 			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr);
 			String[] returnStr = {"下个闹钟" + minAlarmTimeStr, "小闹提醒," + minWelcomeStr};
+			WakeUpActivity.welcomeStr = minWelcomeStr;
 			return returnStr;
 		} else {
 			String[] returnStr = {"小闹没得闹啦", "小闹提醒,今天的闹钟已售罄T-T"};
 			return returnStr;
 		}
-	}
-	
-	String timeReturn (Cursor cursor) {
-		String timeReturnStr = "";
-		String alarmTimeStr = cursor.getString(alarmTimeColumn);
-		String kindStr = cursor.getString(alarmKindColumn);
-		int activeBool = cursor.getInt(activeColumn);
-		int upTimes = cursor.getInt(upTimesColumn);
-		
-		String[] time = alarmTimeStr.split(":");
-		int hour = Integer.parseInt(time[0]);
-		int mins = Integer.parseInt(time[1]);
-		
-		if (activeBool == 1 && setAlarmOrNot(hour,mins, kindStr, upTimes)) {
-			
-		}
-		return timeReturnStr;
 	}
 	
 	int setWeekNum () {
@@ -540,5 +464,95 @@ public class ForegroundService extends Service {
 		}
 		return weekNum;
 	}
+	
+//	boolean addAllAlarmsToAM() {
+//	calendar = Calendar.getInstance();
+//	setWeekNum();
+//	setAllAlarm();
+//	return true;
+//}
+//
+//boolean cancelAlarmsFromAM () {
+//	
+//	Intent intent = new Intent(this,AlarmReceiver.class);
+//    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+//    AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+//    alarmManager.cancel(pendingIntent);
+//	return true;
+//	
+//}
+	
+//	boolean setAllAlarm() {
+//		
+//		db.open();
+//		Cursor cursor = db.getActiveRow();
+//		if (cursor.moveToFirst() == false) {
+//			cursor.close();
+//			db.close();
+//			return false;
+//		}
+//		
+//		for (cursor.moveToFirst(); !cursor.isLast(); cursor.moveToNext()) {
+//			doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
+//		}
+//
+//		doReSetAlarm(cursor, alarmKindColumn, activeColumn, alarmTimeColumn, upTimesColumn, welcomeColumn);
+//		
+//		db.close();
+//		return true;
+//	}
+	
+//	// 查找所有的Alarm并判断是否需要重置
+//	int doReSetAlarm(Cursor cursor, int kindColumn, int activeColumn, int alarmTimeColumn, int upTimesColumn, int welcomeColumn) {
+//		
+//		String kindStr = cursor.getString(kindColumn);
+//		int activeBool = cursor.getInt(activeColumn);
+//		String alarmTimeStr = cursor.getString(alarmTimeColumn);
+//		int upTimes = cursor.getInt(upTimesColumn);
+//		String welcomeStr = cursor.getString(welcomeColumn);
+//		int rowId = cursor.getPosition();
+//		
+//		Log.v("kindStr: ", kindStr);
+//		Log.v("activeBool: ", "" + activeBool);
+//		Log.v("alarmTimeStr: ", alarmTimeStr);
+//		Log.v("week", "" + weekNum);
+//		Log.v("upTimes", "" + upTimes);
+//		Log.v("welcome", welcomeStr);
+//		
+//		String[] time = alarmTimeStr.split(":");
+//		int hour = Integer.parseInt(time[0]);
+//		int mins = Integer.parseInt(time[1]);
+//		
+//		// 如果闹钟没有被取消，并且需要在今天提醒
+//		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
+//			reSetAlarm(hour , mins, rowId, welcomeStr);
+//		}
+//		// 否则不做处理
+//		else {
+//			Toast.makeText(getApplicationContext(), "Needn't ReSet Alarm: " + alarmTimeStr, Toast.LENGTH_SHORT).show();				
+//		}
+//		
+//		return 0;
+//		
+//	}
+	
+	
+//	String timeReturn (Cursor cursor) {
+//		String timeReturnStr = "";
+//		String alarmTimeStr = cursor.getString(alarmTimeColumn);
+//		String kindStr = cursor.getString(alarmKindColumn);
+//		int activeBool = cursor.getInt(activeColumn);
+//		int upTimes = cursor.getInt(upTimesColumn);
+//		
+//		String[] time = alarmTimeStr.split(":");
+//		int hour = Integer.parseInt(time[0]);
+//		int mins = Integer.parseInt(time[1]);
+//		
+//		if (activeBool == 1 && setAlarmOrNot(hour,mins, kindStr, upTimes)) {
+//			
+//		}
+//		return timeReturnStr;
+//	}
+	
 
 }

@@ -29,7 +29,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import cn.jlu.ge.getup.tools.DBAdapter;
+import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.ForegroundService;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -45,7 +45,7 @@ public class SetAlarmActivity extends SherlockActivity {
 	int activeBool;
 	String alarmTimeStr;
 	String kindStr;
-	DBAdapter db;
+	AlarmDBAdapter db;
 	Calendar calendar;
 	AlarmManager alarms;
 	ListView alarmList;
@@ -59,7 +59,7 @@ public class SetAlarmActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_alarm_list);
 		// 设置闹钟
-		db = new DBAdapter(this);
+		db = new AlarmDBAdapter(this);
 		
 		setAlarmList();
 		
@@ -172,10 +172,10 @@ public class SetAlarmActivity extends SherlockActivity {
 				return false;
 			}
 			
-			alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-			kindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
-			activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
-			welcomeColumn = cursor.getColumnIndex(DBAdapter.KEY_WELCOME);
+			alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+			kindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
+			activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
+			welcomeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_WELCOME);
 			
 			for (cursor.moveToFirst();!cursor.isLast(); cursor.moveToNext()) {
 				addHashMap(alarmTimeColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
@@ -304,11 +304,11 @@ public class SetAlarmActivity extends SherlockActivity {
 			return 0;
 		}
 		
-		int alarmTimeColumn = cursor.getColumnIndex(DBAdapter.KEY_ALARM_TIME);
-		int alarmKindColumn = cursor.getColumnIndex(DBAdapter.KEY_KIND);
-		int activeColumn = cursor.getColumnIndex(DBAdapter.KEY_ACTIVE);
-		int keyRowIdColumn = cursor.getColumnIndex(DBAdapter.KEY_ROWID);
-		int numColumn = cursor.getColumnIndex(DBAdapter.KEY_NUM);
+		int alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+		int alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
+		int activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
+		int keyRowIdColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID);
+		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
 		
 		String alarmTimeStr = "";
 		

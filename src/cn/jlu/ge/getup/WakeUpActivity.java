@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -27,7 +26,8 @@ public class WakeUpActivity extends Activity {
 	TextView tv;
 	TextView welcome;
 	int shakeTimes;
-	String mediaNameStr;
+	public static String mediaNameStr = "the_train_in_the_spring.mp3";;
+	public static String welcomeStr = "叫醒你的不是小闹，是梦想！";
 	
 	// 声明键盘管理器
 	KeyguardManager mKeyguardManager = null;
@@ -53,16 +53,17 @@ public class WakeUpActivity extends Activity {
         tv = (TextView)findViewById(R.id.tv);
         tv.setText("闹钟解锁剩余摇晃次数：" + shakeTimes);
         
-        Bundle bundle = getIntent().getExtras();
-        String welcomeStr = bundle.getString("welcomeStr");
-        int rowId = bundle.getInt("rowId");
+//        Bundle bundle = getIntent().getExtras();
+//        welcomeStr = bundle.getString("welcomeStr");
+//        int rowId = bundle.getInt("rowId");
+
+//        Log.v("WakeUpActivity welcomeStr", "" + welcomeStr);
+//        Log.v("WakeUpActivity rowId", "" + rowId);
+
         welcome = (TextView)findViewById(R.id.welcome);
-        Log.v("WakeUpActivity welcomeStr", "" + welcomeStr);
-        Log.v("WakeUpActivity rowId", "" + rowId);
         welcome.setText(welcomeStr);
         
         // 闹铃模块
-        mediaNameStr = "the_train_in_the_spring.mp3";
         WakeUpActivity.this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mediaPlayer = new GetUpMediaPlayer(getApplicationContext(), mediaNameStr);
         mediaPlayer.startPlay();
