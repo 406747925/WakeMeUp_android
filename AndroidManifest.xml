@@ -20,7 +20,7 @@
         <activity
             android:name="cn.jlu.ge.getup.MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
+			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -37,6 +37,9 @@
         </activity>
         <activity 
             android:name="cn.jlu.ge.getup.SignInActivity">
+        </activity>
+        <activity 
+            android:name="cn.jlu.ge.getup.WeatherCitiesSettingActivity">
         </activity>
 		<service 
 		    android:name="cn.jlu.ge.getup.tools.ForegroundService">

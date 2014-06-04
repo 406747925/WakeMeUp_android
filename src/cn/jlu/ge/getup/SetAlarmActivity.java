@@ -305,15 +305,12 @@ public class SetAlarmActivity extends SherlockActivity {
 		}
 		
 		int alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
-		int alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
-		int activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
 		int keyRowIdColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID);
 		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
 		
 		String alarmTimeStr = "";
 		
 		int num_id = 0;
-		int num = 0;
 		
 		int hour_compared = 0;
 		int mins_compared = 0;
@@ -389,7 +386,7 @@ public class SetAlarmActivity extends SherlockActivity {
 				clickViews = (ListClickGroup) convertView.getTag();
 				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
 				
-			}else {
+			} else {
 
 				clickViews = new ListClickGroup();
 				convertView = inflater.inflate(R.layout.alarm_item, null);
@@ -444,6 +441,7 @@ public class SetAlarmActivity extends SherlockActivity {
 							db.enableRow(Integer.parseInt(listItem.get(listPos).get("rowID").toString()));
 							listItem.get(listPos).put("activeBool", 1);
 							v.setBackgroundResource(R.drawable.alarm_on);
+							
 						} else {
 						
 							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
@@ -461,6 +459,7 @@ public class SetAlarmActivity extends SherlockActivity {
 				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
 				        foregroundServiceIntent.putExtra("doSth", ForegroundService.CHANGE_STATE);
 				        startService(foregroundServiceIntent);
+				        
 					}
 					
 				};

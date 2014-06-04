@@ -20,6 +20,7 @@ public class WeatherDBAdapter {
 			"create table " + DATABASE_TABLE + " (_id integer primary key autoincrement, " 
 			+ "time text not null, kind text not null, num integer not null, " 
 			+ "up_times integer not null, active integer not null default 'true', welcome text not null);";
+	
 	private final Context context;
 	private DatabaseHelper DBHelper;
 	private SQLiteDatabase db;

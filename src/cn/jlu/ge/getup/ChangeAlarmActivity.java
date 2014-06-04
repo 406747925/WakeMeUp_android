@@ -3,23 +3,24 @@ package cn.jlu.ge.getup;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.ForegroundService;
 
-public class ChangeAlarmActivity extends Activity {
+import com.actionbarsherlock.app.SherlockActivity;
+
+public class ChangeAlarmActivity extends SherlockActivity {
 
 	private TimePicker timePicker;
 	private String alarmTimeStr;
@@ -194,9 +195,10 @@ public class ChangeAlarmActivity extends Activity {
     	return true;
 	}
 	
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
 		// TODO Auto-generated method stub
         switch(item.getItemId()){ 
         case R.id.change_alarm:
@@ -206,12 +208,14 @@ public class ChangeAlarmActivity extends Activity {
         
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		getMenuInflater().inflate(R.menu.change_alarm, menu);
+		getSupportMenuInflater().inflate(R.menu.change_alarm, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
+	
+
 	
 }

@@ -1,22 +1,112 @@
 package cn.jlu.ge.getup;
 
-import cn.jlu.ge.getup.tools.WeatherCitiesDBAdapter;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewParent;
+import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
+import cn.jlu.ge.getup.tools.UserDataDBAdapter;
+import cn.jlu.ge.getup.tools.WeatherCitiesDBAdapter;
+import cn.jlu.ge.getup.tools.WeatherCitiesExpandListAdapter;
 
 public class WeatherCitiesSettingActivity extends Activity {
 
-	WeatherCitiesDBAdapter weatherCitiesDb;
+	private WeatherCitiesDBAdapter weatherCitiesDb;
+	private UserDataDBAdapter userDataDb;
+	private String cityName;
+	private ExpandableListView weatherCitiesList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_weahter_cities_setting);
+		setContentView(R.layout.activity_weather_cities_setting);
+		
+		weatherCitiesDb = new WeatherCitiesDBAdapter(getApplicationContext());
+
+		userDataDb = new UserDataDBAdapter(getApplicationContext());
+		
+		weatherCitiesList = (ExpandableListView) findViewById(R.id.cities_list);
+		WeatherCitiesExpandListAdapter adapter = new WeatherCitiesExpandListAdapter(this);
+		weatherCitiesList.setAdapter(adapter);
+		weatherCitiesList.setOnGroupClickListener(new OnGroupClickListener() {
+			
+			@Override
+			public boolean onGroupClick(ExpandableListView arg0, View arg1, int arg2,
+					long id) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), "Group Click " + id, Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		});
+		
+		weatherCitiesList.setOnChildClickListener(new OnChildClickListener () {
+			
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v, int groupPos,
+					int childPos, long id) {
+				// TODO Auto-generated method stub
+				
+				Log.v("Child Id", ">>> this child: " + id);
+				
+				String cityName = null;
+				String cityPyName = null;
+				String url = null;
+				
+				weatherCitiesDb.open();
+				Cursor cursor = weatherCitiesDb.getRowByRowId(id);
+				
+				if ( cursor.getCount() != 0 ) {
+					
+					cityName = cursor.getString( cursor.getColumnIndex( WeatherCitiesDBAdapter.KEY_CITY ) );
+					cityPyName = cursor.getString( cursor.getColumnIndex( WeatherCitiesDBAdapter.KEY_CITY_PY ) );
+					url = cursor.getString( cursor.getColumnIndex( WeatherCitiesDBAdapter.KEY_CITY_URL ) );
+					Log.v(cityName, cityPyName);
+				}
+				
+				cursor.close();
+				weatherCitiesDb.close();
+				
+				if (cityName != null && cityPyName != null && url != null) {
+					userDataDb.open();
+					Cursor citiesCursor = userDataDb.getAllWeatherCitiesDatas();
+					if (citiesCursor != null) {
+						if ( citiesCursor.getCount() > 3 ) {
+							
+							Toast.makeText(getApplicationContext(), "最多添加4个城市哦~", Toast.LENGTH_SHORT).show();
+							
+						} else {
+							
+							userDataDb.insertWeatherCityData(cityName, cityPyName, url, citiesCursor.getCount());
+							userDataDb.close();
+							
+							View cityAddedListItem = setCityAddedView(cityName);
+							parent.addHeaderView(cityAddedListItem);
+							
+						}
+						
+					}
+					
+				}
+				
+				return true;
+				
+			}
+			
+		});
+		
+		setWeatherCitiesHaveBeenAdded();
 		
 	}
 
@@ -26,32 +116,76 @@ public class WeatherCitiesSettingActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 	
-	void getWeatherCitiesFormDb() {
-		
-		weatherCitiesDb = new WeatherCitiesDBAdapter(this);
-		weatherCitiesDb.open();
-		Cursor cursor = weatherCitiesDb.getAllRows();
+	public void setWeatherCitiesHaveBeenAdded() {
+
+		int citiesCount = weatherCitiesList.getHeaderViewsCount();
+		for (int i = 0; i < citiesCount ; i++) {
+			weatherCitiesList.removeHeaderView(weatherCitiesList.getChildAt(i));
+		}
+
+		userDataDb.open();
+		Cursor cursor = userDataDb.getAllWeatherCitiesDatas();
 		if (cursor.moveToFirst() == false) {
-			cursor.close();
-			weatherCitiesDb.close();
 			return ;
 		}
 		
-		String cityName;
-		String cityPyName;
-		String cityUrl;
-		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
-			
-			// get city info : name, pinyin name, url
-			cityName = cursor.getString(cursor.getColumnIndex(WeatherCitiesDBAdapter.KEY_CITY));
-			cityPyName = cursor.getString(cursor.getColumnIndex(WeatherCitiesDBAdapter.KEY_CITY_PY));
-			cityUrl = cursor.getString(cursor.getColumnIndex(WeatherCitiesDBAdapter.KEY_CITY_URL));
-			
-			// TODO get province info
-			
-			// TODO put data into map
-		}
+		int cityNameColumn = cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_CONTENT);
+		int countColumn = cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_COUNT);
 		
+		String cityName = null;
+		int cityCount = 0;
+		
+		for ( cursor.moveToFirst() ; ; cursor.moveToNext() ) {
+			
+			cityName = cursor.getString(cityNameColumn);
+			cityCount = cursor.getInt(countColumn);
+			
+			
+			weatherCitiesList.addHeaderView(setCityAddedView(cityName));
+			
+			if ( cursor.isLast() ) {
+				break;
+			}
+		}
+
+	}
+	
+	View setCityAddedView (String cityName) {
+		
+		View cityAddedListItem = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_weather_city_added, null);
+		TextView cityNameTV = (TextView) cityAddedListItem.findViewById(R.id.listText);
+		cityNameTV.setText(cityName);
+		Button deleteCity = (Button) cityAddedListItem.findViewById(R.id.itemDelete);
+		deleteCity.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				// TODO Auto-generated method stub
+				
+				View viewParent = (View) view.getParent();
+				TextView cityNameTV = (TextView) viewParent.findViewById(R.id.listText);
+				userDataDb.open();
+				userDataDb.deleteWeatherCityByName(cityNameTV.getText().toString());
+				userDataDb.close();
+				Log.v("HELLO delete", "delete" + cityNameTV.getText().toString());
+				setWeatherCitiesHaveBeenAdded();
+			}
+		});
+		
+		cityAddedListItem.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				// TODO Auto-generated method stub
+				TextView cityNameTV = (TextView) view.findViewById(R.id.listText);
+				userDataDb.open();
+				userDataDb.setWeatherCityDefaulted(cityNameTV.getText().toString());
+				userDataDb.close();
+				setWeatherCitiesHaveBeenAdded();
+			}
+		});
+		
+		return cityAddedListItem;
 	}
 
 }

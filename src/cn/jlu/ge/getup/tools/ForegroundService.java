@@ -50,6 +50,7 @@ public class ForegroundService extends Service {
     private Notification notification;
     
     private AlarmDBAdapter db;
+    private UserDataDBAdapter userDatadb;
     private Calendar calendar;
 	int weekNum = -1;
 	int alarmTimeColumn;
@@ -66,6 +67,7 @@ public class ForegroundService extends Service {
         Log.d(TAG, "onCreate");
         
         // 数据初始化
+        
         db = new AlarmDBAdapter(this);
         
         setDBColumn();

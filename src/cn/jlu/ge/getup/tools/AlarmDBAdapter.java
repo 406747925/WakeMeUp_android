@@ -47,8 +47,7 @@ public class AlarmDBAdapter {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w(TAG, "Upgrading database from version " + oldVersion
-			+ " to "
-			+ newVersion + ", which will destroy all old data");
+			+ " to " + newVersion + ", which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS titles");
 			onCreate(db);
 		}
@@ -65,7 +64,9 @@ public class AlarmDBAdapter {
 	//关闭数据库
 	
 	public void close() {
+		
 		DBHelper.close();
+		
 	}
 	
 	//插入一个数据
@@ -90,7 +91,7 @@ public class AlarmDBAdapter {
 	//检索所有数据
 	
 	public Cursor getAllRows() {
-		return db.query(DATABASE_TABLE, new String[] {
+		Cursor mCursor = db.query(DATABASE_TABLE, new String[] {
 		KEY_ROWID,
 		KEY_ALARM_TIME,
 		KEY_KIND,
@@ -104,19 +105,26 @@ public class AlarmDBAdapter {
 		null,
 		null,
 		null);
+		
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		
+		return mCursor;
 	}
 
 	// 查找激活的闹钟
 	public Cursor getActiveRow() {
 		Cursor mCursor =
 		db.query(true, DATABASE_TABLE, new String[] {
-		KEY_ROWID,
-		KEY_ALARM_TIME,
-		KEY_KIND,
-		KEY_NUM,
-		KEY_UP_TIMES,
-		KEY_ACTIVE,
-		KEY_WELCOME},
+				KEY_ROWID,
+				KEY_ALARM_TIME,
+				KEY_KIND,
+				KEY_NUM,
+				KEY_UP_TIMES,
+				KEY_ACTIVE,
+				KEY_WELCOME
+		},
 		KEY_ACTIVE + "=" + 1,
 		null,
 		null,

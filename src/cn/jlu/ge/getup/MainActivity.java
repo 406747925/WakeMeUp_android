@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.jlu.ge.getup.tools.FileIOTools;
 import cn.jlu.ge.getup.tools.ForegroundService;
-import cn.jlu.ge.getup.tools.WeatherCitiesDBAdapter;
+import cn.jlu.ge.getup.tools.UserDataDBAdapter;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -64,10 +65,14 @@ public class MainActivity extends SherlockActivity {
 	private TextView windText;
 	private TextView uvValueText;
 	private TextView weatherLikeText;
-	
 	private TextView signInText;
-	
 	private TextView positiveText;
+	private int DEFAULT_WEATHER_CITY_FLAG = 1;
+	
+	public static String weatherCity = "长春";
+	public static String weatherUrl = "101060101";
+	
+	private UserDataDBAdapter userDatadb;
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");;
 	
@@ -82,6 +87,9 @@ public class MainActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        userDatadb = new UserDataDBAdapter(getApplicationContext());
+        setWeatherCitiesData();
         
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
         foregroundServiceIntent.putExtra("doSth", ForegroundService.CREATE_STATE);
@@ -127,31 +135,31 @@ public class MainActivity extends SherlockActivity {
         // 主界面第四条：正能量站
         positiveText = (TextView) findViewById(R.id.positiveText);
 
-        alarmLayout.setOnClickListener(new Button.OnClickListener(){
-
+        alarmLayout.setOnClickListener(new OnClickListener() {
+			
 			@Override
-			public void onClick(View v) {
-				
-//				Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-//				startActivity(inten	t);
-				
+			public void onClick(View view) {
+				// TODO Auto-generated method stub
+				Intent newIntent = new Intent(MainActivity.this, WeatherCitiesSettingActivity.class);
+				startActivity(newIntent);
 			}
-        });
+			
+		});
         
         client = new AsyncHttpClient();
-        getWeatherFromNet();
+        getWeatherFromNet(weatherUrl);
         
         // 用来临时测试使用
 		positiveText.setText("MATLAB创始人来吉大啦");
 		
     }
     
-    void internetConnect() {
+    void internetConnect(String weatherCity, String weatherUrl) {
     	try {
 
 			String data = "";//声明要输入的字符串
 			//baseUrl
-			String baseUrl = "http://www.weather.com.cn/data/sk/101010100.html";
+			String baseUrl = "http://www.weather.com.cn/data/sk/" + weatherUrl + ".html";
 
 			//将URL与参数拼接
 			HttpGet getMethod = new HttpGet(baseUrl);
@@ -208,6 +216,22 @@ public class MainActivity extends SherlockActivity {
 		
 	};
 	
+	void setWeatherCitiesData() {
+        userDatadb.open();
+        Cursor cursor = userDatadb.getAllWeatherCitiesDatas();
+        
+        if ( cursor != null && cursor.getCount() != 0 ) {
+        	cursor.moveToFirst();
+            if ( cursor.getInt( cursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_COUNT ) ) == DEFAULT_WEATHER_CITY_FLAG ) {
+                MainActivity.weatherCity = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_CONTENT));
+                MainActivity.weatherUrl = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_UNIT));            	
+            }
+        }
+        
+        if (cursor != null) cursor.close();
+        
+        userDatadb.close();
+	}
 	
 	public void writeFileData(String fileName,String message){ 
 		try{ 
@@ -222,8 +246,8 @@ public class MainActivity extends SherlockActivity {
 	        }
 	}
 	
-	void getWeatherFromNet() {
-        client.get("http://www.weather.com.cn/data/cityinfo/101060101.html", new AsyncHttpResponseHandler() {
+	void getWeatherFromNet(String weatherUrl) {
+        client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
             	try {
@@ -272,7 +296,7 @@ public class MainActivity extends SherlockActivity {
 			}
         });
         
-        client.get("http://www.weather.com.cn/data/sk/101060101.html", new AsyncHttpResponseHandler(){
+        client.get("http://www.weather.com.cn/data/sk/" + weatherUrl + ".html", new AsyncHttpResponseHandler(){
 
 			@Override
 			public void onFailure(Throwable arg0, String arg1) {
@@ -292,7 +316,7 @@ public class MainActivity extends SherlockActivity {
 					String wetStr = weatherObject.getString("SD");
 					String wdStr = weatherObject.getString("WD");
 					
-			        locationText.setText(cityStr);
+			        locationText.setText(weatherCity);
 			        weatherLikeText.setText(windStr);
 			        windText.setText(wetStr);
 			        tempText.setText(tempStr + "C");
