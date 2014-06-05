@@ -74,7 +74,7 @@ public class MainActivity extends SherlockActivity {
 	
 	private UserDataDBAdapter userDatadb;
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");;
+	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");
 	
 	final String SNOW_AND_RAIN = "”Íº–—©";
 	final String SUNNY = "«Á";
@@ -140,7 +140,7 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View view) {
 				// TODO Auto-generated method stub
-				Intent newIntent = new Intent(MainActivity.this, WeatherCitiesSettingActivity.class);
+				Intent newIntent = new Intent(MainActivity.this, WeatherMainActivity.class);
 				startActivity(newIntent);
 			}
 			
@@ -247,7 +247,8 @@ public class MainActivity extends SherlockActivity {
 	}
 	
 	void getWeatherFromNet(String weatherUrl) {
-        client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
+    
+		client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(String response) {
             	try {
@@ -328,9 +329,11 @@ public class MainActivity extends SherlockActivity {
 				}
 				
 				super.onSuccess(code, response);
+				
 			}
         	
         });
+        
 	}
 
 	@Override

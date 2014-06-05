@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/weather_setting"
+        android:showAsAction="ifRoom"
+        android:title="@string/weather_setting"
+        android:titleCondensed="@string/weather_setting">
+    </item>
+
+</menu>

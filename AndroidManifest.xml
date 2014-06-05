@@ -41,6 +41,9 @@
         <activity 
             android:name="cn.jlu.ge.getup.WeatherCitiesSettingActivity">
         </activity>
+        <activity 
+            android:name="cn.jlu.ge.getup.WeatherMainActivity">
+        </activity>
 		<service 
 		    android:name="cn.jlu.ge.getup.tools.ForegroundService">
             <intent-filter android:priority="1000"></intent-filter>

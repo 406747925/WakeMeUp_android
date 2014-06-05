@@ -17,5 +17,6 @@
 	<string name="friday">五</string>
 	<string name="saturday">六</string>
 	<string name="sunday">日</string>
+	<string name="weather_setting">天气设置</string>
 	
 </resources>
