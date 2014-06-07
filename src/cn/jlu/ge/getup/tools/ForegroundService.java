@@ -335,8 +335,9 @@ public class ForegroundService extends Service {
 	}
 	
 	// 重新设置闹钟，设置广播
-	int reSetAlarm(int hour, int mins, int rowId, String welcomeStr) {
-
+	int reSetAlarm(int hour, int mins, int rowId, String welcomeStr, int dayOffset) {
+		
+		calendar.setTimeInMillis(System.currentTimeMillis() + dayOffset * 86400 * 1000);
 		calendar.set(Calendar.HOUR_OF_DAY, hour);
 		calendar.set(Calendar.MINUTE, mins);
 		calendar.set(Calendar.SECOND, 0);
@@ -393,9 +394,15 @@ public class ForegroundService extends Service {
 		String minAlarmTimeStr = "";
 		String minWelcomeStr = "";
 		
+		int tomorrowAlarmMins = 8400;
+		String nextDayAlarmTimeStr = "";
+		String nextDayWelcomeStr = "";
+		
 		int weekNum = setWeekNum();
 		boolean todayOrNot = true;
 		int minRowId = 0;
+		int nextAlarmWeekDay = 0;
+		int nextDayRowId = 0;
 		
 		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
 			
@@ -434,6 +441,22 @@ public class ForegroundService extends Service {
 				}
 			}
 			
+			int compareDay = getAlarmWeekDay(weekNum, alarmKindStr);
+			if ( compareDay != -1 ) {
+				Log.v("Day Alarm", "compare day week num: " + compareDay);
+				nextAlarmWeekDay = getLaterAlarm(weekNum, nextAlarmWeekDay, compareDay);
+				Log.v("Day Alarm", "next day week num: " + nextAlarmWeekDay);
+				if (compareDay == nextAlarmWeekDay) {
+					if ( ((comparedHour) * 60 + comparedMins) < tomorrowAlarmMins ) {
+						Log.v("nextDayAlarm", "next day alarm time: " + alarmTimeStr);
+						tomorrowAlarmMins = (comparedHour)*60 + comparedMins;
+						nextDayAlarmTimeStr = alarmTimeStr;
+						nextDayWelcomeStr = welcomeStr;
+						nextDayRowId = cursor.getInt(cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID));
+					}
+				}				
+			}
+			
 			if (cursor.isLast()) {
 				
 				break;
@@ -445,11 +468,18 @@ public class ForegroundService extends Service {
 		
 		if (subCompareMins != 8400 ) {
 			String time[] = minAlarmTimeStr.split(":");
-			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr);
+			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr, 0);
 			String[] returnStr = {"下个闹钟" + minAlarmTimeStr, "小闹提醒," + minWelcomeStr};
 			WakeUpActivity.welcomeStr = minWelcomeStr;
 			return returnStr;
-		} else {
+		} else if (tomorrowAlarmMins != 8400) {
+			String time[] = nextDayAlarmTimeStr.split(":");
+			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, nextDayWelcomeStr, getDayOffset(weekNum, nextAlarmWeekDay) );
+			String[] returnStr = { NextWeekOrNot(weekNum, nextAlarmWeekDay) + nextDayAlarmTimeStr, "小闹提醒," + nextDayWelcomeStr};
+			WakeUpActivity.welcomeStr = nextDayWelcomeStr;
+			return returnStr;
+		}
+		else {
 			String[] returnStr = {"小闹没得闹啦", "小闹提醒,今天的闹钟已售罄T-T"};
 			return returnStr;
 		}
@@ -465,6 +495,43 @@ public class ForegroundService extends Service {
 			weekNum--;
 		}
 		return weekNum;
+	}
+	
+	int getAlarmWeekDay(int weekNum, String alarmKindStr) {
+		for (int i = 0;i < 8; i++ ) {
+			if (weekNum != 7) {
+				weekNum++;
+			} else {
+				weekNum = 1;
+			}
+			if (alarmKindStr.indexOf("" + weekNum) != -1) {
+				return weekNum;
+			}
+		}
+		return -1;
+	}
+	
+	int getLaterAlarm (int weekNum, int nextAlarmDay, int compareDay) {
+		int subPre = nextAlarmDay - weekNum;
+		int subThis = compareDay - weekNum;
+
+		if ( 0 == nextAlarmDay ) {
+			return compareDay;
+		}
+		if ( subPre * subThis >= 0 ) {
+			return subPre < subThis ? nextAlarmDay : compareDay;
+		} else {
+			return subPre < subThis ? compareDay : nextAlarmDay;
+		}
+
+	}
+	
+	int getDayOffset (int weekNum, int alarmWeekDay) {
+		return weekNum < alarmWeekDay ? alarmWeekDay - weekNum : alarmWeekDay + 7 - weekNum;
+	}
+	
+	String NextWeekOrNot (int weekNum, int alarmWeekDay) {
+		return weekNum < alarmWeekDay ? (alarmWeekDay - weekNum + "天后:") : ("下周" + alarmWeekDay + ":") ;
 	}
 	
 //	boolean addAllAlarmsToAM() {
