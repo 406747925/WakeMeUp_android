@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -84,7 +83,7 @@ public class WeatherCitiesSettingActivity extends Activity {
 					if (citiesCursor != null) {
 						if ( citiesCursor.getCount() > 3 ) {
 							
-							Toast.makeText(getApplicationContext(), "×î¶àÌí¼Ó4¸ö³ÇÊÐÅ¶~", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(), "æœ€å¤š3ä¸ªåŸŽå¸‚å“¦ï½ž", Toast.LENGTH_SHORT).show();
 							
 						} else {
 							

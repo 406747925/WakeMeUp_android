@@ -23,7 +23,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/alarmTime"
             android:background="#FFFFFF"
-            android:layout_marginTop="@dimen/alarm_item_min_margin_top"
+            android:layout_marginTop="@dimen/alarm_item_mid_margin_top"
             android:layout_marginLeft="@dimen/alarm_item_min_margin_left"
             android:layout_marginRight="@dimen/alarm_item_mid_margin_left"
             android:layout_width="@dimen/alarm_item_set_alarm_btn_size"

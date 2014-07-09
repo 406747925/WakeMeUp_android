@@ -26,11 +26,11 @@ public class WeatherMainActivity extends SherlockActivity {
 	private String weatherUrl;
 	private ImageView weatherIcon;
 	
-	final String SNOW_AND_RAIN = "”Íº–—©";
-	final String SUNNY = "«Á";
-	final String CLOUD_LITTLE_RAIN = "∂‡‘∆◊™–°”Í";
-	final String SUNNY_CLOUD = "«Á◊™∂‡‘∆";
-	final String CLOUD = "∂‡‘∆";
+	final String SNOW_AND_RAIN = "Èõ®Â§πÈõ™";
+	final String SUNNY = "Êô¥";
+	final String CLOUD_LITTLE_RAIN = "Â§ö‰∫ëËΩ¨Â∞èÈõ®";
+	final String SUNNY_CLOUD = "Êô¥ËΩ¨Â§ö‰∫ë";
+	final String CLOUD = "Â§ö‰∫ë";
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");
 	
@@ -41,6 +41,7 @@ public class WeatherMainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_weather_main);
 		
+		rowOne = (TextView) findViewById(R.id.rowOne);
 		client = new AsyncHttpClient();
 		getWeatherFromNet(weatherUrl);
 	
@@ -50,11 +51,20 @@ public class WeatherMainActivity extends SherlockActivity {
 		
 		client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
             
+
 			@Override
-            public void onSuccess(String response) {
-            	
+			public void onFailure(Throwable throwable, String failureStr) {
+				// TODO Auto-generated method stub
+				String time = sdf.format(new java.util.Date());
+				rowOne.setText(" " + time);
+				super.onFailure(throwable, failureStr);
+			}
+
+			@Override
+			public void onSuccess(String response) {
+				// TODO Auto-generated method stub
+
 				try {
-            		
 					JSONObject weatherObject = new JSONObject(response).getJSONObject("weatherinfo");
 					String cityStr = weatherObject.getString("city");
 					String temp1Str = weatherObject.getString("temp1");
@@ -87,15 +97,6 @@ public class WeatherMainActivity extends SherlockActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-            }
-
-			@Override
-			public void onFailure(Throwable throwable, String failureStr) {
-				// TODO Auto-generated method stub
-				sdf = new SimpleDateFormat("hh:mm");
-				String time = sdf.format(new java.util.Date());
-				rowOne.setText(time);
-				super.onFailure(throwable, failureStr);
 			}
 			
         });

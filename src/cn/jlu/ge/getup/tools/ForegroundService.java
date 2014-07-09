@@ -32,7 +32,7 @@ public class ForegroundService extends Service {
     
     private boolean mReflectFlg = false;
     
-    private static final int NOTIFICATION_ID = 1; // Èç¹ûidÉèÖÃÎª0,»áµ¼ÖÂ²»ÄÜÉèÖÃÎªÇ°Ì¨service
+    private static final int NOTIFICATION_ID = 1; 
     private static final Class<?>[] mSetForegroundSignature = new Class[] {
         boolean.class};
     private static final Class<?>[] mStartForegroundSignature = new Class[] {
@@ -66,7 +66,7 @@ public class ForegroundService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
         
-        // Êı¾İ³õÊ¼»¯
+        //
         
         db = new AlarmDBAdapter(this);
         
@@ -75,7 +75,7 @@ public class ForegroundService extends Service {
         calendar = Calendar.getInstance();
         handler.post(alarmUpdateThread);
         
-        // Æô¶¯·şÎñ
+        //
         mNM = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         try {
             mStartForeground = ForegroundService.class.getMethod("startForeground", mStartForegroundSignature);  
@@ -99,9 +99,10 @@ public class ForegroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "onStartCommand");
+        if ( intent == null ) return START_STICKY;
         String doWhatStr = intent.getStringExtra("doSth");
         if (doWhatStr == null) {
-        	Log.v("None", "NO STATE£¬ Wrong Start.");
+        	Log.v("None", "NO STATE Wrong Start.");
         }
         else if (doWhatStr.equals(CREATE_STATE)) {
 			if (ALARM_CHANGE_STATE != 1) {
@@ -157,7 +158,7 @@ public class ForegroundService extends Service {
         Log.d(TAG, "onDestroy");
         
         Intent localIntent = new Intent();
-        localIntent.setClass(this, ForegroundService.class); // Ïú»ÙÊ±ÖØĞÂÆô¶¯Service
+        localIntent.setClass(this, ForegroundService.class); // 
         this.startService(localIntent);
     }
     
@@ -192,8 +193,6 @@ public class ForegroundService extends Service {
             invokeMethod(mSetForeground, mSetForegroundArgs);
             mNM.notify(id, notification);
         } else {
-            /* »¹¿ÉÒÔÊ¹ÓÃÒÔÏÂ·½·¨£¬µ±sdk´óÓÚµÈÓÚ5Ê±£¬µ÷ÓÃsdkÏÖÓĞµÄ·½·¨startForegroundÉèÖÃÇ°Ì¨ÔËĞĞ£¬
-             * ·ñÔòµ÷ÓÃ·´ÉäÈ¡µÃµÄsdk level 5£¨¶ÔÓ¦Android 2.0£©ÒÔÏÂ²ÅÓĞµÄ¾É·½·¨setForegroundÉèÖÃÇ°Ì¨ÔËĞĞ */
             
             if(VERSION.SDK_INT >= 5) {
                 startForeground(id, notification);
@@ -225,8 +224,6 @@ public class ForegroundService extends Service {
             mSetForegroundArgs[0] = Boolean.FALSE;
             invokeMethod(mSetForeground, mSetForegroundArgs);
         } else {
-            /* »¹¿ÉÒÔÊ¹ÓÃÒÔÏÂ·½·¨£¬µ±sdk´óÓÚµÈÓÚ5Ê±£¬µ÷ÓÃsdkÏÖÓĞµÄ·½·¨stopForegroundÍ£Ö¹Ç°Ì¨ÔËĞĞ£¬
-             * ·ñÔòµ÷ÓÃ·´ÉäÈ¡µÃµÄsdk level 5£¨¶ÔÓ¦Android 2.0£©ÒÔÏÂ²ÅÓĞµÄ¾É·½·¨setForegroundÍ£Ö¹Ç°Ì¨ÔËĞĞ */
             
             if(VERSION.SDK_INT >= 5) {
                 stopForeground(true);
@@ -250,7 +247,7 @@ public class ForegroundService extends Service {
                 new Intent(this, MainActivity.class), 0); 
         builder.setContentIntent(contentIntent);
         builder.setSmallIcon(R.drawable.clock);
-        builder.setTicker("Ğ¡ÄÖÔÚÕâÀï");
+        builder.setTicker("å°é—¹æé†’ï¼š");
         builder.setContentTitle(stateBarStr[0]);
         builder.setContentText(stateBarStr[1]);
     	notification = builder.getNotification();
@@ -271,7 +268,7 @@ public class ForegroundService extends Service {
 		db.close();
     }
     
-	// Ë¢ĞÂÊ±¼ä
+	// 
 	Handler handler = new Handler();
 	Runnable alarmUpdateThread = new Runnable() {
 		
@@ -294,28 +291,26 @@ public class ForegroundService extends Service {
     
 
     
-    // ÅĞ¶ÏÊÇ·ñÓ¦¸ÃÉèÖÃAlarm
+    // 
 	boolean setAlarmOrNot (int hour, int mins, String kindStr, int upTimes) {
 		
 		int weekNumAlarm = -1;
 		calendar = Calendar.getInstance();
-		// Èç¹ûµ±Ç°ÒÑ¾­ÏìÁå¹ıµÄÄÖÖÓ£¬Ôò²»½øĞĞÖØĞÂÉèÖÃ
+		// 
 		if (upTimes == 1) {
 			Toast.makeText(getApplicationContext(), hour + ":" + mins + " uptimes: " + upTimes, Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		// ·ñÔòÈç¹ûÊÇÍ¬Ò»Ìì£¬²¢ÇÒĞ¡ÓÚµÈÓÚµ±Ç°Ê±¼äµÄ Alarm ÔòÉèÖÃËüÔÚµÚ¶şÌì´¥·¢
-		// ·½±ãÄÖÖÓ²âÊÔ£¬ÕâÀïÉèÖÃÎªÔÊĞíµ±Ç°Ê±¼äÉèÖÃÎªÁ¢¼´´¥·¢µÄÄÖÖÓ
+
 		/*************************************************************************
 		 * 
-		 * ´Ë´¦ÎªÕıÈ·´¥·¢ÄÖÖÓµÄÅĞ¶ÏÌõ¼ş
 		 * calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)\
 		 * 
 		 *************************************************************************/
 		else if (calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)) {
 			if ( weekNum == 7 ) weekNumAlarm = 1;
 			else weekNumAlarm = weekNum + 1;
-			// Ò»Ìì 86400000 ºÁÃë
+
 			calendar.setTimeInMillis(System.currentTimeMillis() + 86400000);
 		} else {
 			Log.v("Second", "This is else");
@@ -334,7 +329,7 @@ public class ForegroundService extends Service {
 		
 	}
 	
-	// ÖØĞÂÉèÖÃÄÖÖÓ£¬ÉèÖÃ¹ã²¥
+
 	int reSetAlarm(int hour, int mins, int rowId, String welcomeStr, int dayOffset) {
 		
 		calendar.setTimeInMillis(System.currentTimeMillis() + dayOffset * 86400 * 1000);
@@ -360,14 +355,14 @@ public class ForegroundService extends Service {
 	
 	String[] checkRecentAlarmAndSetIt() {
 		
-		// ²éÕÒÀëµ±Ç°Ê±¼ä×î½üµÄÄÖÖÓ
+		// 
 		db.open();
 		Cursor cursor = db.getActiveRow();
 		
 		if (cursor.moveToFirst() == false) {
 			cursor.close();
 			db.close();
-			String[] returnStr = {"Ğ¡ÄÖÃ»µÃÄÖÀ²", "Ğ¡ÄÖÌáĞÑ,½ñÌìµÄÄÖÖÓÒÑÊÛóÀT-T"};
+			String[] returnStr = {"é—¹é’Ÿå“ç£¬äº†ï¼", "å°é—¹ä»Šå¤©æ²¡å¾—é—¹äº†T-T"};
 			return returnStr;
 		}
 		
@@ -469,18 +464,18 @@ public class ForegroundService extends Service {
 		if (subCompareMins != 8400 ) {
 			String time[] = minAlarmTimeStr.split(":");
 			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr, 0);
-			String[] returnStr = {"ÏÂ¸öÄÖÖÓ" + minAlarmTimeStr, "Ğ¡ÄÖÌáĞÑ," + minWelcomeStr};
+			String[] returnStr = {"ä¸‹ä¸ªé—¹é’Ÿï¼š" + minAlarmTimeStr, "å°é—¹æé†’ï¼š" + minWelcomeStr};
 			WakeUpActivity.welcomeStr = minWelcomeStr;
 			return returnStr;
 		} else if (tomorrowAlarmMins != 8400) {
 			String time[] = nextDayAlarmTimeStr.split(":");
 			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, nextDayWelcomeStr, getDayOffset(weekNum, nextAlarmWeekDay) );
-			String[] returnStr = { NextWeekOrNot(weekNum, nextAlarmWeekDay) + nextDayAlarmTimeStr, "Ğ¡ÄÖÌáĞÑ," + nextDayWelcomeStr};
+			String[] returnStr = { NextWeekOrNot(weekNum, nextAlarmWeekDay) + nextDayAlarmTimeStr, "å°é—¹æé†’ï¼š" + nextDayWelcomeStr};
 			WakeUpActivity.welcomeStr = nextDayWelcomeStr;
 			return returnStr;
 		}
 		else {
-			String[] returnStr = {"Ğ¡ÄÖÃ»µÃÄÖÀ²", "Ğ¡ÄÖÌáĞÑ,½ñÌìµÄÄÖÖÓÒÑÊÛóÀT-T"};
+			String[] returnStr = {"é—¹é’Ÿå“ç£¬äº†ï¼", "å°é—¹ä»Šå¤©æ²¡å¾—é—¹äº†ï¼ T-T"};
 			return returnStr;
 		}
 	}
@@ -488,7 +483,7 @@ public class ForegroundService extends Service {
 	int setWeekNum () {
 		calendar = Calendar.getInstance();
 		weekNum = calendar.get(Calendar.DAY_OF_WEEK);
-		// µ±ĞÇÆÚÊıÎª1Ê±£¬Ó¦µ±ÊÇÖÜÈÕ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª1Ê±ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if ( weekNum == 1) {
 			weekNum = 7;
 		} else {
@@ -531,7 +526,7 @@ public class ForegroundService extends Service {
 	}
 	
 	String NextWeekOrNot (int weekNum, int alarmWeekDay) {
-		return weekNum < alarmWeekDay ? (alarmWeekDay - weekNum + "Ììºó:") : ("ÏÂÖÜ" + alarmWeekDay + ":") ;
+		return weekNum < alarmWeekDay ? (alarmWeekDay - weekNum + "ï¿½ï¿½ï¿½:") : ("ï¿½ï¿½ï¿½ï¿½" + alarmWeekDay + ":") ;
 	}
 	
 //	boolean addAllAlarmsToAM() {
@@ -571,7 +566,7 @@ public class ForegroundService extends Service {
 //		return true;
 //	}
 	
-//	// ²éÕÒËùÓĞµÄAlarm²¢ÅĞ¶ÏÊÇ·ñĞèÒªÖØÖÃ
+//	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½Alarmï¿½ï¿½ï¿½Ğ¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 //	int doReSetAlarm(Cursor cursor, int kindColumn, int activeColumn, int alarmTimeColumn, int upTimesColumn, int welcomeColumn) {
 //		
 //		String kindStr = cursor.getString(kindColumn);
@@ -592,11 +587,11 @@ public class ForegroundService extends Service {
 //		int hour = Integer.parseInt(time[0]);
 //		int mins = Integer.parseInt(time[1]);
 //		
-//		// Èç¹ûÄÖÖÓÃ»ÓĞ±»È¡Ïû£¬²¢ÇÒĞèÒªÔÚ½ñÌìÌáĞÑ
+//		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ğ±ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		if (activeBool == 1 && setAlarmOrNot(hour, mins, kindStr, upTimes)) {
 //			reSetAlarm(hour , mins, rowId, welcomeStr);
 //		}
-//		// ·ñÔò²»×ö´¦Àí
+//		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		else {
 //			Toast.makeText(getApplicationContext(), "Needn't ReSet Alarm: " + alarmTimeStr, Toast.LENGTH_SHORT).show();				
 //		}

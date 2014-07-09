@@ -30,14 +30,21 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
+import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.MenuFragment;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class SetAlarmActivity extends SherlockActivity {
+public class SetAlarmActivity extends BaseActivity {
 	
+	public SetAlarmActivity() {
+		super(R.string.app_name);
+		// TODO Auto-generated constructor stub
+	}
+
 	int alarmTimeColumn;
 	int kindColumn;
 	int activeColumn;
@@ -54,15 +61,25 @@ public class SetAlarmActivity extends SherlockActivity {
 	private ArrayList<HashMap<String, Object>> listItem;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_alarm_list);
+		
 		// 设置闹钟
 		db = new AlarmDBAdapter(this);
 		
 		setAlarmList();
 		
+		menuInit();
+	}
+	
+	public void menuInit() {
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		setContentView(R.layout.activity_alarm_list);
+		getSlidingMenu().setSecondaryMenu(R.layout.menu_frame);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.menu_frame2, new MenuFragment()).commit();
 	}
 	
 	@Override

@@ -4,6 +4,15 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     
+        
+    <!-- SlidingMenu -->
+    <dimen name="list_padding_top">50dp</dimen>
+    <dimen name="list_padding">10dp</dimen>
+    <dimen name="slidingmenu_offset">100dp</dimen>
+    <dimen name="sliding_menu_icon_size">50dp</dimen>
+    <dimen name="sliding_menu_item_padding">10dp</dimen>
+    <dimen name="sliding_menu_text_size">16sp</dimen>
+    
     <!-- MainActivity -->
     <dimen name="activity_main_big_title">200dp</dimen>
     <dimen name="activity_main_margin_top_mid">20dp</dimen>

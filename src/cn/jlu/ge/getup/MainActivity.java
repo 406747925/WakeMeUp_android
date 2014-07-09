@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -14,7 +13,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,25 +20,28 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.jlu.ge.getup.tools.FileIOTools;
+import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.MenuFragment;
 import cn.jlu.ge.getup.tools.UserDataDBAdapter;
-
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-public class MainActivity extends SherlockActivity {
+public class MainActivity extends BaseActivity {
 	
-	static FileIOTools fileIO;
+	public MainActivity() {
+		super(R.string.app_name);
+		// TODO Auto-generated constructor stub
+	}
+
 	private AsyncHttpClient client;
 	
 	private Calendar calendar;
@@ -69,44 +70,69 @@ public class MainActivity extends SherlockActivity {
 	private TextView positiveText;
 	private int DEFAULT_WEATHER_CITY_FLAG = 1;
 	
-	public static String weatherCity = "³¤´º";
+	public static String weatherCity = "é•¿æ˜¥";
 	public static String weatherUrl = "101060101";
+	
+	public static JSONObject weatherObject;
 	
 	private UserDataDBAdapter userDatadb;
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("hh mm");
 	
-	final String SNOW_AND_RAIN = "Óê¼ĞÑ©";
-	final String SUNNY = "Çç";
-	final String CLOUD_LITTLE_RAIN = "¶àÔÆ×ªĞ¡Óê";
-	final String SUNNY_CLOUD = "Çç×ª¶àÔÆ";
-	final String CLOUD = "¶àÔÆ";
+	final String SNOW_AND_RAIN = "é›¨å¤¹é›ª";
+	final String SUNNY = "æ™´";
+	final String CLOUD_LITTLE_RAIN = "å¤šäº‘è½¬å°é›¨";
+	final String SUNNY_CLOUD = "æ™´è½¬å¤šäº‘";
+	final String CLOUD = "å¤šäº‘";
 
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        Locale.setDefault(Locale.SIMPLIFIED_CHINESE);
+        
+        // å¿…é¡»å¯¹å…¶è¿›è¡Œåˆå§‹åŒ–ï¼Œå¦åˆ™å°†ä¼šæŠ›å‡ºè¿è¡Œæ—¶å¼‚å¸¸ï¼Œæç¤ºæœªå‘ç°æ§ä»¶ã€‚
+        init();
         
         userDatadb = new UserDataDBAdapter(getApplicationContext());
         setWeatherCitiesData();
         
+        startService();
+        
+		
+    }
+    
+	public void init() {
+        
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		setContentView(R.layout.activity_main);
+		
+		viewInit();
+		
+		// å› ä¸ºåœ¨çˆ¶ç±» BaseActivity çš„ onCreate æ–¹æ³•æ‰§è¡Œæ—¶ï¼Œ æ‰€éœ€è¦çš„ Fragment æ§ä»¶å¿…é¡»æ˜¯ å­æ§ä»¶ï¼Œ
+        // æ–¹æ³•ä¸­çš„ FragmentTransaction ä¼šä½¿ç”¨ id èµ„æº( R.id.menu_frame2 ) å¼•ç”¨ Fragment æ§ä»¶ï¼Œ
+        // å¦‚æœæœªå…ˆå°†å¯¹åº”çš„ Fragment æ§ä»¶è®¾ç½®ä¸ºå­æ§ä»¶è¿›è¡Œåˆå§‹åŒ–ï¼Œ FragmentManager å°†ä¼šæ‰¾ä¸åˆ°è¿™ä¸ªå­æ§ä»¶ï¼Œ
+		// è€Œåœ¨ç»˜åˆ¶ç•Œé¢æ—¶æ‰æŠ›å‡ºè¿è¡Œæ—¶å¼‚å¸¸
+		getSlidingMenu().setSecondaryMenu(R.layout.menu_frame);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.menu_frame2, new MenuFragment()).commit();
+	}
+	
+	void startService () {
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
         foregroundServiceIntent.putExtra("doSth", ForegroundService.CREATE_STATE);
         startService(foregroundServiceIntent);
-        
-        Locale.setDefault(Locale.SIMPLIFIED_CHINESE);
-        
+	}
+    
+	public void viewInit() {
         alarmLayout = (RelativeLayout) findViewById(R.id.alarm);
         weatherLayout = (RelativeLayout) findViewById(R.id.weather);
         signInLayout = (RelativeLayout) findViewById(R.id.signInLayout);
         positiveLayout = (RelativeLayout) findViewById(R.id.positiveLayout);
         
-        // ÈÕÆÚ
         calendar = Calendar.getInstance();
 
-        // Ö÷½çÃæµÚÒ»Ìõ£ºÊ±¼ä¡¢ÌìÆøºÍÏÂÒ»´ÎÄÖÖÓ
-        // Ê±¼äÏÔÊ¾ºÍ¸üĞÂ
         rowOne = (TextView) findViewById(R.id.rowOne);
         
         handler.post(updateThread);
@@ -114,8 +140,7 @@ public class MainActivity extends SherlockActivity {
         rowTwo = (TextView) findViewById(R.id.rowTwo);
         rowThree = (TextView) findViewById(R.id.rowThree);
         weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
-
-        // Ö÷½çÃæµÚ¶şÌõ£ºµØµã¡¢ÌìÆø¡¢·çËÙ¡¢ÎÂ¶È¡¢UVµÄÍ¼±êÓëÖµ
+        
         locationBtn = (ImageButton) findViewById(R.id.location);
         weatherLikeBtn = (ImageButton) findViewById(R.id.weatherLike);
         windBtn = (ImageButton) findViewById(R.id.wind);
@@ -128,11 +153,21 @@ public class MainActivity extends SherlockActivity {
         tempText = (TextView) findViewById(R.id.tempText);
         uvValueText = (TextView) findViewById(R.id.uvValueText);
         
-        // Ö÷½çÃæµÚÈıÌõ£ºÔçÆÚÇ©µ½£¬Èë¿Ú
-        signInText = (TextView) findViewById(R.id.signInText);
-        signInText.setText("ÔçÆğÇ©µ½,ÎªÃ¿Ò»Ìì¼ÓÓÍ");
+        signInLayout = (RelativeLayout) findViewById(R.id.signInLayout);
+        signInLayout.setOnClickListener(new OnClickListener () {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent newIntent = new Intent(getApplicationContext(), SignInActivity.class);
+				startActivity(newIntent);
+			}
+        	
+        });
         
-        // Ö÷½çÃæµÚËÄÌõ£ºÕıÄÜÁ¿Õ¾
+        signInText = (TextView) findViewById(R.id.signInText);
+        signInText.setText("æ—©æœŸç­¾åˆ°");
+        
         positiveText = (TextView) findViewById(R.id.positiveText);
 
         alarmLayout.setOnClickListener(new OnClickListener() {
@@ -149,28 +184,36 @@ public class MainActivity extends SherlockActivity {
         client = new AsyncHttpClient();
         getWeatherFromNet(weatherUrl);
         
-        // ÓÃÀ´ÁÙÊ±²âÊÔÊ¹ÓÃ
-		positiveText.setText("MATLAB´´Ê¼ÈËÀ´¼ª´óÀ²");
-		
-    }
-    
+		positiveText.setText("æ¯•ä¸šäº†ï¼Œè¿˜ç¡å‘€é™ªä½ éšè¡Œ");
+		positiveLayout.setOnClickListener(new OnClickListener () {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent newIntent = new Intent(MainActivity.this, WebPageActivity.class);
+				newIntent.putExtra("url", "positive_energy");
+				startActivity(newIntent);
+			}
+			
+		});
+	}
+	
     void internetConnect(String weatherCity, String weatherUrl) {
     	try {
 
-			String data = "";//ÉùÃ÷ÒªÊäÈëµÄ×Ö·û´®
+			String data = "";
 			//baseUrl
 			String baseUrl = "http://www.weather.com.cn/data/sk/" + weatherUrl + ".html";
 
-			//½«URLÓë²ÎÊıÆ´½Ó
 			HttpGet getMethod = new HttpGet(baseUrl);
 
 			HttpClient httpClient = new DefaultHttpClient();
 
 			try {
-			    HttpResponse response = httpClient.execute(getMethod); //·¢ÆğGETÇëÇó  
+			    HttpResponse response = httpClient.execute(getMethod);
 			    data = EntityUtils.toString(response.getEntity(), "utf-8");
-			    Log.i("resCode", "resCode = " + response.getStatusLine().getStatusCode()); //»ñÈ¡ÏìÓ¦Âë  
-			    Log.i("result", "result = " + data);//»ñÈ¡·şÎñÆ÷ÏìÓ¦ÄÚÈİ 
+			    Log.i("resCode", "resCode = " + response.getStatusLine().getStatusCode());
+			    Log.i("result", "result = " + data);
 			} catch (ClientProtocolException e) {
 			    // TODO Auto-generated catch block
 				Toast.makeText( MainActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
@@ -202,7 +245,6 @@ public class MainActivity extends SherlockActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// Ë¢ĞÂÊ±¼ä
 	Handler handler = new Handler();
 	Runnable updateThread = new Runnable() {
 		
@@ -246,6 +288,42 @@ public class MainActivity extends SherlockActivity {
 	        }
 	}
 	
+	void setWeatherView (JSONObject weatherObject) {
+
+		try {
+			String cityStr = weatherObject.getString("city");
+			String temp1Str = weatherObject.getString("temp1");
+			String temp2Str = weatherObject.getString("temp2");
+			String weatherStr = weatherObject.getString("weather");
+			weatherObject.getString("ptime");
+			
+			rowTwo.setText(cityStr);
+			rowThree.setText(temp2Str + "~" + temp1Str + "\n" + weatherStr);
+			
+			if (weatherStr.equals(SNOW_AND_RAIN)) {
+				weatherIcon.setBackgroundResource(R.drawable.snow_with_rain);
+			}
+			else if (weatherStr.equals(SUNNY)) {
+				weatherIcon.setBackgroundResource(R.drawable.sunny);
+			}
+			else if (weatherStr.equals(CLOUD_LITTLE_RAIN)) {
+				weatherIcon.setBackgroundResource(R.drawable.cloud_little_rain);
+			}
+			else if (weatherStr.equals(SUNNY_CLOUD)) {
+				weatherIcon.setBackgroundResource(R.drawable.sunny_cloud);
+			}
+			else if (weatherStr.equals(CLOUD)) {
+				weatherIcon.setBackgroundResource(R.drawable.cloudy);
+			}
+			else {
+				weatherIcon.setBackgroundResource(R.drawable.error_weather);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	void getWeatherFromNet(String weatherUrl) {
     
 		client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
@@ -253,34 +331,9 @@ public class MainActivity extends SherlockActivity {
             public void onSuccess(String response) {
             	try {
             		
-					JSONObject weatherObject = new JSONObject(response).getJSONObject("weatherinfo");
-					String cityStr = weatherObject.getString("city");
-					String temp1Str = weatherObject.getString("temp1");
-					String temp2Str = weatherObject.getString("temp2");
-					String weatherStr = weatherObject.getString("weather");
-					weatherObject.getString("ptime");
+					weatherObject = new JSONObject(response).getJSONObject("weatherinfo");
+					setWeatherView(weatherObject);
 					
-					rowTwo.setText(cityStr);
-					rowThree.setText(temp2Str + "~" + temp1Str + "\n" + weatherStr);
-					
-					if (weatherStr.equals(SNOW_AND_RAIN)) {
-						weatherIcon.setBackgroundResource(R.drawable.snow_with_rain);
-					}
-					else if (weatherStr.equals(SUNNY)) {
-						weatherIcon.setBackgroundResource(R.drawable.sunny);
-					}
-					else if (weatherStr.equals(CLOUD_LITTLE_RAIN)) {
-						weatherIcon.setBackgroundResource(R.drawable.cloud_little_rain);
-					}
-					else if (weatherStr.equals(SUNNY_CLOUD)) {
-						weatherIcon.setBackgroundResource(R.drawable.sunny_cloud);
-					}
-					else if (weatherStr.equals(CLOUD)) {
-						weatherIcon.setBackgroundResource(R.drawable.cloudy);
-					}
-					else {
-						weatherIcon.setBackgroundResource(R.drawable.error_weather);
-					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -290,9 +343,14 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onFailure(Throwable throwable, String failureStr) {
 				// TODO Auto-generated method stub
-				sdf = new SimpleDateFormat("hh:mm");    
+				sdf = new SimpleDateFormat("hh:mm");
 				String time = sdf.format(new java.util.Date());
 				rowOne.setText(time);
+				
+				if ( weatherObject != null ) {
+					setWeatherView(weatherObject);
+				}
+				
 				super.onFailure(throwable, failureStr);
 			}
         });
@@ -335,7 +393,7 @@ public class MainActivity extends SherlockActivity {
         });
         
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub

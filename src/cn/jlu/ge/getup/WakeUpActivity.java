@@ -27,11 +27,9 @@ public class WakeUpActivity extends Activity {
 	TextView welcome;
 	int shakeTimes;
 	public static String mediaNameStr = "the_train_in_the_spring.mp3";;
-	public static String welcomeStr = "½ĞĞÑÄãµÄ²»ÊÇĞ¡ÄÖ£¬ÊÇÃÎÏë£¡";
+	public static String welcomeStr = "æ„¿ï¼Œå«é†’ä½ çš„æ˜¯æ¢¦æƒ³";
 	
-	// ÉùÃ÷¼üÅÌ¹ÜÀíÆ÷
 	KeyguardManager mKeyguardManager = null;
-	// ÉùÃ÷µçÔ´¹ÜÀíÆ÷
 	private PowerManager pm;
 	private PowerManager.WakeLock wakeLock;
 	
@@ -41,17 +39,15 @@ public class WakeUpActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wakeup);
 		
-		// µãÁÁÆÁÄ»£¬½âËøÊÖ»ú
 
 		setScreenBrightAndShowWindow();
 		
-        // ³õÊ¼»¯Ò¡»Î´ÎÊı
 		shakeTimes = 3;
         long[] pattern = {1000, 500, 1000, 500};
         int type = 0;
         
         tv = (TextView)findViewById(R.id.tv);
-        tv.setText("ÄÖÖÓ½âËøÊ£ÓàÒ¡»Î´ÎÊı£º" + shakeTimes);
+        tv.setText("å‰©ä½™æ‘‡åœæ¬¡æ•°ï¼š" + shakeTimes);
         
 //        Bundle bundle = getIntent().getExtras();
 //        welcomeStr = bundle.getString("welcomeStr");
@@ -63,14 +59,12 @@ public class WakeUpActivity extends Activity {
         welcome = (TextView)findViewById(R.id.welcome);
         welcome.setText(welcomeStr);
         
-        // ÄÖÁåÄ£¿é
         WakeUpActivity.this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mediaPlayer = new GetUpMediaPlayer(getApplicationContext(), mediaNameStr);
         mediaPlayer.startPlay();
         
-        // Õğ¶¯Ä£¿é
         vibrator = new GetUpVibrator(getApplicationContext());
-     // ²âÊÔÒôÀÖ²¥·Å£¬ÔİÍ£Õğ¶¯
+        
 //		vibrator.playVibrate(pattern, type);
 		shakeDetector = new ShakeDetector(getApplicationContext());
 		shakeDetector.start();
@@ -81,11 +75,11 @@ public class WakeUpActivity extends Activity {
 				shakeTimes--;
 				if (shakeTimes == 0) {
 					shakeDetector.stop();
-					// ²âÊÔÒôÀÖ²¥·Å£¬ÔİÍ£Õğ¶¯
+
 //					vibrator.cancelVibrate();
 					mediaPlayer.stopPlay();
 				}
-				tv.setText("ÄÖÖÓ½âËøÊ£ÓàÒ¡»Î´ÎÊı£º" + shakeTimes);
+				tv.setText("å‰©ä½™æ‘‡åœæ¬¡æ•°ï¼š" + shakeTimes);
 			}
         });
         
@@ -100,14 +94,12 @@ public class WakeUpActivity extends Activity {
 		final WindowManager.LayoutParams params = win.getAttributes();
 		params.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
 
-		//»ñÈ¡µçÔ´µÄ·şÎñ
 		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		//»ñÈ¡ÏµÍ³·şÎñ
 		mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-		//µãÁÁÁÁÆÁ
+
 		wakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
-		wakeLock.acquire();// µãÁÁ
-		wakeLock.release();// ÊÍ·ÅµãÁÁ
+		wakeLock.acquire();
+		wakeLock.release();
 
 	}
 

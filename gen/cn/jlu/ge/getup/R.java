@@ -167,6 +167,34 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
 "<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
          */
         public static final int backgroundStacked=0x7f01004f;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int behindOffset=0x7f010065;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int behindScrollScale=0x7f010067;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int behindWidth=0x7f010066;
         /**  Small Button style. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -230,6 +258,22 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int expandActivityOverflowButtonDrawable=0x7f01005f;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int fadeDegree=0x7f01006d;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int fadeEnabled=0x7f01006c;
         /**  Default background for the menu header. 
          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -365,6 +409,17 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int logo=0x7f01004e;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>left</code></td><td>0</td><td></td></tr>
+<tr><td><code>right</code></td><td>1</td><td></td></tr>
+</table>
+         */
+        public static final int mode=0x7f010062;
         /**  The type of navigation to use. 
          <p>Must be one of the following constant values.</p>
 <table>
@@ -485,6 +540,32 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
+        public static final int selectorDrawable=0x7f01006f;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int selectorEnabled=0x7f01006e;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int shadowDrawable=0x7f01006a;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int shadowWidth=0x7f01006b;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
         public static final int spinnerDropDownItemStyle=0x7f010023;
         /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
@@ -580,11 +661,43 @@ containing a value of this type.
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int titleTextStyle=0x7f010000;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>margin</code></td><td>0</td><td></td></tr>
+<tr><td><code>fullscreen</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int touchModeAbove=0x7f010068;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>margin</code></td><td>0</td><td></td></tr>
+<tr><td><code>fullscreen</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int touchModeBehind=0x7f010069;
         /**  Default vertical divider between menu items. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
 or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
          */
         public static final int verticalDivider=0x7f010058;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int viewAbove=0x7f010063;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int viewBehind=0x7f010064;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -788,16 +901,16 @@ containing a value of this type.
         /**  Minimum width of the search view text entry area. 
          */
         public static final int abs__search_view_text_min_width=0x7f07000b;
-        public static final int activity_change_alarm_day_btn_margin_left_max=0x7f070020;
-        public static final int activity_change_alarm_day_btn_margin_left_min=0x7f070021;
-        public static final int activity_change_alarm_day_btn_size=0x7f07001e;
-        public static final int activity_change_alarm_day_btn_text_size=0x7f07001f;
+        public static final int activity_change_alarm_day_btn_margin_left_max=0x7f070026;
+        public static final int activity_change_alarm_day_btn_margin_left_min=0x7f070027;
+        public static final int activity_change_alarm_day_btn_size=0x7f070024;
+        public static final int activity_change_alarm_day_btn_text_size=0x7f070025;
         /**  ChangeAlarmActivity 
  ChangeAlarmActivity 
          */
-        public static final int activity_change_alarm_min_padding=0x7f07001b;
-        public static final int activity_change_alarm_timepicker_bar_size=0x7f07001d;
-        public static final int activity_change_alarm_timepicker_height=0x7f07001c;
+        public static final int activity_change_alarm_min_padding=0x7f070021;
+        public static final int activity_change_alarm_timepicker_bar_size=0x7f070023;
+        public static final int activity_change_alarm_timepicker_height=0x7f070022;
         /**  Default screen margins, per the Android Design guidelines. 
 
          Customize dimensions originally defined in res/values/dimens.xml (such as
@@ -812,28 +925,41 @@ containing a value of this type.
          screen margins) for sw600dp devices (e.g. 7" tablets) here.
     
          */
-        public static final int activity_main_big_title=0x7f070011;
-        public static final int activity_main_block_height=0x7f070013;
-        public static final int activity_main_cityname_size=0x7f070019;
-        public static final int activity_main_margin_left_max=0x7f070018;
-        public static final int activity_main_margin_left_mid=0x7f070014;
-        public static final int activity_main_margin_top_max=0x7f070017;
-        public static final int activity_main_margin_top_mid=0x7f070012;
-        public static final int activity_main_time_str_size=0x7f070015;
-        public static final int activity_main_weather_icon_size=0x7f070016;
-        public static final int activity_main_weatherstr_size=0x7f07001a;
+        public static final int activity_main_big_title=0x7f070017;
+        public static final int activity_main_block_height=0x7f070019;
+        public static final int activity_main_cityname_size=0x7f07001f;
+        public static final int activity_main_margin_left_max=0x7f07001e;
+        public static final int activity_main_margin_left_mid=0x7f07001a;
+        public static final int activity_main_margin_top_max=0x7f07001d;
+        public static final int activity_main_margin_top_mid=0x7f070018;
+        public static final int activity_main_time_str_size=0x7f07001b;
+        public static final int activity_main_weather_icon_size=0x7f07001c;
+        public static final int activity_main_weatherstr_size=0x7f070020;
         public static final int activity_vertical_margin=0x7f070010;
-        public static final int alarm_item_day_btn_size=0x7f070028;
-        public static final int alarm_item_day_text_size=0x7f070029;
+        public static final int alarm_item_day_btn_size=0x7f07002e;
+        public static final int alarm_item_day_text_size=0x7f07002f;
         /**  SetAlarmActivity ( alarm_item ) 
  SetAlarmActivity alarm_item 
          */
-        public static final int alarm_item_height=0x7f070022;
-        public static final int alarm_item_mid_margin_left=0x7f070025;
-        public static final int alarm_item_min_margin_left=0x7f070026;
-        public static final int alarm_item_min_margin_top=0x7f070024;
-        public static final int alarm_item_set_alarm_btn_size=0x7f070027;
-        public static final int alarm_item_time_text_size=0x7f070023;
+        public static final int alarm_item_height=0x7f070028;
+        public static final int alarm_item_mid_margin_left=0x7f07002b;
+        public static final int alarm_item_mid_margin_top=0x7f070030;
+        public static final int alarm_item_min_margin_left=0x7f07002c;
+        public static final int alarm_item_min_margin_top=0x7f07002a;
+        public static final int alarm_item_set_alarm_btn_size=0x7f07002d;
+        public static final int alarm_item_time_text_size=0x7f070029;
+        /**  WebPageActivity 
+         */
+        public static final int bottom_bar_height=0x7f070031;
+        public static final int list_padding=0x7f070012;
+        /**  SlidingMenu 
+ SlidingMenu 
+         */
+        public static final int list_padding_top=0x7f070011;
+        public static final int sliding_menu_icon_size=0x7f070014;
+        public static final int sliding_menu_item_padding=0x7f070015;
+        public static final int sliding_menu_text_size=0x7f070016;
+        public static final int slidingmenu_offset=0x7f070013;
     }
     public static final class drawable {
         public static final int abs__ab_bottom_solid_dark_holo=0x7f020000;
@@ -976,116 +1102,134 @@ containing a value of this type.
         public static final int wind_power=0x7f020089;
     }
     public static final class id {
-        public static final int AlarmSong=0x7f04003e;
-        public static final int AlarmVoicepower=0x7f040040;
-        public static final int AlarmWelcome=0x7f04003c;
-        public static final int SignInLayout=0x7f040060;
-        public static final int WakeUpMainLayout=0x7f04005c;
-        public static final int WakeUpTextLayout=0x7f04005e;
-        public static final int abs__action_bar=0x7f040020;
-        public static final int abs__action_bar_container=0x7f04001f;
-        public static final int abs__action_bar_subtitle=0x7f040011;
-        public static final int abs__action_bar_title=0x7f040010;
-        public static final int abs__action_context_bar=0x7f040021;
+        public static final int AlarmSong=0x7f040044;
+        public static final int AlarmVoicepower=0x7f040046;
+        public static final int AlarmWelcome=0x7f040042;
+        public static final int SignInLayout=0x7f040066;
+        public static final int WakeUpMainLayout=0x7f040062;
+        public static final int WakeUpTextLayout=0x7f040064;
+        public static final int abs__action_bar=0x7f040026;
+        public static final int abs__action_bar_container=0x7f040025;
+        public static final int abs__action_bar_subtitle=0x7f040017;
+        public static final int abs__action_bar_title=0x7f040016;
+        public static final int abs__action_context_bar=0x7f040027;
         public static final int abs__action_menu_divider=0x7f04000c;
         public static final int abs__action_menu_presenter=0x7f04000d;
-        public static final int abs__action_mode_bar=0x7f040025;
-        public static final int abs__action_mode_bar_stub=0x7f040024;
-        public static final int abs__action_mode_close_button=0x7f040014;
-        public static final int abs__activity_chooser_view_content=0x7f040015;
-        public static final int abs__checkbox=0x7f04001c;
-        public static final int abs__content=0x7f040022;
-        public static final int abs__default_activity_button=0x7f040018;
-        public static final int abs__expand_activities_button=0x7f040016;
+        public static final int abs__action_mode_bar=0x7f04002b;
+        public static final int abs__action_mode_bar_stub=0x7f04002a;
+        public static final int abs__action_mode_close_button=0x7f04001a;
+        public static final int abs__activity_chooser_view_content=0x7f04001b;
+        public static final int abs__checkbox=0x7f040022;
+        public static final int abs__content=0x7f040028;
+        public static final int abs__default_activity_button=0x7f04001e;
+        public static final int abs__expand_activities_button=0x7f04001c;
         public static final int abs__home=0x7f04000a;
-        public static final int abs__icon=0x7f04001a;
-        public static final int abs__image=0x7f040017;
-        public static final int abs__imageButton=0x7f040012;
-        public static final int abs__list_item=0x7f040019;
+        public static final int abs__icon=0x7f040020;
+        public static final int abs__image=0x7f04001d;
+        public static final int abs__imageButton=0x7f040018;
+        public static final int abs__list_item=0x7f04001f;
         public static final int abs__progress_circular=0x7f04000e;
         public static final int abs__progress_horizontal=0x7f04000f;
-        public static final int abs__radio=0x7f04001d;
-        public static final int abs__search_badge=0x7f040028;
-        public static final int abs__search_bar=0x7f040027;
-        public static final int abs__search_button=0x7f040029;
-        public static final int abs__search_close_btn=0x7f04002e;
-        public static final int abs__search_edit_frame=0x7f04002a;
-        public static final int abs__search_go_btn=0x7f040030;
-        public static final int abs__search_mag_icon=0x7f04002b;
-        public static final int abs__search_plate=0x7f04002c;
-        public static final int abs__search_src_text=0x7f04002d;
-        public static final int abs__search_voice_btn=0x7f040031;
-        public static final int abs__shortcut=0x7f04001e;
-        public static final int abs__split_action_bar=0x7f040023;
-        public static final int abs__submit_area=0x7f04002f;
-        public static final int abs__textButton=0x7f040013;
-        public static final int abs__title=0x7f04001b;
+        public static final int abs__radio=0x7f040023;
+        public static final int abs__search_badge=0x7f04002e;
+        public static final int abs__search_bar=0x7f04002d;
+        public static final int abs__search_button=0x7f04002f;
+        public static final int abs__search_close_btn=0x7f040034;
+        public static final int abs__search_edit_frame=0x7f040030;
+        public static final int abs__search_go_btn=0x7f040036;
+        public static final int abs__search_mag_icon=0x7f040031;
+        public static final int abs__search_plate=0x7f040032;
+        public static final int abs__search_src_text=0x7f040033;
+        public static final int abs__search_voice_btn=0x7f040037;
+        public static final int abs__shortcut=0x7f040024;
+        public static final int abs__split_action_bar=0x7f040029;
+        public static final int abs__submit_area=0x7f040035;
+        public static final int abs__textButton=0x7f040019;
+        public static final int abs__title=0x7f040021;
         public static final int abs__up=0x7f04000b;
-        public static final int add_alarm=0x7f04006c;
-        public static final int alarm=0x7f040045;
-        public static final int alarmList=0x7f040032;
-        public static final int alarmSongText=0x7f04003f;
-        public static final int alarmTime=0x7f040068;
-        public static final int alarm_item=0x7f040067;
-        public static final int alarm_setting=0x7f040034;
-        public static final int changeActive=0x7f040069;
-        public static final int change_alarm=0x7f04006d;
-        public static final int cities_list=0x7f040062;
+        public static final int add_alarm=0x7f04007e;
+        public static final int alarm=0x7f04004b;
+        public static final int alarmList=0x7f040038;
+        public static final int alarmSongText=0x7f040045;
+        public static final int alarmTime=0x7f040073;
+        public static final int alarm_item=0x7f040072;
+        public static final int alarm_setting=0x7f04003a;
+        public static final int bottomBarLayout=0x7f04006e;
+        public static final int changeActive=0x7f040074;
+        public static final int change_alarm=0x7f04007f;
+        public static final int cities_list=0x7f040068;
         public static final int disableHome=0x7f040009;
-        public static final int edit_query=0x7f040026;
-        public static final int friday=0x7f040039;
+        public static final int edit_query=0x7f04002c;
+        public static final int firstBottomBarBtn=0x7f04006f;
+        public static final int friday=0x7f04003f;
+        public static final int fullscreen=0x7f040013;
         public static final int homeAsUp=0x7f040006;
-        public static final int itemDelete=0x7f040065;
-        public static final int listItem=0x7f040063;
+        public static final int itemDelete=0x7f04006b;
+        public static final int left=0x7f040010;
+        public static final int listItem=0x7f040069;
         public static final int listMode=0x7f040002;
-        public static final int listText=0x7f040064;
-        public static final int location=0x7f04004c;
-        public static final int locationText=0x7f040051;
-        public static final int mainWeatherCity=0x7f040066;
-        public static final int max_voice=0x7f040043;
-        public static final int min_voice=0x7f040042;
-        public static final int monday=0x7f040035;
+        public static final int listText=0x7f04006a;
+        public static final int location=0x7f040052;
+        public static final int locationText=0x7f040057;
+        public static final int mainWeatherCity=0x7f04006c;
+        public static final int margin=0x7f040012;
+        public static final int max_voice=0x7f040049;
+        public static final int menu_frame2=0x7f040076;
+        public static final int min_voice=0x7f040048;
+        public static final int monday=0x7f04003b;
+        public static final int none=0x7f040014;
         public static final int normal=0x7f040001;
-        public static final int positiveLayout=0x7f040058;
-        public static final int positiveText=0x7f040059;
-        public static final int rowFour=0x7f04004a;
-        public static final int rowOne=0x7f040046;
-        public static final int rowThree=0x7f040049;
-        public static final int rowTwo=0x7f040048;
-        public static final int saturday=0x7f04003a;
+        public static final int positiveLayout=0x7f04005e;
+        public static final int positiveText=0x7f04005f;
+        public static final int right=0x7f040011;
+        public static final int rowFour=0x7f040050;
+        public static final int rowOne=0x7f04004c;
+        public static final int rowThree=0x7f04004f;
+        public static final int rowTwo=0x7f04004e;
+        public static final int row_icon=0x7f040077;
+        public static final int row_title=0x7f040078;
+        public static final int saturday=0x7f040040;
+        public static final int secBottomBarBtn=0x7f040070;
+        public static final int selected_view=0x7f040015;
         public static final int showCustom=0x7f040008;
         public static final int showHome=0x7f040005;
         public static final int showTitle=0x7f040007;
-        public static final int signIn=0x7f04005a;
-        public static final int signInIcon=0x7f04005b;
-        public static final int signInLayout=0x7f040056;
-        public static final int signInText=0x7f040057;
-        public static final int sunday=0x7f04003b;
-        public static final int sv_value_activity=0x7f040044;
+        public static final int signIn=0x7f040060;
+        public static final int signInIcon=0x7f040061;
+        public static final int signInLayout=0x7f04005c;
+        public static final int signInText=0x7f04005d;
+        public static final int sliding_menu=0x7f040079;
+        public static final int slidingmenumain=0x7f04007a;
+        public static final int sunday=0x7f040041;
+        public static final int sv_value_activity=0x7f04004a;
         public static final int tabMode=0x7f040003;
-        public static final int temp=0x7f04004d;
-        public static final int tempText=0x7f040052;
-        public static final int textChild=0x7f04006b;
-        public static final int textGroup=0x7f040061;
-        public static final int thursday=0x7f040038;
-        public static final int timePicker=0x7f040033;
-        public static final int tuesday=0x7f040036;
-        public static final int tv=0x7f04005f;
-        public static final int upTimes=0x7f04006a;
+        public static final int temp=0x7f040053;
+        public static final int tempText=0x7f040058;
+        public static final int textChild=0x7f04007d;
+        public static final int textGroup=0x7f040067;
+        public static final int thirdBottomBarBtn=0x7f040071;
+        public static final int thursday=0x7f04003e;
+        public static final int timePicker=0x7f040039;
+        public static final int tuesday=0x7f04003c;
+        public static final int tv=0x7f040065;
+        public static final int upTimes=0x7f040075;
         public static final int useLogo=0x7f040004;
-        public static final int uvValue=0x7f040050;
-        public static final int uvValueText=0x7f040055;
-        public static final int voice_seek=0x7f040041;
-        public static final int weather=0x7f04004b;
-        public static final int weatherIcon=0x7f040047;
-        public static final int weatherLike=0x7f04004e;
-        public static final int weatherLikeText=0x7f040053;
-        public static final int weather_setting=0x7f04006e;
-        public static final int wednesday=0x7f040037;
-        public static final int welcome=0x7f04005d;
-        public static final int welcomeText=0x7f04003d;
-        public static final int wind=0x7f04004f;
-        public static final int windText=0x7f040054;
+        public static final int user_head=0x7f04007b;
+        public static final int user_name=0x7f04007c;
+        public static final int uvValue=0x7f040056;
+        public static final int uvValueText=0x7f04005b;
+        public static final int voice_seek=0x7f040047;
+        public static final int weather=0x7f040051;
+        public static final int weatherIcon=0x7f04004d;
+        public static final int weatherLike=0x7f040054;
+        public static final int weatherLikeText=0x7f040059;
+        public static final int weather_setting=0x7f040080;
+        public static final int webPage=0x7f04006d;
+        public static final int wednesday=0x7f04003d;
+        public static final int welcome=0x7f040063;
+        public static final int welcomeTextEdit=0x7f040043;
+        public static final int wind=0x7f040055;
+        public static final int windText=0x7f04005a;
         public static final int wrap_content=0x7f040000;
     }
     public static final class integer {
@@ -1115,17 +1259,26 @@ containing a value of this type.
         public static final int abs__simple_dropdown_hint=0x7f030014;
         public static final int activity_alarm_list=0x7f030015;
         public static final int activity_change_alarm=0x7f030016;
-        public static final int activity_main=0x7f030017;
-        public static final int activity_sign_in=0x7f030018;
-        public static final int activity_wakeup=0x7f030019;
-        public static final int activity_weather_cities_group_title=0x7f03001a;
-        public static final int activity_weather_cities_setting=0x7f03001b;
-        public static final int activity_weather_city_added=0x7f03001c;
-        public static final int activity_weather_main=0x7f03001d;
-        public static final int alarm_item=0x7f03001e;
-        public static final int sherlock_spinner_dropdown_item=0x7f03001f;
-        public static final int sherlock_spinner_item=0x7f030020;
-        public static final int weather_cities_list_child=0x7f030021;
+        public static final int activity_change_alarm2=0x7f030017;
+        public static final int activity_main=0x7f030018;
+        public static final int activity_sign_in=0x7f030019;
+        public static final int activity_wakeup=0x7f03001a;
+        public static final int activity_weahter_cities_setting=0x7f03001b;
+        public static final int activity_weather_cities_group_title=0x7f03001c;
+        public static final int activity_weather_cities_setting=0x7f03001d;
+        public static final int activity_weather_city_added=0x7f03001e;
+        public static final int activity_weather_main=0x7f03001f;
+        public static final int activity_webpage=0x7f030020;
+        public static final int alarm_item=0x7f030021;
+        public static final int menu_fragment=0x7f030022;
+        public static final int menu_frame=0x7f030023;
+        public static final int row=0x7f030024;
+        public static final int sherlock_spinner_dropdown_item=0x7f030025;
+        public static final int sherlock_spinner_item=0x7f030026;
+        public static final int sliding_menu=0x7f030027;
+        public static final int slidingmenumain=0x7f030028;
+        public static final int user_row=0x7f030029;
+        public static final int weather_cities_list_child=0x7f03002a;
     }
     public static final class menu {
         public static final int alarm_list=0x7f0b0000;
@@ -1174,23 +1327,31 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f090007;
-        public static final int action_settings=0x7f09000e;
-        public static final int add=0x7f090010;
-        public static final int add_alarm=0x7f090014;
-        public static final int alarm_setting=0x7f090013;
+        public static final int action_settings=0x7f09001d;
+        public static final int add=0x7f09000f;
+        public static final int add_alarm=0x7f090013;
+        public static final int alarm_setting=0x7f090012;
         public static final int app_name=0x7f09000d;
-        public static final int change_alarm=0x7f090015;
-        public static final int delete=0x7f090011;
-        public static final int friday=0x7f09001a;
-        public static final int hello_world=0x7f09000f;
-        public static final int monday=0x7f090016;
-        public static final int saturday=0x7f09001b;
-        public static final int signin_desc=0x7f090012;
-        public static final int sunday=0x7f09001c;
-        public static final int thursday=0x7f090019;
-        public static final int tuesday=0x7f090017;
-        public static final int weather_setting=0x7f09001d;
-        public static final int wednesday=0x7f090018;
+        public static final int bottom_bar_first=0x7f090025;
+        public static final int change_alarm=0x7f090014;
+        public static final int delete=0x7f090010;
+        public static final int friday=0x7f090019;
+        public static final int hello_world=0x7f09000e;
+        public static final int menu_settings=0x7f09001e;
+        public static final int monday=0x7f090015;
+        public static final int saturday=0x7f09001a;
+        public static final int signin_desc=0x7f090011;
+        public static final int sliding_menu_alarm_setting=0x7f090020;
+        public static final int sliding_menu_communicate=0x7f090024;
+        public static final int sliding_menu_model_setting=0x7f090022;
+        public static final int sliding_menu_share=0x7f090023;
+        public static final int sliding_menu_user_setting=0x7f09001f;
+        public static final int sliding_menu_weather_setting=0x7f090021;
+        public static final int sunday=0x7f09001b;
+        public static final int thursday=0x7f090018;
+        public static final int tuesday=0x7f090016;
+        public static final int weather_setting=0x7f09001c;
+        public static final int wednesday=0x7f090017;
     }
     public static final class style {
         /** 
@@ -2358,7 +2519,7 @@ containing a value of this type.
          */
         public static final int[] SherlockSpinner = {
             0x010100af, 0x01010175, 0x01010176, 0x0101017b,
-            0x01010262, 0x010102ac, 0x010102ad, 0x010103ef
+            0x01010262, 0x010102ac, 0x010102ad, 0x0101043a
         };
         /**
           <p>
@@ -3478,5 +3639,244 @@ containing a value of this type.
           @attr name android:focusable
         */
         public static final int SherlockView_android_focusable = 0;
+        /** Attributes that can be used with a SlidingMenu.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #SlidingMenu_behindOffset cn.jlu.ge.getup:behindOffset}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_behindScrollScale cn.jlu.ge.getup:behindScrollScale}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_behindWidth cn.jlu.ge.getup:behindWidth}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_fadeDegree cn.jlu.ge.getup:fadeDegree}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_fadeEnabled cn.jlu.ge.getup:fadeEnabled}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_mode cn.jlu.ge.getup:mode}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_selectorDrawable cn.jlu.ge.getup:selectorDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_selectorEnabled cn.jlu.ge.getup:selectorEnabled}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_shadowDrawable cn.jlu.ge.getup:shadowDrawable}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_shadowWidth cn.jlu.ge.getup:shadowWidth}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_touchModeAbove cn.jlu.ge.getup:touchModeAbove}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_touchModeBehind cn.jlu.ge.getup:touchModeBehind}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_viewAbove cn.jlu.ge.getup:viewAbove}</code></td><td></td></tr>
+           <tr><td><code>{@link #SlidingMenu_viewBehind cn.jlu.ge.getup:viewBehind}</code></td><td></td></tr>
+           </table>
+           @see #SlidingMenu_behindOffset
+           @see #SlidingMenu_behindScrollScale
+           @see #SlidingMenu_behindWidth
+           @see #SlidingMenu_fadeDegree
+           @see #SlidingMenu_fadeEnabled
+           @see #SlidingMenu_mode
+           @see #SlidingMenu_selectorDrawable
+           @see #SlidingMenu_selectorEnabled
+           @see #SlidingMenu_shadowDrawable
+           @see #SlidingMenu_shadowWidth
+           @see #SlidingMenu_touchModeAbove
+           @see #SlidingMenu_touchModeBehind
+           @see #SlidingMenu_viewAbove
+           @see #SlidingMenu_viewBehind
+         */
+        public static final int[] SlidingMenu = {
+            0x7f010062, 0x7f010063, 0x7f010064, 0x7f010065,
+            0x7f010066, 0x7f010067, 0x7f010068, 0x7f010069,
+            0x7f01006a, 0x7f01006b, 0x7f01006c, 0x7f01006d,
+            0x7f01006e, 0x7f01006f
+        };
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#behindOffset}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:behindOffset
+        */
+        public static final int SlidingMenu_behindOffset = 3;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#behindScrollScale}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:behindScrollScale
+        */
+        public static final int SlidingMenu_behindScrollScale = 5;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#behindWidth}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:behindWidth
+        */
+        public static final int SlidingMenu_behindWidth = 4;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#fadeDegree}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:fadeDegree
+        */
+        public static final int SlidingMenu_fadeDegree = 11;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#fadeEnabled}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:fadeEnabled
+        */
+        public static final int SlidingMenu_fadeEnabled = 10;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#mode}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>left</code></td><td>0</td><td></td></tr>
+<tr><td><code>right</code></td><td>1</td><td></td></tr>
+</table>
+          @attr name cn.jlu.ge.getup:mode
+        */
+        public static final int SlidingMenu_mode = 0;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#selectorDrawable}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name cn.jlu.ge.getup:selectorDrawable
+        */
+        public static final int SlidingMenu_selectorDrawable = 13;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#selectorEnabled}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:selectorEnabled
+        */
+        public static final int SlidingMenu_selectorEnabled = 12;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#shadowDrawable}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name cn.jlu.ge.getup:shadowDrawable
+        */
+        public static final int SlidingMenu_shadowDrawable = 8;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#shadowWidth}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name cn.jlu.ge.getup:shadowWidth
+        */
+        public static final int SlidingMenu_shadowWidth = 9;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#touchModeAbove}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>margin</code></td><td>0</td><td></td></tr>
+<tr><td><code>fullscreen</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name cn.jlu.ge.getup:touchModeAbove
+        */
+        public static final int SlidingMenu_touchModeAbove = 6;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#touchModeBehind}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>margin</code></td><td>0</td><td></td></tr>
+<tr><td><code>fullscreen</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name cn.jlu.ge.getup:touchModeBehind
+        */
+        public static final int SlidingMenu_touchModeBehind = 7;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#viewAbove}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name cn.jlu.ge.getup:viewAbove
+        */
+        public static final int SlidingMenu_viewAbove = 1;
+        /**
+          <p>This symbol is the offset where the {@link cn.jlu.ge.getup.R.attr#viewBehind}
+          attribute's value can be found in the {@link #SlidingMenu} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name cn.jlu.ge.getup:viewBehind
+        */
+        public static final int SlidingMenu_viewBehind = 2;
     };
 }

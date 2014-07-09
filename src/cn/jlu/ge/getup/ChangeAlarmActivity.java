@@ -13,14 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Menu;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
+import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.MenuFragment;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class ChangeAlarmActivity extends SherlockActivity {
+public class ChangeAlarmActivity extends BaseActivity {
 
 	private TimePicker timePicker;
 	private String alarmTimeStr;
@@ -35,17 +37,41 @@ public class ChangeAlarmActivity extends SherlockActivity {
 	
 	EditText editWelcome;
 	
+	public ChangeAlarmActivity() {
+		super(R.string.app_name);
+		// TODO Auto-generated constructor stub
+	}
+	
+	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_change_alarm);
-		
-		//  ˝æ›ø‚≥ı ºªØ
+        
 		db = new AlarmDBAdapter(this);
+        
+        init();
+	}
+	
+	public void init() {
+		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		setContentView(R.layout.activity_change_alarm2);
 		
 		setWeeksMap();
-
+		
+		getAlarmDataFromBundle();
+        
+        setAlarmDay();
+        
+        setAlarmSettingView();
+		
+        getSlidingMenu().setSecondaryMenu(R.layout.menu_frame);
+		getSupportFragmentManager().beginTransaction()
+				.replace(R.id.menu_frame2, new MenuFragment()).commit();
+	}
+	
+	
+	void getAlarmDataFromBundle () {
 		Intent getIntent = getIntent();
         Bundle getBundle = getIntent.getExtras();
         alarmTimeStr = getBundle.getString("alarmTime");
@@ -53,23 +79,20 @@ public class ChangeAlarmActivity extends SherlockActivity {
         alarmKindStr = getBundle.getString("alarmKind");
         welcomeStr = getBundle.getString("welcome");
         time = alarmTimeStr.split(":");
-        
-        setAlarmDay();
-        
+	}
+	
+	void setAlarmSettingView () {
 		timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
         timePicker.setCurrentHour(Integer.parseInt(time[0]));
         timePicker.setCurrentMinute(Integer.parseInt(time[1]));
         
-        editWelcome = (EditText) findViewById(R.id.welcomeText);
+        editWelcome = (EditText) findViewById(R.id.welcomeTextEdit);
         editWelcome.setText(welcomeStr);
         
         TextView choiceSong = (TextView) findViewById(R.id.alarmSongText);
-        choiceSong.setText("¡Â…˘:‘Á…œ∫√");
-        
-        
-        
-	}
+        choiceSong.setText("ÁâßÁ•ûÊê≠‰∏äÊò•Ëâ≤ÁöÑÁÅ´ËΩ¶");
+    }
 	
 	int setTimePicker() {
 		
@@ -95,6 +118,7 @@ public class ChangeAlarmActivity extends SherlockActivity {
 	}
 	
 	public class DayBtn {
+		
 		public Button dayBtn;
 		
 		public DayBtn (int id, int day) {
@@ -129,7 +153,7 @@ public class ChangeAlarmActivity extends SherlockActivity {
 						else
 							alarmKindStr = new StringBuilder(alarmKindStr).replace(alarmKindStr.length() - 1, alarmKindStr.length(), String.valueOf(day)).toString();
 						dayBtn.setTextColor(Color.parseColor("#FFFFFF"));
-						Log.v("weekDayButton", "enable a week day button£∫ " + String.valueOf(day) + ";" + alarmKindStr);
+						Log.v("weekDayButton", "enable a week day button: " + String.valueOf(day) + ";" + alarmKindStr);
 						
 					}
 				}
@@ -183,13 +207,11 @@ public class ChangeAlarmActivity extends SherlockActivity {
     	db.updateRowKind(Long.parseLong(rowID), alarmTimeStr, alarmKindStr, welcomeStr);
     	db.close();
 		
-    	// ƒ÷÷”◊¥Ã¨–ﬁ∏ƒ£¨∑¥¿°≥Ã–ÚΩ¯––÷ÿ–¬∂®ƒ÷÷”
 		ForegroundService.ALARM_CHANGE_STATE = 0;
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
         foregroundServiceIntent.putExtra("doSth",ForegroundService.CHANGE_STATE);
         startService(foregroundServiceIntent);
 		
-		// ÕÀ≥ˆ
 		this.finish();
 		
     	return true;
