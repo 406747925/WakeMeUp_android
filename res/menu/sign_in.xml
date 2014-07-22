@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
  
     <item
-        android:id="@+id/alarm_setting"
+        android:id="@+id/alarm_list"
         android:showAsAction="ifRoom"
-        android:title="@string/alarm_setting"
-        android:titleCondensed="@string/alarm_setting">
+        android:title="@string/alarm_list"
+        android:titleCondensed="@string/alarm_list">
     </item>
 
 </menu>

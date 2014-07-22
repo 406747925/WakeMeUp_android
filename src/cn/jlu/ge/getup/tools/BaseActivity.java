@@ -11,18 +11,31 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class BaseActivity extends SlidingFragmentActivity {
 
-    private int titleRes;  
+    private int titleRes;
+    private String title;
     Fragment frag;  
       
-    public BaseActivity(int titleRes) {  
+    public BaseActivity (int titleRes) {  
         this.titleRes = titleRes;
+        this.title = title;
+    }
+    
+    public BaseActivity (String title) {
+    	this.titleRes = 0;
+    	this.title = title;
     }
     
     @Override  
     public void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub  
         super.onCreate(savedInstanceState);
-        this.setTitle(titleRes);
+        
+        if (title == null) {
+        	this.setTitle(titleRes);
+        } else {
+        	this.setTitle(title);
+        }
+        
         
         //设置behind View
         this.setBehindContentView(R.layout.sliding_menu);

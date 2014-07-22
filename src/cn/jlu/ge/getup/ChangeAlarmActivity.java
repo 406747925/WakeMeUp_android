@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.BaseActivity;
+import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.MyGlobal;
 import cn.jlu.ge.getup.tools.MenuFragment;
 
 import com.actionbarsherlock.view.Menu;
@@ -207,9 +209,9 @@ public class ChangeAlarmActivity extends BaseActivity {
     	db.updateRowKind(Long.parseLong(rowID), alarmTimeStr, alarmKindStr, welcomeStr);
     	db.close();
 		
-		ForegroundService.ALARM_CHANGE_STATE = 0;
+    	MyGlobal.ALARM_CHANGE = true;
         Intent foregroundServiceIntent = new Intent(this, ForegroundService.class);
-        foregroundServiceIntent.putExtra("doSth",ForegroundService.CHANGE_STATE);
+        foregroundServiceIntent.putExtra("doSth",Const.CHANGE_STATE);
         startService(foregroundServiceIntent);
 		
 		this.finish();

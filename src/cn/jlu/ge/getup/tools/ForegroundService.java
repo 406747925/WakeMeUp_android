@@ -3,6 +3,8 @@ package cn.jlu.ge.getup.tools;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,6 +12,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build.VERSION;
 import android.os.Handler;
@@ -19,20 +22,17 @@ import android.widget.Toast;
 import cn.jlu.ge.getup.MainActivity;
 import cn.jlu.ge.getup.R;
 import cn.jlu.ge.getup.WakeUpActivity;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class ForegroundService extends Service {
     private static final String TAG = "ForegroundService";
     
-    public static final String CREATE_STATE = "Create_MainActivity";
-    public static final String NEW_ALRM_STATE = "New_Alarm_SetAlarmActivity";
-    public static final String CHANGE_STATE = "Change_State";
-    public static final String SHOW_NEXT_ALARM = "Next_Alarm_State";
-    
-    public static int ALARM_CHANGE_STATE = 0;
+    private static int DEFAULT_WEATHER_CITY_FLAG = 1;
     
     private boolean mReflectFlg = false;
     
-    private static final int NOTIFICATION_ID = 1; 
+    private static final int NOTIFICATION_ID = 1;
     private static final Class<?>[] mSetForegroundSignature = new Class[] {
         boolean.class};
     private static final Class<?>[] mStartForegroundSignature = new Class[] {
@@ -60,13 +60,13 @@ public class ForegroundService extends Service {
 	int welcomeColumn;
 
 	AlarmManager alarmManager;
+	private AsyncHttpClient client;
+	private SharedPreferences appInfo;
 	
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        
-        //
         
         db = new AlarmDBAdapter(this);
         
@@ -93,10 +93,13 @@ public class ForegroundService extends Service {
         }
 
         setNotificationAndAlarm();
+        setAppInfoPreference();
+        
     }  
     
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+    	
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "onStartCommand");
         if ( intent == null ) return START_STICKY;
@@ -104,45 +107,41 @@ public class ForegroundService extends Service {
         if (doWhatStr == null) {
         	Log.v("None", "NO STATE Wrong Start.");
         }
-        else if (doWhatStr.equals(CREATE_STATE)) {
-			if (ALARM_CHANGE_STATE != 1) {
-				
-				Log.v("Create State", "Create State.");
-//				cancelAlarmsFromAM ();
-//				addAllAlarmsToAM ();
+        else if (doWhatStr.equals(Const.CREATE_STATE)) {
+
+			Log.v("Create State", "Create State.");
+			
+			if ( MyGlobal.ALARM_CHANGE ) {
 				setNotificationAndAlarm();
-				
+				MyGlobal.ALARM_CHANGE = false;
 			}
 			
-			ALARM_CHANGE_STATE = 1;
-        } else if (doWhatStr.equals(NEW_ALRM_STATE)) {
-			if (ALARM_CHANGE_STATE != 1) {
-				
-				Log.v("New State", "A New Alarm Insert.");
-//				cancelAlarmsFromAM ();
-//				addAllAlarmsToAM ();
-				setNotificationAndAlarm();
-				
-			}
-			
-			ALARM_CHANGE_STATE = 1;
-        } else if (doWhatStr.equals(CHANGE_STATE)) {
-			if (ALARM_CHANGE_STATE != 1) {
-				
-				Log.v("Change State", "Having Some Change.");
-//				cancelAlarmsFromAM ();
-//				addAllAlarmsToAM ();
-				setNotificationAndAlarm();
-				
-			}
-			
-			ALARM_CHANGE_STATE = 1;
-        } else if (doWhatStr.equals(SHOW_NEXT_ALARM)) {
+			setAppInfoPreference();
+        } else if (doWhatStr.equals(Const.NEW_ALRM_STATE)) {
         	
-        	setNotificationAndAlarm();
+			Log.v("New State", "A New Alarm Insert.");
+			if ( MyGlobal.ALARM_CHANGE ) {
+				setNotificationAndAlarm();
+				MyGlobal.ALARM_CHANGE = false;
+			}
+			
+        } else if (doWhatStr.equals(Const.CHANGE_STATE)) {
+        	
+			Log.v("Change State", "Having Some Change.");
+			if ( MyGlobal.ALARM_CHANGE ) {
+				setNotificationAndAlarm();
+				MyGlobal.ALARM_CHANGE = false;
+			}
+			
+        } else if (doWhatStr.equals(Const.SHOW_NEXT_ALARM)) {
+        	
+        	Log.v("None State", "Nothing yet.");
+			if ( MyGlobal.ALARM_CHANGE ) {
+				setNotificationAndAlarm();	
+				MyGlobal.ALARM_CHANGE = false;
+			}
         	
         }
-        
         
         return START_STICKY;
     }
@@ -150,15 +149,16 @@ public class ForegroundService extends Service {
     @Override  
     public IBinder onBind(Intent intent) {  
         return null;  
-    }  
+    }
 
     @Override  
-    public void onDestroy() {  
+    public void onDestroy() {
+    	
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         
         Intent localIntent = new Intent();
-        localIntent.setClass(this, ForegroundService.class); // 
+        localIntent.setClass(this, ForegroundService.class);
         this.startService(localIntent);
     }
     
@@ -237,17 +237,26 @@ public class ForegroundService extends Service {
         }
     }
     
+    void setAppInfoPreference () {
+    	
+    	userDatadb = new UserDataDBAdapter(getApplicationContext());
+		setWeatherInfoData();
+		userDatadb.close();
+		userDatadb = null;
+		
+    }
+    
     void setNotificationAndAlarm() {
     	
     	String []stateBarStr = checkRecentAlarmAndSetIt();
-    	Log.v("Next Alarm State", SHOW_NEXT_ALARM);
+    	Log.v("Next Alarm State", Const.SHOW_NEXT_ALARM);
     	
         Notification.Builder builder = new Notification.Builder(this);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,  
                 new Intent(this, MainActivity.class), 0); 
         builder.setContentIntent(contentIntent);
         builder.setSmallIcon(R.drawable.clock);
-        builder.setTicker("小闹提醒：");
+        builder.setTicker("小闹在这里");
         builder.setContentTitle(stateBarStr[0]);
         builder.setContentText(stateBarStr[1]);
     	notification = builder.getNotification();
@@ -255,6 +264,43 @@ public class ForegroundService extends Service {
         startForegroundCompat(NOTIFICATION_ID, notification);
         
     }
+    
+	void setWeatherInfoData() {
+		
+        userDatadb.open();
+        
+        Cursor cursor = userDatadb.getAllWeatherCitiesDatas();
+        
+        if ( cursor != null && cursor.getCount() != 0 ) {
+        	
+        	cursor.moveToFirst();
+        	
+        	// 初始化显示天气预报的城市信息
+            if ( cursor.getInt( cursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_COUNT ) ) == DEFAULT_WEATHER_CITY_FLAG ) {
+                String weatherCity = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_CONTENT));
+                String weatherUrl = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_UNIT));
+                
+                appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+                SharedPreferences.Editor appInfoEditor = appInfo.edit();
+                appInfoEditor.putString(Const.FIRST_CITY_KEY, weatherCity);
+                appInfoEditor.putString(Const.FIRST_CITY_URL_KEY, weatherUrl);
+                appInfoEditor.commit();
+                
+                // 存在城市的设置则初始化天气信息
+                getWeatherFromNet(weatherUrl);
+                
+                appInfoEditor = null;
+                weatherCity = null;
+                weatherUrl = null;
+                
+            }
+        }
+        
+        if (cursor != null) cursor.close();
+        
+        userDatadb.close();
+        
+	}
     
     void setDBColumn() {
     	db.open();
@@ -268,7 +314,122 @@ public class ForegroundService extends Service {
 		db.close();
     }
     
-	// 
+	void setWeatherView (JSONObject weatherObject) {
+
+		try {
+			
+			String temp1Str = weatherObject.getString("temp1");
+			String temp2Str = weatherObject.getString("temp2");
+			String weatherStr = weatherObject.getString("weather");
+			String ptimeStr = weatherObject.getString("ptime");
+			
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.FIRST_PTIME_KEY, ptimeStr);
+			appInfoEditor.putString(Const.FIRST_WEATHER_KEY, weatherStr);
+			appInfoEditor.putString(Const.FIRST_DAY_TEMP_KEY, temp1Str + "~" + temp2Str);
+			appInfoEditor.commit();
+			
+			temp1Str = null;
+			temp2Str = null;
+			weatherStr = null;
+			ptimeStr = null;
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	void setWeatherDetailView (JSONObject weatherDetailObject) {
+		
+		try {
+			
+			String tempStr = weatherDetailObject.getString("temp");
+			String windStr = weatherDetailObject.getString("WS");
+			String wetStr = weatherDetailObject.getString("SD");
+			String wdStr = weatherDetailObject.getString("WD");
+	        
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.FIRST_WET_KEY, wetStr);
+			appInfoEditor.putString(Const.FIRST_WD_KEY, wdStr);
+			appInfoEditor.putString(Const.FIRST_WS_KEY, windStr);
+			appInfoEditor.putString(Const.FIRST_NOW_TEMP_KEY, tempStr);
+			appInfoEditor.commit();
+			
+			tempStr = null;
+			windStr = null;
+			wetStr = null;
+			wdStr = null;
+	        
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	void getWeatherFromNet(String weatherUrl) {
+		
+		client = new AsyncHttpClient();
+		
+		client.get("http://www.weather.com.cn/data/cityinfo/" + weatherUrl + ".html", new AsyncHttpResponseHandler() {
+            
+			@Override
+            public void onSuccess(String response) {
+            	try {
+            		
+					JSONObject weatherObject = new JSONObject(response).getJSONObject("weatherinfo");
+					setWeatherView(weatherObject);
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+
+			@Override
+			public void onFailure(Throwable throwable, String failureStr) {
+				// TODO Auto-generated method stub
+				
+				super.onFailure(throwable, failureStr);
+			}
+        });
+        
+        client.get("http://www.weather.com.cn/data/sk/" + weatherUrl + ".html", new AsyncHttpResponseHandler(){
+
+			@Override
+			public void onFailure(Throwable arg0, String arg1) {
+				// TODO Auto-generated method stub
+				super.onFailure(arg0, arg1);
+			}
+
+			@Override
+			public void onSuccess(int code, String response) {
+				// TODO Auto-generated method stub
+				try {
+					
+					JSONObject weatherDetailObject = new JSONObject(response).getJSONObject("weatherinfo");
+					setWeatherDetailView(weatherDetailObject);
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				super.onSuccess(code, response);
+				
+			}
+        	
+        });
+        
+        client = null;
+        
+	}
+    
+	// 定时更新闹钟
 	Handler handler = new Handler();
 	Runnable alarmUpdateThread = new Runnable() {
 		
@@ -276,15 +437,13 @@ public class ForegroundService extends Service {
 		public void run() {
 			// TODO Auto-generated method stub
 			handler.postDelayed(alarmUpdateThread, 9633);
-			if (ALARM_CHANGE_STATE != 1) {
-//				cancelAlarmsFromAM ();
-//				addAllAlarmsToAM ();
-				
-				setNotificationAndAlarm();
-
+			if ( MyGlobal.ALARM_CHANGE ) {
+				setNotificationAndAlarm();				
+				MyGlobal.ALARM_CHANGE = false;
 			}
 			
-			ALARM_CHANGE_STATE = 1;
+			Log.v("ForegroundService", "Update the alarm.");
+			
 		}
 		
 	};
@@ -302,8 +461,11 @@ public class ForegroundService extends Service {
 			return false;
 		}
 
+		// 否则如果是同一天，并且小于等于当前时间的 Alarm 则设置它在第二天触发
+		// 方便闹钟测试，这里设置为允许当前时间设置为立即触发的闹钟
 		/*************************************************************************
 		 * 
+		 * 此处为正确触发闹钟的判断条件
 		 * calendar.get(Calendar.HOUR_OF_DAY) > hour || (calendar.get(Calendar.HOUR_OF_DAY) == hour && calendar.get(Calendar.MINUTE) >= mins)\
 		 * 
 		 *************************************************************************/
@@ -362,7 +524,18 @@ public class ForegroundService extends Service {
 		if (cursor.moveToFirst() == false) {
 			cursor.close();
 			db.close();
-			String[] returnStr = {"闹钟响磬了！", "小闹今天没得闹了T-T"};
+			String[] returnStr = {"小闹没得闹啦", "小闹提醒,所有的闹钟已闹罄T-T"};
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.NEXT_ALARM_TIME_KEY, Const.NEXT_ALARM_TIME_DEFAULT);
+			appInfoEditor.putString(Const.NEXT_ALARM_DESC_KEY, Const.NEXT_ALARM_DESC_DEFAULT);
+			appInfoEditor.commit();
+			
+			appInfo = null;
+			appInfoEditor = null;
+			
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			
 			return returnStr;
 		}
 		
@@ -379,8 +552,6 @@ public class ForegroundService extends Service {
 		
 		int nowHour = calendar.get(Calendar.HOUR_OF_DAY);
 		int nowMins = calendar.get(Calendar.MINUTE);
-		
-		Toast.makeText(getApplicationContext(), "Now Time: " + nowHour + ":" + nowMins, Toast.LENGTH_SHORT).show();
 		
 		int comparedHour = 0;
 		int comparedMins = 0;
@@ -449,7 +620,7 @@ public class ForegroundService extends Service {
 						nextDayWelcomeStr = welcomeStr;
 						nextDayRowId = cursor.getInt(cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID));
 					}
-				}				
+				}
 			}
 			
 			if (cursor.isLast()) {
@@ -460,30 +631,74 @@ public class ForegroundService extends Service {
 		}
 
 		db.close();
-		
-		if (subCompareMins != 8400 ) {
+
+		if ( subCompareMins != 8400 ) {
 			String time[] = minAlarmTimeStr.split(":");
-			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, welcomeStr, 0);
-			String[] returnStr = {"下个闹钟：" + minAlarmTimeStr, "小闹提醒：" + minWelcomeStr};
+			int mins = Integer.parseInt(time[1]);
+			int hour = Integer.parseInt(time[0]);
+			minAlarmTimeStr = setTimeFormat(hour, mins);
+			reSetAlarm(hour, mins, minRowId, welcomeStr, 0);
+			String[] returnStr = {"下个闹钟：" + minAlarmTimeStr, "小闹提醒," + minWelcomeStr};
 			WakeUpActivity.welcomeStr = minWelcomeStr;
+			
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.NEXT_ALARM_DESC_KEY, "下个闹钟");
+			appInfoEditor.putString(Const.NEXT_ALARM_TIME_KEY, minAlarmTimeStr);
+			appInfoEditor.putString(Const.WELCOME_STR_KEY, minWelcomeStr);
+			appInfoEditor.commit();
+			
+			appInfo = null;
+			appInfoEditor = null;
 			return returnStr;
-		} else if (tomorrowAlarmMins != 8400) {
+		} else if ( tomorrowAlarmMins != 8400 ) {
 			String time[] = nextDayAlarmTimeStr.split(":");
-			reSetAlarm(Integer.parseInt(time[0]), Integer.parseInt(time[1]), minRowId, nextDayWelcomeStr, getDayOffset(weekNum, nextAlarmWeekDay) );
-			String[] returnStr = { NextWeekOrNot(weekNum, nextAlarmWeekDay) + nextDayAlarmTimeStr, "小闹提醒：" + nextDayWelcomeStr};
+			int mins = Integer.parseInt(time[1]);
+			int hour = Integer.parseInt(time[0]);
+			nextDayAlarmTimeStr = setTimeFormat(hour, mins);
+			String nextAlarmDescStr = NextWeekOrNot(weekNum, nextAlarmWeekDay);
+			reSetAlarm(hour, mins, minRowId, nextDayWelcomeStr, getDayOffset(weekNum, nextAlarmWeekDay) );
+			String[] returnStr = { nextAlarmDescStr + nextDayAlarmTimeStr, "小闹提醒," + nextDayWelcomeStr};
 			WakeUpActivity.welcomeStr = nextDayWelcomeStr;
+			
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.NEXT_ALARM_DESC_KEY, nextAlarmDescStr);
+			appInfoEditor.putString(Const.NEXT_ALARM_TIME_KEY, nextDayAlarmTimeStr);
+			appInfoEditor.putString(Const.WELCOME_STR_KEY, nextDayWelcomeStr);
+			appInfoEditor.commit();
+			
+			appInfo = null;
+			appInfoEditor = null;
+			
 			return returnStr;
 		}
+		
 		else {
-			String[] returnStr = {"闹钟响磬了！", "小闹今天没得闹了！ T-T"};
+			
+			String[] returnStr = {"小闹没得闹啦", "小闹提醒,所有的闹钟已闹罄T-T"};
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.NEXT_ALARM_TIME_KEY, Const.NEXT_ALARM_TIME_DEFAULT);
+			appInfoEditor.putString(Const.NEXT_ALARM_DESC_KEY, Const.NEXT_ALARM_DESC_DEFAULT);
+			appInfoEditor.commit();
+			
+			appInfo = null;
+			appInfoEditor = null;
+			
 			return returnStr;
+			
 		}
+	}
+	
+	String setTimeFormat (int hour, int mins) {
+		return (hour < 10 ? "0" + hour : "" + hour) + ":" + (mins < 10 ? "0" + mins : "" + mins);
 	}
 	
 	int setWeekNum () {
 		calendar = Calendar.getInstance();
 		weekNum = calendar.get(Calendar.DAY_OF_WEEK);
-		// ��������Ϊ1ʱ��Ӧ��������
+
 		if ( weekNum == 1) {
 			weekNum = 7;
 		} else {
@@ -526,7 +741,7 @@ public class ForegroundService extends Service {
 	}
 	
 	String NextWeekOrNot (int weekNum, int alarmWeekDay) {
-		return weekNum < alarmWeekDay ? (alarmWeekDay - weekNum + "���:") : ("����" + alarmWeekDay + ":") ;
+		return weekNum < alarmWeekDay ? ("下个闹钟" + ( (alarmWeekDay - weekNum) == 1 ? "在明天:" : (alarmWeekDay - weekNum) + "天后:" ) ) : ("下个闹钟,下周" + alarmWeekDay + ":") ;
 	}
 	
 //	boolean addAllAlarmsToAM() {

@@ -31,8 +31,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.BaseActivity;
+import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
 import cn.jlu.ge.getup.tools.MenuFragment;
+import cn.jlu.ge.getup.tools.MyGlobal;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -142,10 +144,10 @@ public class SetAlarmActivity extends BaseActivity {
 						// 重新排列闹钟列表
 						setAlarmList();
 						
-						ForegroundService.ALARM_CHANGE_STATE = 0;
+						MyGlobal.ALARM_CHANGE = true;
 						
 				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
-				        foregroundServiceIntent.putExtra("doSth", ForegroundService.NEW_ALRM_STATE);
+				        foregroundServiceIntent.putExtra("doSth", Const.NEW_ALRM_STATE);
 				        startService(foregroundServiceIntent);
 				        
 					}
@@ -280,14 +282,13 @@ public class SetAlarmActivity extends BaseActivity {
 						
 						insertAlarmInDb(time[0], time[1]);
 			            
-						// 闹钟状态修改，反馈程序进行重新定闹钟
-						ForegroundService.ALARM_CHANGE_STATE = 0;
-						
 						// 因为添加闹钟，所以刷新闹钟列表
 						setAlarmList();
 						
+						MyGlobal.ALARM_CHANGE = true;
+						
 				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
-				        foregroundServiceIntent.putExtra("doSth", ForegroundService.NEW_ALRM_STATE);
+				        foregroundServiceIntent.putExtra("doSth", Const.NEW_ALRM_STATE);
 				        startService(foregroundServiceIntent);
 						
 					}
@@ -393,6 +394,10 @@ public class SetAlarmActivity extends BaseActivity {
 			// TODO Auto-generated method stub
 			return position;
 		}
+		
+		String setTimeFormat (int hour, int mins) {
+			return (hour < 10 ? "0" + hour : "" + hour) + ":" + (mins < 10 ? "0" + mins : "" + mins);
+		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -433,7 +438,10 @@ public class SetAlarmActivity extends BaseActivity {
 				
 				Log.v("What the Fuck!", listItem.get(position).toString());
 				
-				clickViews.alarmTime.setText(listItem.get(position).get("alarmTime").toString());
+				String []time = listItem.get(position).get("alarmTime").toString().split(":");
+				int hour = Integer.parseInt(time[0]);
+				int mins = Integer.parseInt(time[1]);
+				clickViews.alarmTime.setText(setTimeFormat(hour, mins));
 				
 				if (listItem.get(position).get("activeBool").toString().equals("1")) {
 					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_on);
@@ -470,11 +478,10 @@ public class SetAlarmActivity extends BaseActivity {
 
 						db.close();
 						
-						// 闹钟状态修改，反馈程序进行重新定闹钟
-						ForegroundService.ALARM_CHANGE_STATE = 0;
+						MyGlobal.ALARM_CHANGE = true;
 						
 				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
-				        foregroundServiceIntent.putExtra("doSth", ForegroundService.CHANGE_STATE);
+				        foregroundServiceIntent.putExtra("doSth", Const.CHANGE_STATE);
 				        startService(foregroundServiceIntent);
 				        
 					}

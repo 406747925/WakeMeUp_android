@@ -18,12 +18,17 @@
 	<string name="friday">五</string>
 	<string name="saturday">六</string>
 	<string name="sunday">日</string>
-	<string name="weather_setting">天气设置</string>
 	
+	
+	<string name="weather_main">天气详情</string>
+	<string name="weather_setting">城市设置</string>
+	
+	
+	<string name="alarm_list">查看闹钟</string>
 	
 	<string name="action_settings">Action</string>
     <string name="menu_settings">Settings</string>
-    <string name="sliding_menu_user_setting">用户设置</string>
+    <string name="sliding_menu_user_setting">用户名</string>
     <string name="sliding_menu_alarm_setting">闹钟设置</string>
     <string name="sliding_menu_weather_setting">天气设置</string>
     <string name="sliding_menu_model_setting">模块设置</string>

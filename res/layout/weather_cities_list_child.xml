@@ -12,7 +12,7 @@
 		android:paddingLeft="80dp"
 		android:paddingTop="15dp"
 		android:paddingBottom="15dp"
-		android:textSize="20sp"
+		android:textSize="18sp"
 		android:text="City Name"
 	/>
 

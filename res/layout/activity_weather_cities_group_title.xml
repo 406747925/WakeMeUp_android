@@ -11,7 +11,7 @@
         android:paddingLeft="60dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:text="Province Name"
     />
 

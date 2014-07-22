@@ -10,9 +10,11 @@ import android.os.PowerManager;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
 import cn.jlu.ge.getup.tools.GetUpMediaPlayer;
 import cn.jlu.ge.getup.tools.GetUpVibrator;
+import cn.jlu.ge.getup.tools.MyGlobal;
 import cn.jlu.ge.getup.tools.ShakeDetector;
 import cn.jlu.ge.getup.tools.ShakeDetector.OnShakeListener;
 
@@ -83,8 +85,9 @@ public class WakeUpActivity extends Activity {
 			}
         });
         
+        MyGlobal.ALARM_CHANGE = true;
         Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
-        foregroundServiceIntent.putExtra("doSth", ForegroundService.SHOW_NEXT_ALARM);
+        foregroundServiceIntent.putExtra("doSth", Const.SHOW_NEXT_ALARM);
         startService(foregroundServiceIntent);
         
 	}

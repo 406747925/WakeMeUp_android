@@ -14,15 +14,34 @@
     <dimen name="sliding_menu_text_size">18sp</dimen>
     
     <!-- MainActivity -->
-    <dimen name="activity_main_big_title">220dp</dimen>
+    <dimen name="activity_main_big_title">230dp</dimen>
     <dimen name="activity_main_block_height">90dp</dimen>
     <dimen name="activity_main_margin_top_mid">20dp</dimen>
-    <dimen name="activity_main_margin_left_mid">20dp</dimen>
+    <dimen name="activity_main_margin_mid">20dp</dimen>
+    <dimen name="activity_main_margin_min">10dp</dimen>
     <dimen name="activity_main_time_str_size">70sp</dimen>
-    <dimen name="activity_main_weather_icon_size">80dp</dimen>
-    <dimen name="activity_main_margin_top_max">40dp</dimen>
-    <dimen name="activity_main_cityname_size">20sp</dimen>
+    <dimen name="activity_main_weather_icon_size">100dp</dimen>
+    <dimen name="activity_main_margin_top_max">30dp</dimen>
+    <dimen name="activity_main_margin_top_min">10dp</dimen>
+    <dimen name="activity_main_cityname_size">16sp</dimen>
+    <dimen name="activity_main_alarm_desc_str_size">16sp</dimen>
     <dimen name="activity_main_weatherstr_size">16sp</dimen>
+    <dimen name="activity_main_welcome_str_size">16sp</dimen>
+    <dimen name="activity_main_welcome_str_width">180dp</dimen>
+    <dimen name="activity_main_weather_image_size">36dp</dimen>
+    <dimen name="activity_main_weather_image_margin">15dp</dimen>
+    <dimen name="activity_main_weather_image_margin_top">5dp</dimen>
+    
+    <!-- WeatherMainActivity -->
+    <dimen name="activity_weather_main_min_font_size">16sp</dimen>
+    <dimen name="activity_weather_main_mid_font_size">18sp</dimen>
+	<dimen name="activity_weather_main_max_font_size">32sp</dimen>
+	<dimen name="activity_weather_main_padding_min">10dp</dimen>
+    <dimen name="activity_weather_main_margin_min">10dp</dimen>
+	<dimen name="activity_weather_main_margin_mid">20dp</dimen>
+	<dimen name="activity_weather_main_margin_max">30dp</dimen>
+    <dimen name="activity_weather_main_margin_top_max">40dp</dimen>
+    <dimen name="activity_weather_main_weather_icon_size">100dp</dimen>
     
     <!-- ChangeAlarmActivity -->
     <dimen name="activity_change_alarm_min_padding">10dp</dimen>
