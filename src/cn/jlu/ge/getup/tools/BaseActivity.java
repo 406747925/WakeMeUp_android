@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import cn.jlu.ge.getup.R;
-
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -15,9 +14,9 @@ public class BaseActivity extends SlidingFragmentActivity {
     private String title;
     Fragment frag;  
       
-    public BaseActivity (int titleRes) {  
+    public BaseActivity (int titleRes) {
         this.titleRes = titleRes;
-        this.title = title;
+        this.title = null;
     }
     
     public BaseActivity (String title) {

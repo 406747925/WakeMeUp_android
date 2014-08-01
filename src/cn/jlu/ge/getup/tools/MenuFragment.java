@@ -29,12 +29,6 @@ public class MenuFragment extends ListFragment {
 		// TODO Auto-generated method stub
 		DisplayMetrics dm = new DisplayMetrics();
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-//		int widthPixels= dm.widthPixels;
-//		int heightPixels= dm.heightPixels;
-//		float density = dm.density;
-//		screenWidth = (int) (widthPixels * density) ;
-//		screenHeight = (int) (heightPixels * density) ;
-		
 		super.onActivityCreated(savedInstanceState);
 		
 		MenuAdapter menuAdapter = new MenuAdapter(getActivity());

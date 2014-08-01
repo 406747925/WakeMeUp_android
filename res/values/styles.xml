@@ -11,7 +11,15 @@
             backward-compatibility can go here.
         -->
     </style>
-
+    
+    <style name="AppBaseTheme.ActionBarStyle" parent="Widget.Sherlock.ActionBar">
+		<item name="background">@drawable/actionbar_bg_main</item>
+		<item name="android:background">@drawable/actionbar_bg_main</item>
+	</style>
+	
+	<style name="AppBaseTheme.SherlockCustom" parent="@style/Theme.Sherlock.Light">
+	    <item name="actionBarStyle">@style/AppBaseTheme.ActionBarStyle</item>
+	</style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->

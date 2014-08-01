@@ -16,17 +16,43 @@ public class UserDataDBAdapter {
 	public static final String KEY_DATA_DESC = "data_desc";
 	public static final String KEY_DATA_COUNT = "data_count";
 	public static final String KEY_DATA_UNIT = "data_unit";
+	
+	public static final String KEY_CITY = "city";
+	public static final String KEY_TEMP1 = "temp1";
+	public static final String KEY_TEMP2 = "temp2";
+	public static final String KEY_WEATHER = "weather";
+	public static final String KEY_PTIME = "ptime";
+	public static final String KEY_WD = "wd";
+	public static final String KEY_WS = "ws";
+	public static final String KEY_WSE = "wse";
+	public static final String KEY_SD = "sd";
+	public static final String KEY_INSERT_DATE = "insert_date";
+	
 	private static final String TAG = "UserDataDBAdapter";
 	private static final String DATABASE_NAME = "bnl_user";
-	private static final String DATABASE_TABLE = "user_data";
+	private static final String DATABASE_USER_DATA_TABLE = "user_data";
+	private static final String DATABASE_WEATHER_INFO_TABLE = "weather_data";
 	private static final int DATABASE_VERSION = 1;
 	private static final String CREATE_USER_DATA_TABLE = 
-			"create table " + DATABASE_TABLE + " (_id integer primary key autoincrement, " +
+			"create table " + DATABASE_USER_DATA_TABLE + " (_id integer primary key autoincrement, " +
 					"data_type text not null, " +
 					"data_content text not null, " +
 					"data_desc text not null, " +
 					"data_count integer not null, " +
 					"data_unit text not null);";
+	
+	private static final String CREATE_WEATHER_DATA_TABLE = 
+			"create table " + DATABASE_WEATHER_INFO_TABLE + " (_id integer primary key autoincrement, " +
+					"city text not null, " +
+					"temp1 integer not null, " +
+					"temp2 integer not null, " +
+					"weather text not null, " +
+					"ptime text not null, " +
+					"wd text not null, " +
+					"ws integer not null, " +
+					"wse integer not null, " + 
+					"sd integer not null, " +
+					"insert_date DATETIME);";
 	
 	private Context context;
 	private DatabaseHelper databaseHelper;
@@ -34,12 +60,14 @@ public class UserDataDBAdapter {
 	
 	private String WEATHER_CITY_ADDED = "weather_city";
 	
+	
 	public UserDataDBAdapter(Context c) {
 		
 		context = c;
 		databaseHelper = new DatabaseHelper(context);
 		
 	}
+	
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 		
@@ -54,6 +82,7 @@ public class UserDataDBAdapter {
 			// TODO Auto-generated method stub
 			Log.v("DB Helper", "Create table.");
 			db.execSQL(CREATE_USER_DATA_TABLE);
+			db.execSQL(CREATE_WEATHER_DATA_TABLE);
 		}
 
 		@Override
@@ -66,18 +95,21 @@ public class UserDataDBAdapter {
 		}
 	}
 	
+	
 	public UserDataDBAdapter open() throws SQLException {
 		db = databaseHelper.getWritableDatabase();
 		return this;
 	}
 	
+	
 	public void close() {
 		databaseHelper.close();
 	}
 	
+	
 	public Cursor getAllWeatherCitiesDatas() {
 		
-		Cursor mCursor = db.query(true, DATABASE_TABLE, new String[] {
+		Cursor mCursor = db.query(true, DATABASE_USER_DATA_TABLE, new String[] {
 				KEY_ROWID, 
 				KEY_DATA_TYPE,
 				KEY_DATA_CONTENT,
@@ -100,6 +132,7 @@ public class UserDataDBAdapter {
 		
 	}
 	
+	
 	public long insertWeatherCityData(String cityName, String cityPyName, String url, int count) {
 		ContentValues values = new ContentValues();
 		values.put(KEY_DATA_TYPE, WEATHER_CITY_ADDED);
@@ -108,26 +141,80 @@ public class UserDataDBAdapter {
 		values.put(KEY_DATA_COUNT, count);
 		values.put(KEY_DATA_UNIT, url);
 		Log.v(TAG, "City: " + cityName + " ;" + "Url: " + url + " ;");
-		return db.insert(DATABASE_TABLE, null, values);
+		return db.insert(DATABASE_USER_DATA_TABLE, null, values);
 	}
 	
 	public boolean deleteWeatherCityByName(String name) {
 		
-		return db.delete(DATABASE_TABLE, KEY_DATA_CONTENT + "= '" + name + "'", null) > 0;
+		return db.delete(DATABASE_USER_DATA_TABLE, KEY_DATA_CONTENT + "= '" + name + "'", null) > 0;
 		
 	}
 	
-	public long setWeatherCityDefaulted(String name) {
+	
+	public long setWeatherCityDefaulted ( String name ) {
 		long otherCitiesNum = setOtherWeatherCitiesCommon ();
 		ContentValues defaultValues = new ContentValues();
 		defaultValues.put(KEY_DATA_COUNT, 1);
 		Log.v(TAG, "The " + name + " will be the default city. " + otherCitiesNum + " cities had been change.");
-		return db.update(DATABASE_TABLE, defaultValues, KEY_DATA_CONTENT + "='" + name + "'", null);
+		return db.update(DATABASE_USER_DATA_TABLE, defaultValues, KEY_DATA_CONTENT + "='" + name + "'", null);
 	}
+	
 	
 	public long setOtherWeatherCitiesCommon () {
 		ContentValues othersValues = new ContentValues();
 		othersValues.put(KEY_DATA_COUNT, 0);
-		return db.update(DATABASE_TABLE, othersValues, KEY_DATA_TYPE + "='" + WEATHER_CITY_ADDED + "'", null);
+		return db.update(DATABASE_USER_DATA_TABLE, othersValues, KEY_DATA_TYPE + "='" + WEATHER_CITY_ADDED + "'", null);
 	}
+	
+	
+	public Cursor getWeatherByCity ( String cityName ) {
+		
+		Cursor mCursor = db.query(true, DATABASE_WEATHER_INFO_TABLE, new String[] {
+				KEY_ROWID, 
+				KEY_TEMP1,
+				KEY_TEMP2,
+				KEY_WEATHER,
+				KEY_WD,
+				KEY_WS,
+				KEY_WSE,
+				KEY_INSERT_DATE
+		}, 
+		KEY_CITY + "=" + "'" + cityName + "'",
+		null,
+		null,
+		null,
+		null,
+		null);
+		
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		
+		return mCursor;
+		
+	}
+	
+	
+	public long insertTodayWeatherData(String cityName, int temp1, int temp2, String weather, String wd, int ws, int wse, int sd) {
+		ContentValues values = new ContentValues();
+		values.put(KEY_CITY, cityName);
+		values.put(KEY_TEMP1, temp1);
+		values.put(KEY_TEMP2, temp2);
+		values.put(KEY_WEATHER, weather);
+		values.put(KEY_WD, wd);
+		values.put(KEY_WS, ws);
+		values.put(KEY_WSE, wse);
+		
+		long id = db.update(DATABASE_WEATHER_INFO_TABLE, values, KEY_CITY + "='" + cityName + "' and insert_date = datetime('now','start of day')", null);
+		if ( id < 1 ) {
+			Log.v(TAG, "not row and insert a row");
+			return db.insert(DATABASE_WEATHER_INFO_TABLE, null, values);
+		} else {
+			Log.v(TAG, "update row " + id);
+			return id;
+		}
+		
+	}
+	
+	
 }

@@ -3,14 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/activity_change_alarm_timepicker_height"
-        android:scrollbarSize="@dimen/activity_change_alarm_timepicker_bar_size"
-        android:scrollbarFadeDuration="80"
-        android:scrollbarStyle="outsideOverlay"
-        />
+<!--     <TimePicker -->
+<!--         android:id="@+id/timePicker" -->
+<!--         android:layout_width="fill_parent" -->
+<!--         android:layout_height="@dimen/activity_change_alarm_timepicker_height" -->
+<!--         android:scrollbarSize="@dimen/activity_change_alarm_timepicker_bar_size" -->
+<!--         android:scrollbarFadeDuration="80" -->
+<!--         android:scrollbarStyle="outsideOverlay" -->
+<!--         /> -->
+	<LinearLayout
+	    android:layout_marginTop="20dp"
+	    android:background="#FFFFFF"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+	<cn.jlu.ge.knightView.KnightNumberPicker 
+	    android:id="@+id/hourNumberPicker"
+	    android:layout_width="0dp"
+	    android:layout_weight="1"
+	    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
+	    android:paddingLeft="20dp"
+	    />
+	<cn.jlu.ge.knightView.KnightNumberPicker 
+	    android:id="@+id/minsNumberPicker"
+	    android:layout_width="0dp"
+	    android:layout_weight="1"
+	    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
+	    android:paddingRight="20dp"
+	    />
+	
+	</LinearLayout>
+	
 	<LinearLayout
 	    android:id="@+id/alarm_setting"
 	    android:layout_width="fill_parent"

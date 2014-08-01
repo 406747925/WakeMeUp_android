@@ -1,6 +1,7 @@
 package cn.jlu.ge.getup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,9 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.jlu.ge.getup.tools.Const;
+import cn.jlu.ge.getup.tools.ForegroundService;
+import cn.jlu.ge.getup.tools.MyGlobal;
 import cn.jlu.ge.getup.tools.UserDataDBAdapter;
 import cn.jlu.ge.getup.tools.WeatherCitiesDBAdapter;
 import cn.jlu.ge.getup.tools.WeatherCitiesExpandListAdapter;
@@ -24,6 +28,9 @@ public class WeatherCitiesSettingActivity extends Activity {
 	private UserDataDBAdapter userDataDb;
 	private String cityName;
 	private ExpandableListView weatherCitiesList;
+	private boolean needToUpdateWeatherInfoOrNot = false;
+	
+	final static String TAG = "WeatherCitiesSettingActivity";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +100,8 @@ public class WeatherCitiesSettingActivity extends Activity {
 							View cityAddedListItem = setCityAddedView(cityName);
 							parent.addHeaderView(cityAddedListItem);
 							
+							needToUpdateWeatherInfoOrNot = true;
+							
 						}
 						
 					}
@@ -115,6 +124,20 @@ public class WeatherCitiesSettingActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 	
+	
+	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "onPause");
+		Log.v(TAG, "Start Service to update weather.");
+		
+        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+        foregroundServiceIntent.putExtra("doSth", Const.UPDATE_WEATHER);
+        startService(foregroundServiceIntent);
+		super.onPause();
+	}
+
 	public void setWeatherCitiesHaveBeenAdded() {
 
 		int citiesCount = weatherCitiesList.getHeaderViewsCount();
@@ -167,6 +190,9 @@ public class WeatherCitiesSettingActivity extends Activity {
 				userDataDb.deleteWeatherCityByName(cityNameTV.getText().toString());
 				userDataDb.close();
 				Log.v("HELLO delete", "delete" + cityNameTV.getText().toString());
+				
+				needToUpdateWeatherInfoOrNot = true;
+				
 				setWeatherCitiesHaveBeenAdded();
 			}
 		});
@@ -177,10 +203,17 @@ public class WeatherCitiesSettingActivity extends Activity {
 			public void onClick(View view) {
 				// TODO Auto-generated method stub
 				TextView cityNameTV = (TextView) view.findViewById(R.id.listText);
+				
 				userDataDb.open();
-				userDataDb.setWeatherCityDefaulted(cityNameTV.getText().toString());
+				String weatherCity = cityNameTV.getText().toString();
+				userDataDb.setWeatherCityDefaulted(weatherCity);
 				userDataDb.close();
+				
 				setWeatherCitiesHaveBeenAdded();
+				
+				needToUpdateWeatherInfoOrNot = true;
+				MyGlobal.defaultWeatherCity = weatherCity;
+				
 			}
 		});
 		

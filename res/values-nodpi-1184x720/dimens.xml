@@ -66,4 +66,13 @@
 	<!-- WebPageActivity -->
 	<dimen name="bottom_bar_height">50dp</dimen>
 	
+	<!-- WakeUpAcitivity -->
+	<dimen name="activity_wakeup_mainblock_height">220dp</dimen>
+	<dimen name="activity_wakeup_signinblock_height">120dp</dimen>
+	<dimen name="activity_wakeup_signin_button_size">85dp</dimen>
+	<dimen name="activity_wakeup_max_text_size">65sp</dimen>
+	<dimen name="activity_wakeup_mid_text_size">18sp</dimen>
+	<dimen name="activity_wakeup_min_text_size">16sp</dimen>
+	<dimen name="activity_wakeup_min_margin">10dp</dimen>
+	<dimen name="activity_wakeup_mid_margin">20dp</dimen>
 </resources>

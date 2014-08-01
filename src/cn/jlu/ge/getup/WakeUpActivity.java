@@ -1,15 +1,20 @@
 package cn.jlu.ge.getup;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
 import cn.jlu.ge.getup.tools.GetUpMediaPlayer;
@@ -25,15 +30,32 @@ public class WakeUpActivity extends Activity {
 	ShakeDetector shakeDetector;
 	GetUpMediaPlayer mediaPlayer;
 	
-	TextView tv;
+	TextView shakeRemained;
 	TextView welcome;
+	
+	String weatherCity;
+	String alarmDiscStr;
+	String alarmTimeStr;
+	String welcomeStr;
+	String weatherUrl;
+	String weatherStr;
+	String dayTempStr;
+	
 	int shakeTimes;
-	public static String mediaNameStr = "the_train_in_the_spring.mp3";;
-	public static String welcomeStr = "愿，叫醒你的是梦想";
+	public static String mediaNameStr = "the_train_in_the_spring.mp3";
 	
 	KeyguardManager mKeyguardManager = null;
 	private PowerManager pm;
 	private PowerManager.WakeLock wakeLock;
+	
+	final String SNOW_AND_RAIN = "雨夹雪";
+	final String SUNNY = "晴";
+	final String CLOUD_LITTLE_RAIN = "多云转小雨";
+	final String RAIN_TO_LIGHTING_RAIN = "小到中雨转雷阵雨";
+	final String SUNNY_CLOUD = "晴转多云";
+	final String CLOUD = "多云";
+	final String RAIN_WITH_THUNDER = "雷阵雨";
+	final String SOMETIME_RAIN = "阵雨";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +70,15 @@ public class WakeUpActivity extends Activity {
         long[] pattern = {1000, 500, 1000, 500};
         int type = 0;
         
-        tv = (TextView)findViewById(R.id.tv);
-        tv.setText("剩余摇停次数：" + shakeTimes);
-        
-//        Bundle bundle = getIntent().getExtras();
-//        welcomeStr = bundle.getString("welcomeStr");
-//        int rowId = bundle.getInt("rowId");
-
-//        Log.v("WakeUpActivity welcomeStr", "" + welcomeStr);
-//        Log.v("WakeUpActivity rowId", "" + rowId);
-
-        welcome = (TextView)findViewById(R.id.welcome);
-        welcome.setText(welcomeStr);
+        viewInit ();
         
         WakeUpActivity.this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         mediaPlayer = new GetUpMediaPlayer(getApplicationContext(), mediaNameStr);
         mediaPlayer.startPlay();
         
         vibrator = new GetUpVibrator(getApplicationContext());
-        
-//		vibrator.playVibrate(pattern, type);
+		vibrator.playVibrate(pattern, type);
+		
 		shakeDetector = new ShakeDetector(getApplicationContext());
 		shakeDetector.start();
         shakeDetector.registerOnShakeListener(new OnShakeListener(){
@@ -77,11 +88,10 @@ public class WakeUpActivity extends Activity {
 				shakeTimes--;
 				if (shakeTimes == 0) {
 					shakeDetector.stop();
-
-//					vibrator.cancelVibrate();
+					vibrator.cancelVibrate();
 					mediaPlayer.stopPlay();
 				}
-				tv.setText("剩余摇停次数：" + shakeTimes);
+				shakeRemained.setText("剩余摇停次数：" + shakeTimes);
 			}
         });
         
@@ -90,6 +100,72 @@ public class WakeUpActivity extends Activity {
         foregroundServiceIntent.putExtra("doSth", Const.SHOW_NEXT_ALARM);
         startService(foregroundServiceIntent);
         
+	}
+	
+	void viewInit () {
+		
+        shakeRemained = (TextView)findViewById(R.id.shakeRemained);
+        shakeRemained.setText("剩余摇停次数：" + shakeTimes);
+		
+		SharedPreferences appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+		weatherCity = appInfo.getString(Const.FIRST_CITY_KEY, Const.FIRST_CITY_DEFAULT);
+		alarmDiscStr = appInfo.getString(Const.NEXT_ALARM_DESC_KEY, Const.NEXT_ALARM_DESC_DEFAULT);
+		alarmTimeStr = appInfo.getString(Const.NEXT_ALARM_TIME_KEY, Const.NEXT_ALARM_TIME_DEFAULT);
+		welcomeStr = appInfo.getString(Const.WELCOME_STR_KEY, Const.WELCOME_STR_DEFAULT);
+		
+		weatherStr = appInfo.getString(Const.FIRST_WEATHER_KEY, "");
+		dayTempStr = appInfo.getString(Const.FIRST_DAY_TEMP_KEY, "");
+		
+		TextView cityName = (TextView) findViewById (R.id.cityName);
+		Toast.makeText(getApplicationContext(), "what:" + welcomeStr, Toast.LENGTH_SHORT).show();
+		cityName.setText(weatherCity);
+		
+		TextView notify = (TextView) findViewById (R.id.notify);
+		notify.setText(welcomeStr);
+		
+		TextView welcome = (TextView) findViewById (R.id.welcome);
+		welcome.setText(welcomeStr);
+		
+		TextView alarmTime = (TextView) findViewById (R.id.alarmTime);
+		alarmTime.setText(alarmTimeStr);
+		
+		TextView dateText = (TextView) findViewById (R.id.dateText);
+		SimpleDateFormat sdf = new SimpleDateFormat("M月 d日 EEEE");
+		String date = sdf.format(new java.util.Date());
+		dateText.setText(" " + date);
+		
+		TextView weatherStrTV = (TextView) findViewById(R.id.weather);
+		weatherStrTV.setText(dayTempStr + "\n" + weatherStr);
+		
+		ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+		
+		if (weatherStr == null) {
+			weatherIcon.setBackgroundResource(R.drawable.error_weather);
+		}
+		else if (weatherStr.equals(SNOW_AND_RAIN)) {
+			weatherIcon.setBackgroundResource(R.drawable.snow_with_rain);
+		}
+		else if (weatherStr.equals(SUNNY)) {
+			weatherIcon.setBackgroundResource(R.drawable.sunny);
+		}
+		else if (weatherStr.equals(CLOUD_LITTLE_RAIN)) {
+			weatherIcon.setBackgroundResource(R.drawable.cloud_little_rain);
+		}
+		else if (weatherStr.equals(SUNNY_CLOUD)) {
+			weatherIcon.setBackgroundResource(R.drawable.sunny_cloud);
+		}
+		else if (weatherStr.equals(CLOUD)) {
+			weatherIcon.setBackgroundResource(R.drawable.cloudy);
+		}
+		else if (weatherStr.equals(RAIN_WITH_THUNDER)) {
+			weatherIcon.setBackgroundResource(R.drawable.rain_with_thunder);
+		}
+		else if (weatherStr.equals(SOMETIME_RAIN)) {
+			weatherIcon.setBackgroundResource(R.drawable.sometime_rain);
+		}
+		else {
+			weatherIcon.setBackgroundResource(R.drawable.error_weather);
+		}
 	}
 	
 	public void setScreenBrightAndShowWindow() {

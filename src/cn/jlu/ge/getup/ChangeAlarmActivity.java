@@ -2,7 +2,6 @@ package cn.jlu.ge.getup;
 
 import java.util.Calendar;
 import java.util.HashMap;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,21 +11,22 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
-import cn.jlu.ge.getup.tools.MyGlobal;
 import cn.jlu.ge.getup.tools.MenuFragment;
-
+import cn.jlu.ge.getup.tools.MyGlobal;
+import cn.jlu.ge.knightView.KnightNumberPicker;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class ChangeAlarmActivity extends BaseActivity {
 
-	private TimePicker timePicker;
+//	private TimePicker timePicker;
+	private KnightNumberPicker hourNumberPicker;
+	private KnightNumberPicker minsNumberPicker;
 	private String alarmTimeStr;
 	private String rowID;
 	private String alarmKindStr;
@@ -84,10 +84,25 @@ public class ChangeAlarmActivity extends BaseActivity {
 	}
 	
 	void setAlarmSettingView () {
-		timePicker = (TimePicker) findViewById(R.id.timePicker);
-        timePicker.setIs24HourView(true);
-        timePicker.setCurrentHour(Integer.parseInt(time[0]));
-        timePicker.setCurrentMinute(Integer.parseInt(time[1]));
+//		timePicker = (TimePicker) findViewById(R.id.timePicker);
+//        timePicker.setIs24HourView(true);
+//        timePicker.setCurrentHour(Integer.parseInt(time[0]));
+//        timePicker.setCurrentMinute(Integer.parseInt(time[1]));
+		
+		int hour = Integer.parseInt(time[0]);
+		int mins = Integer.parseInt(time[1]);
+		
+		hourNumberPicker = (KnightNumberPicker) findViewById (R.id.hourNumberPicker);
+		hourNumberPicker.setNumText(hour - 1, hour, hour + 1);
+		hourNumberPicker.setTextSize(32, 40, 32);
+		hourNumberPicker.setPickerObjectDesc("h", 22);
+		hourNumberPicker.setMinMoveDelta(12);
+		
+		minsNumberPicker = (KnightNumberPicker) findViewById (R.id.minsNumberPicker);
+		minsNumberPicker.setNumText(mins - 1, mins, mins + 1);
+		minsNumberPicker.setTextSize(32, 40, 32);
+		minsNumberPicker.setPickerObjectDesc("m", 22);
+		minsNumberPicker.setMinMoveDelta(12);
         
         editWelcome = (EditText) findViewById(R.id.welcomeTextEdit);
         editWelcome.setText(welcomeStr);
@@ -204,9 +219,9 @@ public class ChangeAlarmActivity extends BaseActivity {
     	db.open();
     	// TODO save the data in db.
     	Log.v("todo", "save the data in db." + alarmKindStr);
-    	alarmTimeStr = timePicker.getCurrentHour() + ":" + timePicker.getCurrentMinute();
+//    	alarmTimeStr = timePicker.getCurrentHour() + ":" + timePicker.getCurrentMinute();
     	welcomeStr = editWelcome.getText().toString();
-    	db.updateRowKind(Long.parseLong(rowID), alarmTimeStr, alarmKindStr, welcomeStr);
+    	db.updateRowKind(Long.parseLong(rowID), hourNumberPicker.getCenterNum(), minsNumberPicker.getCenterNum(), alarmKindStr, welcomeStr);
     	db.close();
 		
     	MyGlobal.ALARM_CHANGE = true;

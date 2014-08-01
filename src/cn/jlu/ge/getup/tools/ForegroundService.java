@@ -2,9 +2,13 @@ package cn.jlu.ge.getup.tools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,7 +25,7 @@ import android.util.Log;
 import android.widget.Toast;
 import cn.jlu.ge.getup.MainActivity;
 import cn.jlu.ge.getup.R;
-import cn.jlu.ge.getup.WakeUpActivity;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -53,15 +57,36 @@ public class ForegroundService extends Service {
     private UserDataDBAdapter userDatadb;
     private Calendar calendar;
 	int weekNum = -1;
-	int alarmTimeColumn;
+	int alarmHourColumn;
+	int alarmMinsColumn;
 	int alarmKindColumn;
 	int activeColumn;
 	int upTimesColumn;
 	int welcomeColumn;
-
+	
+	Date nowDate;
+	String weatherUrl;
+	String dateStr;
+	
 	AlarmManager alarmManager;
 	private AsyncHttpClient client;
 	private SharedPreferences appInfo;
+	
+	int netCondiction;
+	
+	boolean weatherNeedUpdateOrNot = true;
+	
+	String weatherCity;
+	String tempStr;
+	int windInt;
+	int wetInt;
+	String wdInt;
+	int wse;
+	int temp1;
+	int temp2;
+	String weatherStr;
+	String ptimeStr;
+	
 	
     @Override
     public void onCreate() {
@@ -102,7 +127,9 @@ public class ForegroundService extends Service {
     	
         super.onStartCommand(intent, flags, startId);
         Log.d(TAG, "onStartCommand");
+        
         if ( intent == null ) return START_STICKY;
+
         String doWhatStr = intent.getStringExtra("doSth");
         if (doWhatStr == null) {
         	Log.v("None", "NO STATE Wrong Start.");
@@ -111,36 +138,34 @@ public class ForegroundService extends Service {
 
 			Log.v("Create State", "Create State.");
 			
-			if ( MyGlobal.ALARM_CHANGE ) {
-				setNotificationAndAlarm();
-				MyGlobal.ALARM_CHANGE = false;
-			}
+			setNotificationAndAlarm();
+			MyGlobal.ALARM_CHANGE = false;
 			
 			setAppInfoPreference();
         } else if (doWhatStr.equals(Const.NEW_ALRM_STATE)) {
         	
 			Log.v("New State", "A New Alarm Insert.");
-			if ( MyGlobal.ALARM_CHANGE ) {
-				setNotificationAndAlarm();
-				MyGlobal.ALARM_CHANGE = false;
-			}
+			
+			setNotificationAndAlarm();
+			MyGlobal.ALARM_CHANGE = false;
 			
         } else if (doWhatStr.equals(Const.CHANGE_STATE)) {
         	
 			Log.v("Change State", "Having Some Change.");
-			if ( MyGlobal.ALARM_CHANGE ) {
-				setNotificationAndAlarm();
-				MyGlobal.ALARM_CHANGE = false;
-			}
+
+			setNotificationAndAlarm();
+			MyGlobal.ALARM_CHANGE = false;
 			
         } else if (doWhatStr.equals(Const.SHOW_NEXT_ALARM)) {
         	
         	Log.v("None State", "Nothing yet.");
-			if ( MyGlobal.ALARM_CHANGE ) {
-				setNotificationAndAlarm();	
-				MyGlobal.ALARM_CHANGE = false;
-			}
-        	
+
+			setNotificationAndAlarm();	
+			MyGlobal.ALARM_CHANGE = false;
+
+        } else if (doWhatStr.equals(Const.UPDATE_WEATHER)) {
+        	Log.v("Weather Update State", "Need Update Weather Information.");
+        	setWeatherInfoData();
         }
         
         return START_STICKY;
@@ -241,9 +266,9 @@ public class ForegroundService extends Service {
     	
     	userDatadb = new UserDataDBAdapter(getApplicationContext());
 		setWeatherInfoData();
+
 		userDatadb.close();
-		userDatadb = null;
-		
+
     }
     
     void setNotificationAndAlarm() {
@@ -277,8 +302,8 @@ public class ForegroundService extends Service {
         	
         	// 初始化显示天气预报的城市信息
             if ( cursor.getInt( cursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_COUNT ) ) == DEFAULT_WEATHER_CITY_FLAG ) {
-                String weatherCity = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_CONTENT));
-                String weatherUrl = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_UNIT));
+                weatherCity = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_CONTENT));
+                weatherUrl = cursor.getString(cursor.getColumnIndex(UserDataDBAdapter.KEY_DATA_UNIT));
                 
                 appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
                 SharedPreferences.Editor appInfoEditor = appInfo.edit();
@@ -290,8 +315,6 @@ public class ForegroundService extends Service {
                 getWeatherFromNet(weatherUrl);
                 
                 appInfoEditor = null;
-                weatherCity = null;
-                weatherUrl = null;
                 
             }
         }
@@ -305,7 +328,8 @@ public class ForegroundService extends Service {
     void setDBColumn() {
     	db.open();
     	Cursor cursor = db.getAllRows();
-		alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+		alarmHourColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_HOUR);
+		alarmMinsColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_MINS);
 		alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
 		activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
 		upTimesColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_UP_TIMES);
@@ -314,55 +338,46 @@ public class ForegroundService extends Service {
 		db.close();
     }
     
-	void setWeatherView (JSONObject weatherObject) {
+	void setWeatherData (JSONObject weatherObject) {
 
 		try {
-			
 			String temp1Str = weatherObject.getString("temp1");
 			String temp2Str = weatherObject.getString("temp2");
-			String weatherStr = weatherObject.getString("weather");
-			String ptimeStr = weatherObject.getString("ptime");
+			weatherStr = weatherObject.getString("weather");
+			ptimeStr = weatherObject.getString("ptime");
 			
 			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 			SharedPreferences.Editor appInfoEditor = appInfo.edit();
+			appInfoEditor.putString(Const.WEATHER_DATE_KEY, dateStr);
 			appInfoEditor.putString(Const.FIRST_PTIME_KEY, ptimeStr);
 			appInfoEditor.putString(Const.FIRST_WEATHER_KEY, weatherStr);
 			appInfoEditor.putString(Const.FIRST_DAY_TEMP_KEY, temp1Str + "~" + temp2Str);
 			appInfoEditor.commit();
 			
-			temp1Str = null;
-			temp2Str = null;
-			weatherStr = null;
-			ptimeStr = null;
-			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	void setWeatherDetailView (JSONObject weatherDetailObject) {
+	void setWeatherDetailData (JSONObject weatherDetailObject) {
 		
 		try {
-			
-			String tempStr = weatherDetailObject.getString("temp");
-			String windStr = weatherDetailObject.getString("WS");
-			String wetStr = weatherDetailObject.getString("SD");
-			String wdStr = weatherDetailObject.getString("WD");
+			String pattern = "\\D*";
+			tempStr = weatherDetailObject.getString("temp");
+			windInt = Integer.parseInt(weatherDetailObject.getString("WS").replaceAll(pattern, ""));
+			wetInt = Integer.parseInt(weatherDetailObject.getString("SD").replaceAll(pattern, ""));
+			wdInt = weatherDetailObject.getString("WD");
+			wse = weatherDetailObject.getInt("WSE");
 	        
 			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 			SharedPreferences.Editor appInfoEditor = appInfo.edit();
-			appInfoEditor.putString(Const.FIRST_WET_KEY, wetStr);
-			appInfoEditor.putString(Const.FIRST_WD_KEY, wdStr);
-			appInfoEditor.putString(Const.FIRST_WS_KEY, windStr);
+			appInfoEditor.putInt(Const.FIRST_WET_KEY, wetInt);
+			appInfoEditor.putString(Const.FIRST_WD_KEY, wdInt);
+			appInfoEditor.putInt(Const.FIRST_WS_KEY, windInt);
 			appInfoEditor.putString(Const.FIRST_NOW_TEMP_KEY, tempStr);
 			appInfoEditor.commit();
 			
-			tempStr = null;
-			windStr = null;
-			wetStr = null;
-			wdStr = null;
-	        
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -371,7 +386,7 @@ public class ForegroundService extends Service {
 	}
 	
 	
-	void getWeatherFromNet(String weatherUrl) {
+	void getWeatherFromNet(final String weatherUrl) {
 		
 		client = new AsyncHttpClient();
 		
@@ -382,7 +397,8 @@ public class ForegroundService extends Service {
             	try {
             		
 					JSONObject weatherObject = new JSONObject(response).getJSONObject("weatherinfo");
-					setWeatherView(weatherObject);
+					setWeatherData(weatherObject);
+					weatherNeedUpdateOrNot = false;
 					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -395,6 +411,7 @@ public class ForegroundService extends Service {
 				// TODO Auto-generated method stub
 				
 				super.onFailure(throwable, failureStr);
+				weatherNeedUpdateOrNot = true;
 			}
         });
         
@@ -404,6 +421,7 @@ public class ForegroundService extends Service {
 			public void onFailure(Throwable arg0, String arg1) {
 				// TODO Auto-generated method stub
 				super.onFailure(arg0, arg1);
+				weatherNeedUpdateOrNot = true;
 			}
 
 			@Override
@@ -412,8 +430,9 @@ public class ForegroundService extends Service {
 				try {
 					
 					JSONObject weatherDetailObject = new JSONObject(response).getJSONObject("weatherinfo");
-					setWeatherDetailView(weatherDetailObject);
-					
+					setWeatherDetailData(weatherDetailObject);
+					weatherNeedUpdateOrNot = false;
+
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -429,19 +448,26 @@ public class ForegroundService extends Service {
         
 	}
     
-	// 定时更新闹钟
+	// 定时更新闹钟,定时查看是否需要更新天气
 	Handler handler = new Handler();
 	Runnable alarmUpdateThread = new Runnable() {
 		
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			handler.postDelayed(alarmUpdateThread, 9633);
+			handler.postDelayed(alarmUpdateThread, 9639);
 			if ( MyGlobal.ALARM_CHANGE ) {
-				setNotificationAndAlarm();				
+				setNotificationAndAlarm();
 				MyGlobal.ALARM_CHANGE = false;
 			}
-			
+			Date justNowDate = new Date();
+			if ( nowDate != justNowDate ) {
+				nowDate = justNowDate;
+				justNowDate = null;
+				SimpleDateFormat sdf = new SimpleDateFormat("M月 d日 EEEE");
+				dateStr = sdf.format(nowDate);
+				getWeatherFromNet(weatherUrl);
+			}
 			Log.v("ForegroundService", "Update the alarm.");
 			
 		}
@@ -457,7 +483,6 @@ public class ForegroundService extends Service {
 		calendar = Calendar.getInstance();
 		// 
 		if (upTimes == 1) {
-			Toast.makeText(getApplicationContext(), hour + ":" + mins + " uptimes: " + upTimes, Toast.LENGTH_SHORT).show();
 			return false;
 		}
 
@@ -539,12 +564,12 @@ public class ForegroundService extends Service {
 			return returnStr;
 		}
 		
-		alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
-		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
+		int alarmHourColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_HOUR);
+		int alarmMinsColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_MINS);
+//		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
 		int welcomeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_WELCOME);
 		int alarmKindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
 		
-		String alarmTimeStr = "";
 		String welcomeStr = "";
 		String alarmKindStr = "";
 		
@@ -572,21 +597,19 @@ public class ForegroundService extends Service {
 		
 		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
 			
-			alarmTimeStr = cursor.getString(alarmTimeColumn);
 			welcomeStr = cursor.getString(welcomeColumn);
 			alarmKindStr = cursor.getString(alarmKindColumn);
 			
-			String[] time = alarmTimeStr.split(":");
-			comparedHour = Integer.parseInt(time[0]);
-			comparedMins = Integer.parseInt(time[1]);
+			comparedHour = cursor.getInt(alarmHourColumn);
+			comparedMins = cursor.getInt(alarmMinsColumn);
 			
 			if (alarmKindStr.indexOf("" + weekNum) == -1) {
 				
 				todayOrNot = false;
-				Log.v("Recent Alarm", "alarm time : " + alarmTimeStr + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
+				Log.v("Recent Alarm", "alarm time : " + comparedHour + ":" + comparedMins + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
 				
 			} else {
-				Log.v("Recent Alarm", "alarm time : " + alarmTimeStr + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
+				Log.v("Recent Alarm", "alarm time : " + comparedHour + ":" + comparedMins + " ; alarm kind :" + alarmKindStr + " ; today week: " + weekNum);
 				todayOrNot = true;
 			}
 			
@@ -600,7 +623,7 @@ public class ForegroundService extends Service {
 							(((comparedHour - nowHour) * 60 + (comparedMins - nowMins)) > 0) ) {
 						
 						subCompareMins = ((comparedHour - nowHour)*60 + (comparedMins - nowMins));
-						minAlarmTimeStr = alarmTimeStr;
+						minAlarmTimeStr = comparedHour + ":" + comparedMins;
 						minWelcomeStr = welcomeStr;
 						minRowId = cursor.getInt(cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID));
 					}
@@ -608,15 +631,17 @@ public class ForegroundService extends Service {
 			}
 			
 			int compareDay = getAlarmWeekDay(weekNum, alarmKindStr);
+			
 			if ( compareDay != -1 ) {
+				
 				Log.v("Day Alarm", "compare day week num: " + compareDay);
 				nextAlarmWeekDay = getLaterAlarm(weekNum, nextAlarmWeekDay, compareDay);
 				Log.v("Day Alarm", "next day week num: " + nextAlarmWeekDay);
 				if (compareDay == nextAlarmWeekDay) {
 					if ( ((comparedHour) * 60 + comparedMins) < tomorrowAlarmMins ) {
-						Log.v("nextDayAlarm", "next day alarm time: " + alarmTimeStr);
+						Log.v("nextDayAlarm", "next day alarm time: " + comparedHour + ":" + comparedMins);
 						tomorrowAlarmMins = (comparedHour)*60 + comparedMins;
-						nextDayAlarmTimeStr = alarmTimeStr;
+						nextDayAlarmTimeStr = comparedHour + ":" + comparedMins;
 						nextDayWelcomeStr = welcomeStr;
 						nextDayRowId = cursor.getInt(cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID));
 					}
@@ -633,13 +658,13 @@ public class ForegroundService extends Service {
 		db.close();
 
 		if ( subCompareMins != 8400 ) {
+			
 			String time[] = minAlarmTimeStr.split(":");
 			int mins = Integer.parseInt(time[1]);
 			int hour = Integer.parseInt(time[0]);
 			minAlarmTimeStr = setTimeFormat(hour, mins);
 			reSetAlarm(hour, mins, minRowId, welcomeStr, 0);
 			String[] returnStr = {"下个闹钟：" + minAlarmTimeStr, "小闹提醒," + minWelcomeStr};
-			WakeUpActivity.welcomeStr = minWelcomeStr;
 			
 			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 			SharedPreferences.Editor appInfoEditor = appInfo.edit();
@@ -651,7 +676,9 @@ public class ForegroundService extends Service {
 			appInfo = null;
 			appInfoEditor = null;
 			return returnStr;
+			
 		} else if ( tomorrowAlarmMins != 8400 ) {
+			
 			String time[] = nextDayAlarmTimeStr.split(":");
 			int mins = Integer.parseInt(time[1]);
 			int hour = Integer.parseInt(time[0]);
@@ -659,7 +686,6 @@ public class ForegroundService extends Service {
 			String nextAlarmDescStr = NextWeekOrNot(weekNum, nextAlarmWeekDay);
 			reSetAlarm(hour, mins, minRowId, nextDayWelcomeStr, getDayOffset(weekNum, nextAlarmWeekDay) );
 			String[] returnStr = { nextAlarmDescStr + nextDayAlarmTimeStr, "小闹提醒," + nextDayWelcomeStr};
-			WakeUpActivity.welcomeStr = nextDayWelcomeStr;
 			
 			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 			SharedPreferences.Editor appInfoEditor = appInfo.edit();

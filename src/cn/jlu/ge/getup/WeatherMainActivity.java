@@ -10,6 +10,7 @@ import android.widget.TextView;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.MenuFragment;
+import cn.jlu.ge.getup.tools.MyGlobal;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -18,7 +19,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 public class WeatherMainActivity extends BaseActivity {
 
 	public WeatherMainActivity() {
-		super(MainActivity.weatherCity + "天气");
+		super(MyGlobal.defaultWeatherCity + "天气");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -73,14 +74,13 @@ public class WeatherMainActivity extends BaseActivity {
 		
 		appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 		
-		String ptimeStr = appInfo.getString(Const.FIRST_PTIME_KEY, null);
-		String weatherStr = appInfo.getString(Const.FIRST_WEATHER_KEY, null);
-		String nowTempStr = appInfo.getString(Const.FIRST_NOW_TEMP_KEY, null);
+		String ptimeStr = appInfo.getString(Const.FIRST_PTIME_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
+		String weatherStr = appInfo.getString(Const.FIRST_WEATHER_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
+		String nowTempStr = appInfo.getString(Const.FIRST_NOW_TEMP_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
 		
 		setWeatherView(ptimeStr, weatherStr, nowTempStr);
 		
-		TextView dateText;
-		dateText = (TextView) findViewById(R.id.dateText);
+		TextView dateText = (TextView) findViewById(R.id.dateText);
 		SimpleDateFormat sdf = new SimpleDateFormat("M月 d日 EEEE");
 		String date = sdf.format(new java.util.Date());
 		dateText.setText(" " + date);
@@ -132,8 +132,8 @@ public class WeatherMainActivity extends BaseActivity {
 			String nowTempStr) {
 		// TODO Auto-generated method stub
 		
-		TextView updateTimeText = (TextView) findViewById(R.id.updateTimeText);;
-		TextView tempText = (TextView) findViewById(R.id.tempText);;
+		TextView updateTimeText = (TextView) findViewById(R.id.updateTimeText);
+		TextView tempText = (TextView) findViewById(R.id.tempText);
 		TextView weatherLikeText = (TextView) findViewById(R.id.weatherLikeText);
 		
 		updateTimeText.setText(ptimeStr + " 发布");

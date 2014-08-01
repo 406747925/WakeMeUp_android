@@ -10,7 +10,8 @@ import android.util.Log;
 
 public class AlarmDBAdapter {
 	public static final String KEY_ROWID = "_id";
-	public static final String KEY_ALARM_TIME = "time";
+	public static final String KEY_ALARM_HOUR = "hour";
+	public static final String KEY_ALARM_MINS = "mins";
 	public static final String KEY_KIND = "kind";
 	public static final String KEY_UP_TIMES = "up_times";
 	public static final String KEY_ACTIVE = "active";
@@ -22,11 +23,11 @@ public class AlarmDBAdapter {
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_CREATE = 
 			"create table " + DATABASE_TABLE + " (_id integer primary key autoincrement, " 
-			+ "time text not null, kind text not null, num integer not null, " 
+			+ "hour integer not null, mins integer not null, kind text not null, num integer not null, " 
 			+ "up_times integer not null, active integer not null default 'true', welcome text not null);";
 	private final Context context;
 	private DatabaseHelper DBHelper;
-	private SQLiteDatabase db; 
+	private SQLiteDatabase db;
 
 	public AlarmDBAdapter(Context ctx) {
 		this.context = ctx;
@@ -54,14 +55,14 @@ public class AlarmDBAdapter {
 		
 	}
 	
-	//´ò¿ªÊý¾Ý¿â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½
 	
 	public AlarmDBAdapter open() throws SQLException {
 		db = DBHelper.getWritableDatabase();
 		return this;
 	}
 	
-	//¹Ø±ÕÊý¾Ý¿â
+	//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½
 	
 	public void close() {
 		
@@ -69,11 +70,12 @@ public class AlarmDBAdapter {
 		
 	}
 	
-	//²åÈëÒ»¸öÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
-	public long insertRow(String time, String kind, int num, int up_times, Boolean activeBool, String welcome) {
+	public long insertRow(int hour, int mins, String kind, int num, int up_times, Boolean activeBool, String welcome) {
 		ContentValues initialValues = new ContentValues();
-		initialValues.put(KEY_ALARM_TIME, time);
+		initialValues.put(KEY_ALARM_HOUR, hour);
+		initialValues.put(KEY_ALARM_MINS, mins);
 		initialValues.put(KEY_KIND, kind);
 		initialValues.put(KEY_NUM, num);
 		initialValues.put(KEY_UP_TIMES, up_times);
@@ -82,18 +84,19 @@ public class AlarmDBAdapter {
 		return db.insert(DATABASE_TABLE, null, initialValues);
 	}
 	
-	//É¾³ýÒ»¸öÖ¸¶¨Êý¾Ý
+	//É¾ï¿½ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
 	public boolean deleteRow(long rowId) {
 		return db.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
 	}
 	
-	//¼ìË÷ËùÓÐÊý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
 	public Cursor getAllRows() {
 		Cursor mCursor = db.query(DATABASE_TABLE, new String[] {
 		KEY_ROWID,
-		KEY_ALARM_TIME,
+		KEY_ALARM_HOUR,
+		KEY_ALARM_MINS,
 		KEY_KIND,
 		KEY_NUM,
 		KEY_UP_TIMES,
@@ -113,12 +116,13 @@ public class AlarmDBAdapter {
 		return mCursor;
 	}
 
-	// ²éÕÒ¼¤»îµÄÄÖÖÓ
+	// ï¿½ï¿½ï¿½Ò¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	public Cursor getActiveRow() {
 		Cursor mCursor =
 		db.query(true, DATABASE_TABLE, new String[] {
 				KEY_ROWID,
-				KEY_ALARM_TIME,
+				KEY_ALARM_HOUR,
+				KEY_ALARM_MINS,
 				KEY_KIND,
 				KEY_NUM,
 				KEY_UP_TIMES,
@@ -139,13 +143,14 @@ public class AlarmDBAdapter {
 		return mCursor;
 	}
 	
-	//---¼ìË÷Ò»¸öÖ¸¶¨±êÌâ---
+	//---ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½---
 	
 	public Cursor getRow(long rowId) throws SQLException {
 		Cursor mCursor =
 		db.query(true, DATABASE_TABLE, new String[] {
 		KEY_ROWID,
-		KEY_ALARM_TIME,
+		KEY_ALARM_HOUR,
+		KEY_ALARM_MINS,
 		KEY_KIND,
 		KEY_NUM,
 		KEY_UP_TIMES,
@@ -165,11 +170,12 @@ public class AlarmDBAdapter {
 		return mCursor;
 	}
 
-	//---¸üÐÂÒ»¸ö±êÌâ---
+	//---ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½---
 	
-	public boolean updateRow(long rowId, String alarmTime, String alarmKind, int num, int upTimes, Boolean activeBool) {
+	public boolean updateRow(long rowId, int hour, int mins, String alarmKind, int num, int upTimes, Boolean activeBool) {
 		ContentValues args = new ContentValues();
-		args.put(KEY_ALARM_TIME, alarmTime);
+		args.put(KEY_ALARM_HOUR, hour);
+		args.put(KEY_ALARM_MINS, mins);
 		args.put(KEY_KIND, alarmKind);
 		args.put(KEY_NUM, num);
 		args.put(KEY_UP_TIMES, upTimes);
@@ -178,9 +184,10 @@ public class AlarmDBAdapter {
 		KEY_ROWID + "=" + rowId, null) > 0;
 	}
 	
-	public boolean updateRowKind(long rowId, String alarmTime, String alarmKind, String welcome) {
+	public boolean updateRowKind(long rowId, int hour, int mins, String alarmKind, String welcome) {
 		ContentValues args = new ContentValues();
-		args.put(KEY_ALARM_TIME, alarmTime);
+		args.put(KEY_ALARM_HOUR, hour);
+		args.put(KEY_ALARM_MINS, mins);
 		args.put(KEY_KIND, alarmKind);
 		args.put(KEY_UP_TIMES, 0);
 		args.put(KEY_WELCOME, welcome);

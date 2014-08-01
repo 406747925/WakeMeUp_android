@@ -20,6 +20,7 @@ public class Const {
 	public static final String FIRST_WET_KEY = ident("city01SD");
 	public static final String FIRST_WD_KEY = ident("city01WD");
 	public static final String FIRST_WS_KEY = ident("city01WS");
+	public static final String WEATHER_DATE_KEY = ident("weatherDate");
 	
 	// The default value of some KEYs
 	public static final String FIRST_CITY_DEFAULT = ident("长春");
@@ -27,13 +28,14 @@ public class Const {
 	public static final String NEXT_ALARM_DESC_DEFAULT = ident("下个闹钟");
 	public static final String NEXT_ALARM_TIME_DEFAULT = ident("没有了!");
 	public static final String WELCOME_STR_DEFAULT = ident("叫醒你的不是闹钟，而是梦想");
+	public static final String WEATHER_KEY_ERROR_DEFAULT = ident("未更新");
 	
 	// The Start's State of Service
     public static final String CREATE_STATE = ident("Create_MainActivity");
     public static final String NEW_ALRM_STATE = ident("New_Alarm_SetAlarmActivity");
     public static final String CHANGE_STATE = ident("Change_State");
     public static final String SHOW_NEXT_ALARM = ident("Next_Alarm_State");
-	
+    public static final String UPDATE_WEATHER = ident("Update_Weather");
 	
 	private static String ident(String s) {
 		return s;

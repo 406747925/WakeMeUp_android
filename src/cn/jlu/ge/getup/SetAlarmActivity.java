@@ -3,7 +3,6 @@ package cn.jlu.ge.getup;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -28,17 +27,16 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+
 import cn.jlu.ge.getup.tools.AlarmDBAdapter;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.Const;
 import cn.jlu.ge.getup.tools.ForegroundService;
 import cn.jlu.ge.getup.tools.MenuFragment;
 import cn.jlu.ge.getup.tools.MyGlobal;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class SetAlarmActivity extends BaseActivity {
 	
@@ -47,7 +45,8 @@ public class SetAlarmActivity extends BaseActivity {
 		// TODO Auto-generated constructor stub
 	}
 
-	int alarmTimeColumn;
+	int alarmHourColumn;
+	int alarmMinsColumn;
 	int kindColumn;
 	int activeColumn;
 	int welcomeColumn;
@@ -88,7 +87,6 @@ public class SetAlarmActivity extends BaseActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		setAlarmList();
-		Toast.makeText(getApplicationContext(), "SetAlarmActivity onResume()", Toast.LENGTH_SHORT).show();
 		super.onResume();
 	}
 
@@ -141,6 +139,7 @@ public class SetAlarmActivity extends BaseActivity {
 						db.open();
 						db.deleteRow(Long.parseLong(listItem.get(pos).get("rowID").toString()));
 						db.close();
+						
 						// 重新排列闹钟列表
 						setAlarmList();
 						
@@ -191,25 +190,26 @@ public class SetAlarmActivity extends BaseActivity {
 				return false;
 			}
 			
-			alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+			alarmHourColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_HOUR);
+			alarmMinsColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_MINS);
 			kindColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_KIND);
 			activeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ACTIVE);
 			welcomeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_WELCOME);
 			
 			for (cursor.moveToFirst();!cursor.isLast(); cursor.moveToNext()) {
-				addHashMap(alarmTimeColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
+				addHashMap(alarmHourColumn, alarmMinsColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
 			}
 			
-			addHashMap(alarmTimeColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
+			addHashMap(alarmHourColumn, alarmMinsColumn, kindColumn, activeColumn, welcomeColumn, activeBool, alarmTimeStr, kindStr, map);
 			db.close();
 			
 			return true;
 		}
 		
-		void addHashMap(int alarmTimeColumn, int kindColumn, int activeColumn, int welcomeColumn, int activeBool, String alarmTimeStr, String kindStr, HashMap<String, Object> map) {
+		void addHashMap(int alarmHourColumn, int alarmMinsColumn, int kindColumn, int activeColumn, int welcomeColumn, int activeBool, String alarmTimeStr, String kindStr, HashMap<String, Object> map) {
 			int rowID = 0;
 			map = new HashMap<String, Object>();
-			alarmTimeStr = cursor.getString(alarmTimeColumn);
+			alarmTimeStr = cursor.getInt(alarmHourColumn) + ":" + cursor.getInt(alarmMinsColumn);
 			rowID = cursor.getShort(cursor.getColumnIndex("_id"));
 			Log.v("AlarmTime:", alarmTimeStr);
 			kindStr = cursor.getString(kindColumn);
@@ -226,6 +226,12 @@ public class SetAlarmActivity extends BaseActivity {
 			listItem.add(map);
 		}
 
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
 	}
 	
 	@Override
@@ -293,9 +299,6 @@ public class SetAlarmActivity extends BaseActivity {
 						
 					}
 				});
-			else 
-				Toast.makeText(this, "hehe", Toast.LENGTH_SHORT).show();
-			
             break;
             
         }
@@ -306,7 +309,7 @@ public class SetAlarmActivity extends BaseActivity {
 		
 		int num = alarmSort(hour, mins);
 		db.open();
-		db.insertRow(hour + ":" + mins, "1 2 3 4 5 0 0", num , 0, true, "叫醒你起床的不是闹钟，而是梦想");
+		db.insertRow(hour, mins, "1 2 3 4 5 0 0", num , 0, true, "叫醒你起床的不是闹钟，而是梦想");
 		db.close();
 		
 		return 0;
@@ -322,11 +325,10 @@ public class SetAlarmActivity extends BaseActivity {
 			return 0;
 		}
 		
-		int alarmTimeColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_TIME);
+		int alarmHourColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_HOUR);
+		int alarmMinsColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ALARM_MINS);
 		int keyRowIdColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_ROWID);
 		int numColumn = cursor.getColumnIndex(AlarmDBAdapter.KEY_NUM);
-		
-		String alarmTimeStr = "";
 		
 		int num_id = 0;
 		
@@ -334,11 +336,9 @@ public class SetAlarmActivity extends BaseActivity {
 		int mins_compared = 0;
 		
 		for (cursor.moveToFirst(); ; cursor.moveToNext()) {
-			alarmTimeStr = cursor.getString(alarmTimeColumn);
-			String[] time = alarmTimeStr.split(":");
 			int numInDb = cursor.getInt(numColumn);
-			hour_compared = Integer.parseInt(time[0]);
-			mins_compared = Integer.parseInt(time[1]);
+			hour_compared = cursor.getInt(alarmHourColumn);
+			mins_compared = cursor.getInt(alarmMinsColumn);
 			if (hour_compared > hour) {
 				Log.v("sort_num and num: ", numInDb+1 + "," + num_id);
 				db.updateNum(cursor.getInt(keyRowIdColumn), numInDb+1);
@@ -446,7 +446,7 @@ public class SetAlarmActivity extends BaseActivity {
 				if (listItem.get(position).get("activeBool").toString().equals("1")) {
 					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_on);
 				} else {
-					convertView.setBackgroundColor(Color.parseColor("#E5E5E5"));
+					convertView.setBackgroundColor(Color.parseColor("#EEEEEE"));
 					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_off);
 				}
 				
@@ -465,15 +465,13 @@ public class SetAlarmActivity extends BaseActivity {
 							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
 							db.enableRow(Integer.parseInt(listItem.get(listPos).get("rowID").toString()));
 							listItem.get(listPos).put("activeBool", 1);
-							v.setBackgroundResource(R.drawable.alarm_on);
-							
+							setAlarmList();
 						} else {
 						
 							Log.v("FUCK STR!", listItem.get(listPos).get("activeBool").toString());
 							db.disableRow(Integer.parseInt(listItem.get(listPos).get("rowID").toString()));
 							listItem.get(listPos).put("activeBool", 0);
-							v.setBackgroundResource(R.drawable.alarm_off);
-
+							setAlarmList();
 						}
 
 						db.close();
