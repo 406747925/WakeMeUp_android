@@ -45,7 +45,7 @@ public class WeatherCitiesSettingActivity extends Activity {
 		
 		weatherCitiesList = (ExpandableListView) findViewById(R.id.cities_list);
 		WeatherCitiesExpandListAdapter adapter = new WeatherCitiesExpandListAdapter(this);
-		weatherCitiesList.setAdapter(adapter);
+		
 		weatherCitiesList.setOnGroupClickListener(new OnGroupClickListener() {
 			
 			@Override
@@ -115,7 +115,7 @@ public class WeatherCitiesSettingActivity extends Activity {
 		});
 		
 		setWeatherCitiesHaveBeenAdded();
-		
+		weatherCitiesList.setAdapter(adapter);
 	}
 
 	@Override

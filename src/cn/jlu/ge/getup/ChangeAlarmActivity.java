@@ -93,12 +93,14 @@ public class ChangeAlarmActivity extends BaseActivity {
 		int mins = Integer.parseInt(time[1]);
 		
 		hourNumberPicker = (KnightNumberPicker) findViewById (R.id.hourNumberPicker);
+		hourNumberPicker.setMaxAndMinValue(24, 0);
 		hourNumberPicker.setNumText(hour - 1, hour, hour + 1);
 		hourNumberPicker.setTextSize(32, 40, 32);
 		hourNumberPicker.setPickerObjectDesc("h", 22);
 		hourNumberPicker.setMinMoveDelta(12);
 		
 		minsNumberPicker = (KnightNumberPicker) findViewById (R.id.minsNumberPicker);
+		minsNumberPicker.setMaxAndMinValue(60, 0);
 		minsNumberPicker.setNumText(mins - 1, mins, mins + 1);
 		minsNumberPicker.setTextSize(32, 40, 32);
 		minsNumberPicker.setPickerObjectDesc("m", 22);

@@ -53,6 +53,7 @@ public class KnightNumberPicker extends LinearLayout {
 	public KnightNumberPicker(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public KnightNumberPicker(Context context, AttributeSet attrs) {
@@ -156,24 +157,24 @@ public class KnightNumberPicker extends LinearLayout {
 	
 	private void makeNumPositive () {
 		if ( ( headNum == -1 ) ) {
-			headNum = 59;
+			headNum = maxValue - 1;
 		} else if ( centerNum == -1 ) {
-			centerNum = 59;
+			centerNum = maxValue - 1;
 		} else if ( tailNum == -1 ) {
-			tailNum = 59;
+			tailNum = maxValue - 1;
 		}
-		if ( headNum == 60 ) {
+		if ( headNum == maxValue ) {
 			headNum = 0;
-		} else if ( centerNum == 60 ) {
+		} else if ( centerNum == maxValue ) {
 			centerNum = 0;
-		} else if ( tailNum == 60 ) {
+		} else if ( tailNum == maxValue ) {
 			tailNum = 0;
 		}
-		if ( headNum == 61 ) {
+		if ( headNum == maxValue + 1 ) {
 			headNum = 1;
-		} else if ( centerNum == 61 ) {
+		} else if ( centerNum == maxValue + 1 ) {
 			centerNum = 1;
-		} else if ( tailNum == 61 ) {
+		} else if ( tailNum == maxValue + 1 ) {
 			tailNum = 1;
 		}
 	}
