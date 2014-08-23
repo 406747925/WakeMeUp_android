@@ -1,19 +1,20 @@
 package cn.jlu.ge.getup.tools;
 
+import cn.jlu.ge.getup.service.ForegroundService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 public class BootBroadcastReceiver extends BroadcastReceiver {
-	//ÖØÐ´onReceive·½·¨
+	//ï¿½ï¿½Ð´onReceiveï¿½ï¿½ï¿½ï¿½
 	@Override
 	public void onReceive(Context context, Intent intent) {
-	//ºó±ßµÄXXX.class¾ÍÊÇÒªÆô¶¯µÄ·þÎñ
+	//ï¿½ï¿½ßµï¿½XXX.classï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
 	Intent service = new Intent(context, ForegroundService.class);
 	context.startService(service);
-	Log.v("TAG", "¿ª»ú×Ô¶¯·þÎñ×Ô¶¯Æô¶¯.....");
-	//Æô¶¯Ó¦ÓÃ£¬²ÎÊýÎªÐèÒª×Ô¶¯Æô¶¯µÄÓ¦ÓÃµÄ°üÃû
+	Log.v("TAG", "ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½.....");
+	//ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Òªï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ÃµÄ°ï¿½ï¿½ï¿½
 //	Intent newIntent = getPackageManager().getLaunchIntentForPackage("cn.jlu.ge.getup");
 //	context.startActivity(newIntent );
 	}

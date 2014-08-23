@@ -19,6 +19,7 @@
 	<string name="saturday">六</string>
 	<string name="sunday">日</string>
 	
+	<string name="PM2_5">PM\n2.5</string>
 	
 	<string name="weather_main">天气详情</string>
 	<string name="weather_setting">城市设置</string>
@@ -32,8 +33,13 @@
     <string name="sliding_menu_alarm_setting">闹钟设置</string>
     <string name="sliding_menu_weather_setting">天气设置</string>
     <string name="sliding_menu_model_setting">模块设置</string>
-	<string name="sliding_menu_share">我要分享</string>
-	<string name="sliding_menu_communicate">提出反馈</string>
+	<string name="sliding_menu_share">好友设置</string>
+	<string name="sliding_menu_communicate">联系我们</string>
 	
+	<string name="scores_and_ranking">积分排行</string>
+	<string name="sign_in_informations">收到嘲笑</string>
+	<string name="about_sign_in">签到规则</string>
+	
+	<string name="weather_icon">天气图标</string>
 	<string name="bottom_bar_first">First</string>
 </resources>

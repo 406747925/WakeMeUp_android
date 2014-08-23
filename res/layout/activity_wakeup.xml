@@ -124,13 +124,13 @@
 	    android:layout_marginTop="@dimen/activity_wakeup_min_margin"
 	    >
 	    <Button 
-	    android:id="@+id/signInText"
-	    android:layout_width="@dimen/activity_wakeup_signin_button_size"
-	    android:layout_height="@dimen/activity_wakeup_signin_button_size"
-	    android:textSize="@dimen/activity_wakeup_mid_text_size"
-	    android:textColor="#2087FC"
-	    android:background="@drawable/disable_button_shape_circle"
-	    android:text="点击\n签到"
+		    android:id="@+id/signInText"
+		    android:layout_width="@dimen/activity_wakeup_signin_button_size"
+		    android:layout_height="@dimen/activity_wakeup_signin_button_size"
+		    android:textSize="@dimen/activity_wakeup_mid_text_size"
+		    android:textColor="#2087FC"
+		    android:background="@drawable/disable_button_shape_circle"
+		    android:text="点击\n签到"
 		/>
 	</LinearLayout>
 

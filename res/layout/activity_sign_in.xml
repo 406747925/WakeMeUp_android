@@ -6,43 +6,70 @@
     android:background="#E8E8E8"
     tools:context=".MainActivity" >
     
-	<RelativeLayout 
-	    android:id="@+id/signIn"
+	<LinearLayout
 	    android:layout_width="fill_parent"
-	    android:layout_height="150dp"
-	    android:background="#e3262e"
+	    android:layout_height="@dimen/activity_main_mid_title"
+	    android:background="#2087FC"
+	    android:gravity="center"
 	    >
-	    <TextView 
-	        android:layout_alignParentTop="true"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:id="@+id/rowOne"
-	        android:clickable="false"
+	    <Button
+	        android:layout_width="@dimen/activity_wakeup_signin_button_size"
+	        android:layout_height="@dimen/activity_wakeup_signin_button_size"
+	        android:id="@+id/signInBtn"
+		    android:textSize="@dimen/activity_wakeup_mid_text_size"
+		    android:textColor="#2087FC"
+		    android:background="@drawable/disable_button_shape_circle"
+		    android:text="点击\n签到"
 	        />
-	    <TextView 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/rowOne"
-	        android:id="@+id/rowTwo"
-	        android:clickable="false"
-	        />
-	    <TextView 
-	        android:layout_below="@id/rowTwo"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:id="@+id/rowThree"
-	        android:clickable="false"
-	        />
-	    <ImageView 
-	        android:id="@+id/signInIcon"
-	        android:layout_alignParentRight="true"
-	        android:layout_width="40dp"
-	        android:layout_height="40dp"
-	        android:padding="8dp"
-	        android:contentDescription="@string/signin_desc"
-	        android:src="@drawable/clock"
-	        android:clickable="false"
-	        />
-	</RelativeLayout>
+	</LinearLayout>
     
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:gravity="center"
+	    android:orientation="vertical"
+	    >
+	    <TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/scores_and_ranking"
+			android:textSize="20sp"
+			android:padding="20dp"
+	        >
+	    </TextView>
+	</LinearLayout>
+
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:gravity="center"
+	    >
+	    <TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/sign_in_informations"
+			android:textSize="20sp"
+			android:padding="20dp"
+	        >
+	    </TextView>
+	</LinearLayout>
+
+	<LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="#FFFFFF"
+	    android:gravity="center"
+	    >
+	    <TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/about_sign_in"
+			android:textSize="20sp"
+			android:padding="20dp"
+	        >
+	    </TextView>
+	</LinearLayout>
+		
 </LinearLayout>

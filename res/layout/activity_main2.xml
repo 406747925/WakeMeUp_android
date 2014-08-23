@@ -225,11 +225,13 @@
 		            android:orientation="vertical"
 		            android:gravity="center"
 				    >
-				    <ImageButton 
+				    <Button
 				        android:id="@+id/uvValue"
 				        android:scaleType="centerCrop"
-				        android:src="@drawable/wind_direction"
-				        android:background="#E3E3E3"
+				        android:background="#000000"
+				        android:text="@string/PM2_5"
+				        android:textSize="12sp"
+				        android:textColor="#FFFFFF"
 				        android:layout_width="@dimen/activity_main_weather_image_size"
 				        android:layout_height="@dimen/activity_main_weather_image_size"
 				        />

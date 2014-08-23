@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
-import cn.jlu.ge.getup.WakeUpActivity;
+import cn.jlu.ge.getup.activity.WakeUpActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	public void onReceive(Context context, Intent intent) {
 
-		Toast.makeText(context , "Ð¡ÄÖÌáÐÑ£¡ÄÖÖÓÊ±¼äµ½ÁË£¡", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context , "Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½äµ½ï¿½Ë£ï¿½", Toast.LENGTH_SHORT).show();
     	Intent newIntent = new Intent(context, WakeUpActivity.class);
     	newIntent.putExtra("rowId", rowId);
     	newIntent.putExtra("welcomeStr", welcomeStr);
