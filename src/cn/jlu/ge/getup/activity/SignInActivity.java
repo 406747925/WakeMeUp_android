@@ -1,12 +1,17 @@
 package cn.jlu.ge.getup.activity;
 
 import java.util.Calendar;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import cn.jlu.ge.getup.R;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.MenuFragment;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -50,7 +55,40 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	public void viewInit () {
+		layoutInit();
+	}
+	
+	public void layoutInit() {
+		LinearLayout scoresAndRankLayout = (LinearLayout) findViewById (R.id.scoresAndRankLayout);
+		LinearLayout signInInfoLayout = (LinearLayout) findViewById (R.id.signInInfoLayout);
+		LinearLayout aboutSignInLayout = (LinearLayout) findViewById (R.id.aboutSignInLayout);
 		
+		scoresAndRankLayout.setOnClickListener(new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(SignInActivity.this, SignInUsersActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+		signInInfoLayout.setOnClickListener(new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(SignInActivity.this, SignInUsersActivity.class);
+				startActivity(intent);				
+			}
+		});
+		
+		aboutSignInLayout.setOnClickListener(new OnClickListener () {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(SignInActivity.this, SignInUsersActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override
@@ -60,7 +98,7 @@ public class SignInActivity extends BaseActivity {
 		switch(item.getItemId()) {
         
         case R.id.alarm_list:
-        	Intent newIntent = new Intent(getApplicationContext(), SetAlarmActivity.class);
+        	Intent newIntent = new Intent(getApplicationContext(), AlarmListActivity.class);
         	startActivity(newIntent);
 			
             break;

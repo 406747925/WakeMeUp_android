@@ -41,7 +41,7 @@
             android:process="gestudio.wakeup.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.SetAlarmActivity"
+            android:name="cn.jlu.ge.getup.activity.AlarmListActivity"
             android:launchMode="singleTask"
             android:process="gestudio.wakeup.main">
         </activity>
@@ -57,6 +57,11 @@
         </activity>
         <activity 
             android:name="cn.jlu.ge.getup.activity.WeatherMainActivity"
+            android:launchMode="singleInstance"
+            android:process="gestudio.wakeup.main">
+        </activity>
+        <activity 
+            android:name="cn.jlu.ge.getup.activity.SignInUsersActivity"
             android:launchMode="singleInstance"
             android:process="gestudio.wakeup.main">
         </activity>

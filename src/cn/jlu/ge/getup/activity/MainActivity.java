@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		switch(item.getItemId()){ 
         case R.id.alarm_setting:
-        	Intent intent = new Intent(MainActivity.this, SetAlarmActivity.class);
+        	Intent intent = new Intent(MainActivity.this, AlarmListActivity.class);
         	startActivity(intent);
             break;
             
@@ -309,6 +309,10 @@ public class MainActivity extends BaseActivity {
         discAlarmTime.setText(nextAlarmDiscStr);
         
         signInLayout = (RelativeLayout) findViewById(R.id.signInLayout);
+        signInText = (TextView) findViewById(R.id.signInText);
+        positiveText = (TextView) findViewById(R.id.positiveText);
+        signInText.setText("早起签到");
+        
         signInLayout.setOnClickListener(new OnClickListener () {
 
 			@Override
@@ -319,18 +323,17 @@ public class MainActivity extends BaseActivity {
 			}
         	
         });
-        
-        signInText = (TextView) findViewById(R.id.signInText);
-        signInText.setText("早起签到");
-        
-        positiveText = (TextView) findViewById(R.id.positiveText);
 
+        
         weatherLayout.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View view) {
 				// TODO Auto-generated method stub
 				Intent newIntent = new Intent(MainActivity.this, WeatherMainActivity.class);
+				
+				newIntent.putExtra("weatherCity", 0);
+				
 				startActivity(newIntent);
 			}
 			

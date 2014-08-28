@@ -85,7 +85,4 @@ public class Const {
 		return i;
 	}
 	
-	private static boolean ident(boolean b) {
-		return b;
-	}
 }

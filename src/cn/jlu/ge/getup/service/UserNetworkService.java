@@ -5,10 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
@@ -16,9 +14,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.util.Xml;
-import cn.jlu.ge.getup.network.NetworkTask;
+import cn.jlu.ge.getup.network.NetworkTaskThread;
 import cn.jlu.ge.getup.tools.Const;
-
 import com.loopj.android.http.AsyncHttpClient;
 
 public class UserNetworkService extends Service {
@@ -29,7 +26,7 @@ public class UserNetworkService extends Service {
 	String[] weatherList;
 	String returnResponse;
 	
-	NetworkTask<String[]> networkTask;
+	NetworkTaskThread<String[]> networkTask;
 	
 	@Override
 	public void onCreate() {
@@ -37,14 +34,14 @@ public class UserNetworkService extends Service {
 		super.onCreate();
 		
 		networkTaskBinder = new NetworkTaskBinder();
-		networkTask = new NetworkTask<String[]>( new Handler() );
-		networkTask.setListener(new NetworkTask.Listener<String[]>() {
+		networkTask = new NetworkTaskThread<String[]>( new Handler() );
+		networkTask.setListener(new NetworkTaskThread.Listener<String[]>() {
 
 			@Override
 			public void onFiveDaysWeatherGot(String[] token, String response) {
 				
 				// TODO Auto-generated method stub
-				Log.v(TAG, response);
+				Log.v(TAG, ">>>>got it: " + response);
 			}
 			
 		});
@@ -111,30 +108,10 @@ public class UserNetworkService extends Service {
 				throws RemoteException {
 			// TODO Auto-generated method stub
 			
-			Log.v(TAG, "Network start.");
-			networkTask.queueTask(weatherList, weatherCity);
-			
-//			client = new AsyncHttpClient();
-//			// "http://www.webxml.com.cn/WebServices/WeatherWS.asmx/getWeather?theCityCode=" + weatherCity + "&theUserId="
-//			client.get("http://www.webxml.com.cn/WebServices/getWeather?theCityCode=" + weatherCity + "&theUserId=", new AsyncHttpResponseHandler () {
-//				
-//				@Override
-//				public void onFailure(Throwable arg0, String arg1) {
-//					// TODO Auto-generated method stub
-//					Toast.makeText(getApplicationContext(), weatherCity + "的五日天气更新失败", Toast.LENGTH_SHORT).show();
-//					super.onFailure(arg0, arg1);
-//				}
-//			
-//				@Override
-//				public void onSuccess(int code, String response) {
-//					// TODO Auto-generated method stub
-//						Log.v(TAG, response);
-////						weatherList = getFiveDaysWeatherAndSuggestion(response);
-//						returnResponse = response;
-//						super.onSuccess(code, response);
-//						getApplicationContext().notifyAll();
-//				}
-//			});
+			Log.v( TAG, "Network start." );
+			networkTask.queueTask( weatherList, weatherCity );
+			Log.v( TAG, ">>> 2 : " + System.currentTimeMillis() );
+
 			
 		}
 		

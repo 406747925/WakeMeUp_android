@@ -9,56 +9,56 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
->
-      
+	>
+
 	<LinearLayout
 	    android:layout_width="match_parent"
 	    android:layout_height="160dp"
 	    android:id="@+id/mainWeatherCity"
-	    android:background="#5FD9CD"
+	    android:background="#000000"
 	    android:baselineAligned="false"
 	    android:orientation="horizontal"
 	    >
-	    
+
 	    <LinearLayout 
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="5"
 		    android:orientation="vertical"
 	        >
+	        
 		    <TextView 
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:id="@+id/dateText"
 		        android:layout_marginTop="@dimen/activity_main_margin_top_mid"
 		        android:layout_marginLeft="@dimen/activity_weather_main_margin_max"
-		        android:textColor="#000000"
+		        android:textColor="#FFFFFF"
 		        android:textSize="@dimen/activity_weather_main_mid_font_size"
 		        android:textStyle="normal"
 		        android:clickable="false"
 		        />
-		    
-		    <TextView 
-				android:id="@+id/weatherLikeText"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="@dimen/activity_weather_main_margin_min"
-		        android:layout_marginLeft="@dimen/activity_weather_main_margin_max"
-		  	    android:textColor="#000000"
-		        android:textSize="@dimen/activity_weather_main_max_font_size"
-		        android:clickable="false"
-		        />
-		    
 		    <TextView 
 		        android:id="@+id/tempText"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		  	    android:textColor="#000000"
+		  	    android:textColor="#FFFFFF"
 		        android:textSize="@dimen/activity_weather_main_max_font_size"
+				android:layout_marginTop="@dimen/activity_weather_main_margin_min"
 		        android:layout_marginLeft="@dimen/activity_weather_main_margin_max"
-				android:layout_marginBottom="@dimen/activity_weather_main_margin_mid"	        
 		        android:clickable="false"
 		        />
+		    <TextView 
+				android:id="@+id/weatherLikeText"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="@dimen/activity_weather_main_margin_max"
+   				android:layout_marginBottom="@dimen/activity_weather_main_margin_mid"	 
+		  	    android:textColor="#FFFFFF"
+		        android:textSize="@dimen/activity_weather_main_max_font_size"
+		        android:clickable="false"
+		        />
+
 	    </LinearLayout>
 	
 		<LinearLayout
@@ -82,21 +82,21 @@
 		        android:layout_height="wrap_content"
 		        android:id="@+id/updateTimeText"
 		        android:layout_marginTop="@dimen/activity_weather_main_margin_min"
-		  	    android:textColor="#000000"
+		  	    android:textColor="#FFFFFF"
 		        android:textSize="@dimen/activity_weather_main_mid_font_size"
 		        android:clickable="false"
-		        />		    
+		        />
 		</LinearLayout>
 	
 	
 	</LinearLayout>
 
-   <GridView  
+   <GridView
 		android:id="@+id/fiveDaysWeather"  
 		android:layout_width="match_parent"  
 		android:layout_height="wrap_content"
 		android:columnWidth="50dp"
-		android:numColumns="5"
+		android:numColumns="4"
 		android:verticalSpacing="10dp"
 		android:horizontalSpacing="10dp"
 		android:stretchMode="columnWidth"
@@ -106,18 +106,17 @@
 		android:paddingLeft="15dp"
 		android:paddingRight="15dp"
 		android:paddingBottom="10dp"
-		android:background="#EAF786"
+		android:background="#2A2A2A"
        />
-   
+
  	<LinearLayout
 	    android:id="@+id/weatherSuggestion01"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:background="#B8F4FF"
+	    android:background="#4A4A4A"
 	    android:orientation="horizontal"
 		android:gravity="center_horizontal"
 		android:paddingTop="15dp"
-		android:paddingLeft="15dp"
 		android:paddingBottom="5dp"
     	>
 		<TextView
@@ -125,12 +124,16 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:id="@+id/suggestionTV01"
+		    android:textColor="#FFFFFF"
+		    android:gravity="center"
 		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
 		    />
 		<TextView
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
+		    android:gravity="center"
+		    android:textColor="#FFFFFF"
 		    android:id="@+id/suggestionTV02"
 		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
 		    />
@@ -140,11 +143,10 @@
 	    android:id="@+id/weatherSuggestion02"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:background="#B8F4FF"
+	    android:background="#4A4A4A"
 	    android:orientation="horizontal"
 		android:gravity="center_horizontal"
 		android:paddingTop="10dp"
-		android:paddingLeft="15dp"
 		android:paddingBottom="15dp"
     	>
 		<TextView
@@ -152,13 +154,17 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		    android:id="@+id/suggestionTV03"
+		    android:gravity="center"
+		    android:textColor="#FFFFFF"
 		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
 		    />
 		<TextView
 		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
+		    android:gravity="center"
 		    android:id="@+id/suggestionTV04"
+		    android:textColor="#FFFFFF"
 		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
 		    />
 	</LinearLayout>
@@ -167,15 +173,33 @@
 	    android:id="@+id/secWeatherCity"
 	    android:layout_width="match_parent"
 	    android:layout_height="80dp"
-	    android:background="#FFB5A1"
+	    android:background="#6A6A6A"
 	    android:orientation="horizontal"
 		android:gravity="center_vertical"
 		android:paddingLeft="20dp"
 	    >
 		<TextView
-		    android:layout_width="wrap_content"
+		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
 		    android:id="@+id/secWeatherCityTV"
+		    android:textColor="#FFFFFF"
+		    android:textSize="@dimen/activity_weather_main_other_city_text_size"
+		    />
+		<TextView 
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="2"
+   		    android:id="@+id/secWeather"
+		    android:textColor="#FFFFFF"
+		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
+		    />
+		<ImageView
+		    android:layout_marginRight="@dimen/activity_weather_main_margin_mid"
+		    android:layout_width="@dimen/activity_weather_main_other_city_image_size"
+		    android:layout_height="@dimen/activity_weather_main_other_city_image_size"
+   		    android:id="@+id/secWeatherImage"
+		    android:textColor="#FFFFFF"
 		    android:textSize="@dimen/activity_weather_main_other_city_text_size"
 		    />
 	</LinearLayout>
@@ -184,16 +208,33 @@
 	    android:id="@+id/thirdWeatherCity"
 	    android:layout_width="match_parent"
 	    android:layout_height="80dp"
-	    android:background="#B8FFB8"
-	    android:orientation="vertical"
+	    android:background="#8A8A8A"
+	    android:orientation="horizontal"
 		android:gravity="center_vertical"
 		android:paddingLeft="20dp"
 	    >
 		<TextView
-		    android:layout_width="wrap_content"
+		    android:layout_width="0dp"
 		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
 		    android:id="@+id/thirdWeatherCityTV"
+		    android:textColor="#FFFFFF"
 		    android:textSize="@dimen/activity_weather_main_other_city_text_size"
+		    />
+		<TextView 
+		    android:layout_width="0dp"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="2"
+   		    android:id="@+id/thirdWeather"
+		    android:textColor="#FFFFFF"
+		    android:textSize="@dimen/activity_weather_main_suggestion_text_size"
+		    />
+		<ImageView
+		    android:layout_marginRight="@dimen/activity_weather_main_margin_mid"
+		    android:layout_width="@dimen/activity_weather_main_other_city_image_size"
+		    android:layout_height="@dimen/activity_weather_main_other_city_image_size"
+   		    android:id="@+id/thirdWeatherImage"
+		    android:textColor="#FFFFFF"
 		    />
 	</LinearLayout>
 

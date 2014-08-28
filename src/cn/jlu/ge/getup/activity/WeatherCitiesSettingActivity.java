@@ -96,6 +96,7 @@ public class WeatherCitiesSettingActivity extends Activity {
 							userDataDb.close();
 							
 							View cityAddedListItem = setCityAddedView(cityName);
+							// TODO Android 4.1 三星无法 addHeaderView
 							parent.addHeaderView(cityAddedListItem);
 							
 						}

@@ -1,37 +1,31 @@
 package cn.jlu.ge.getup.activity;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
-import android.util.Xml;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.jlu.ge.getup.R;
-import cn.jlu.ge.getup.service.INetworkTask;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.BindDataAndResource;
 import cn.jlu.ge.getup.tools.Const;
@@ -41,6 +35,8 @@ import cn.jlu.ge.getup.tools.UserDataDBAdapter;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class WeatherMainActivity extends BaseActivity {
 
@@ -49,44 +45,41 @@ public class WeatherMainActivity extends BaseActivity {
 		// TODO Auto-generated constructor stub
 	}
 
-//	private String weatherUrl;
 	private SharedPreferences appInfo;
 	public String weatherCity;
-//	private AsyncHttpClient client;
+	private AsyncHttpClient client;
 	private UserDataDBAdapter userDataDb;
-	private INetworkTask networkTaskService;
+	ArrayList<String> weatherCities;
+	private JSONArray weatherArray;
+	private int weatherCityNum;
 	
 	final String TAG = "WeatherMainActivity";
-	
-	private ServiceConnection conn = new ServiceConnection () {
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			// TODO Auto-generated method stub
-			networkTaskService = INetworkTask.Stub.asInterface(service);
-			Log.v(TAG, "networkTaskService: " + networkTaskService.toString());
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			// TODO Auto-generated method stub
-			Log.v(TAG, "networkTaskService has been disconnected.");
-			networkTaskService = null;
-		}
-		
-	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		Intent intent = this.getIntent();
+		weatherCityNum = intent.getExtras().getInt("weatherCity");
+		
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
-		init();
 		
 	}
 	
 	
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Toast.makeText(getApplicationContext(), "onResume() >>> " + weatherCityNum, Toast.LENGTH_SHORT).show();
+		init();
+		
+	}
+
+
+
 	public void init() {
         
 		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
@@ -106,31 +99,57 @@ public class WeatherMainActivity extends BaseActivity {
 	
 	void viewInit () {
 		
-		
 		viewDataInit();
-		
 		
 	}
 	
 	void viewDataInit () {
 		
-		appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
-		weatherCity = appInfo.getString(Const.FIRST_CITY_KEY, Const.FIRST_CITY_DEFAULT);
-		String ptimeStr = appInfo.getString(Const.FIRST_PTIME_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
-		String weatherStr = appInfo.getString(Const.FIRST_WEATHER_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
-		String nowTempStr = appInfo.getString(Const.FIRST_NOW_TEMP_KEY, Const.WEATHER_KEY_ERROR_DEFAULT) + "℃";
-		
-		setWeatherView(ptimeStr, weatherStr, nowTempStr);
+		if ( weatherCityNum == 0 ) {
+			appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+			
+			weatherCity = appInfo.getString(Const.FIRST_CITY_KEY, Const.FIRST_CITY_DEFAULT);
+			String ptimeStr = appInfo.getString(Const.FIRST_PTIME_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
+			String weatherStr = appInfo.getString(Const.FIRST_WEATHER_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
+			String nowTempStr = appInfo.getString(Const.FIRST_NOW_TEMP_KEY, Const.WEATHER_KEY_ERROR_DEFAULT) + "℃";
+			
+			setWeatherView(ptimeStr, weatherStr, nowTempStr, weatherCity);
+		} else {
+			
+			try {
+				JSONObject todayWeatherObject = weatherArray.getJSONObject(weatherCityNum).getJSONArray("weather_data").getJSONObject(0);
+				String weatherCity = weatherArray.getJSONObject(weatherCityNum).getString("currentCity");
+				String weatherStr = todayWeatherObject.getString("weather");
+				String nowTempStr = todayWeatherObject.getString("date");
+				String ptimeStr = "实时";
+				nowTempStr = nowTempStr.split("：")[1].replace(")", "");
+				setWeatherView(ptimeStr, weatherStr, nowTempStr, weatherCity);
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 		
 		TextView dateText = (TextView) findViewById(R.id.dateText);
 		SimpleDateFormat sdf = new SimpleDateFormat("M月 d日 EEEE");
 		String date = sdf.format(new java.util.Date());
 		dateText.setText(" " + date);
 		
-		Toast.makeText(getApplicationContext(), "正在更新" + weatherCity + "的五日天气", Toast.LENGTH_SHORT).show();
-
-		
-		getFiveDaysWeatherFromNet(weatherCity);
+		if ( weatherArray == null ) {
+			Toast.makeText(getApplicationContext(), "正在更新" + weatherCity + "的五日天气", Toast.LENGTH_SHORT).show();
+			getFiveDaysWeatherFromNet(weatherCity);
+		} else {
+			try {
+				setFiveDaysWeatherView ( weatherArray.getJSONObject(weatherCityNum).getJSONArray("weather_data") );
+				setTodayWeatherSuggestionView ( weatherArray.getJSONObject(weatherCityNum).getJSONArray("index") );
+				setSecAndThirdWeatherCitiesView ( weatherCities, weatherArray );
+			} catch ( JSONException e ) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		sdf = null;
 		date = null;
@@ -140,56 +159,107 @@ public class WeatherMainActivity extends BaseActivity {
 		
 	}
 	
-	void getFiveDaysWeatherFromNet ( final String weatherCity ) {
-		Intent intent = new Intent("cn.jlu.ge.getup.service.UserNetworkService");
-		bindService(intent, conn, Service.BIND_AUTO_CREATE);
-		new Handler().postDelayed(new Runnable(){
-
-		    public void run() {
-		    	
-		    	// TODO 
-				try {
-					
-					if ( networkTaskService == null ) {
-						Log.v(TAG, "when getFromNet : networkTaskService is null.");
-					} else {
-//						Log.v(TAG, "when getFromNet : networkTaskService is not null.");
-						networkTaskService.getFiveDaysWeatherFromNet(weatherCity);
-//						setFiveDaysWeatherAndSuggestion (response);
-					}
-
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		    
-		 }, 300);
+	String getWeatherUrl ( String weatherCity ) {
+		ArrayList<String> weatherCities = getWeatherCitiesData();
 		
+		String weatherUrl = null;
+		if ( weatherCities != null ) {
+			String weatherCitiesStr = weatherCities.toString().replace(" ", "%7C").replace(",", "").replace("[", "").replace("]", "");
+			weatherUrl = "http://api.map.baidu.com/telematics/v3/weather?location=" + weatherCitiesStr 
+					+ "&output=json&ak=n3OWXWndI27Lk6GcU9joKMOD";
+			
+			Log.v(TAG, weatherUrl);
+		} else {
+			weatherUrl = "http://api.map.baidu.com/telematics/v3/weather?location=" + weatherCity 
+			+ "&output=json&ak=n3OWXWndI27Lk6GcU9joKMOD";
+		}
+		
+		return weatherUrl;
 	}
 	
-	void setFiveDaysWeatherView (ArrayList<String> weatherList) {
+	void getFiveDaysWeatherFromNet ( final String weatherCity ) {
 		
-		{
-			int index = 0;
-			for (String one : weatherList ) {
-				Log.v(TAG,index + ": " + one);
-				index++;
+		String weatherUrl = getWeatherUrl(weatherCity);
+		
+		client = new AsyncHttpClient();
+		
+		client.get( weatherUrl, new AsyncHttpResponseHandler() {
+	        
+			@Override
+	        public void onSuccess(String response) {
+				
+				setOtherWeatherView (response);
+				
+	        }
+
+			@Override
+			public void onFailure(Throwable throwable, String failureStr) {
+				// TODO Auto-generated method stub
+				if ( weatherArray != null ) {
+					try {
+						setFiveDaysWeatherView ( weatherArray.getJSONObject(0).getJSONArray("weather_data") );
+						setTodayWeatherSuggestionView ( weatherArray.getJSONObject(0).getJSONArray("index") );
+						setSecAndThirdWeatherCitiesView (weatherCities, weatherArray);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				super.onFailure(throwable, failureStr);
+				
 			}
+	    });
+		
+		client = null;
+	}
+	
+	void setOtherWeatherView ( String response ) {
+    	try {
+			weatherArray = new JSONObject(response).getJSONArray("results");
+			Log.v(TAG, " weather from baidu : " + weatherArray.toString());
+		} catch ( JSONException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		try {
+			setFiveDaysWeatherView ( weatherArray.getJSONObject(0).getJSONArray("weather_data") );
+			setTodayWeatherSuggestionView ( weatherArray.getJSONObject(0).getJSONArray("index") );
+			setSecAndThirdWeatherCitiesView ( weatherCities, weatherArray );
+		} catch ( JSONException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	void setFiveDaysWeatherView (JSONArray weatherDataArray) {
 		
         //准备要添加的数据条目
         List<Map<String, Object>> items = new ArrayList<Map<String,Object>>(); 
-        for (int i = 1; i < 6; i++) {
+        
+        for (int i = 0; i < 4; i++) {
+        	
         	Map<String, Object> item = new HashMap<String, Object>();
-        	String [] dateAndWeather = weatherList.get( i * 5 + 2 ).split(" ");
-        	String [] tempMinAndMax = weatherList.get( i * 5 + 3 ).split("/");
-        	item.put("date", dateAndWeather[0].replace("月", "-").replace("日", "") );
-        	item.put("minTemp", tempMinAndMax[0]);
-        	item.put("maxTemp", tempMinAndMax[1]);
-        	item.put("weatherLikeImage", BindDataAndResource.getWeatherIconImageResourceId( dateAndWeather[1] ) );
-        	item.put("wind", BindDataAndResource.getWindStringByString( weatherList.get( i * 5 + 4) ) );
-        	items.add(item);
+        	
+        	try {
+        		JSONObject oneObject = weatherDataArray.getJSONObject(i);
+        		String [] tempMinAndMax =oneObject.get("temperature").toString().replace(" ", "").replace("℃", "").split("~");
+        		if ( tempMinAndMax.length == 1 ) 
+        			tempMinAndMax = new String [] { tempMinAndMax[0], tempMinAndMax[0] };
+        		
+				item.put("date",  oneObject.get("date").toString().subSequence(0, 2) );
+	        	
+				Log.v(TAG, ">>>>" + tempMinAndMax.length + ";>>>>" + tempMinAndMax[0] + ";>>>>" + oneObject.get("temperature").toString().replace(" ", "") );
+				// TODO 这里会出现问题
+				item.put("minTemp", tempMinAndMax[1] + "℃");
+	        	item.put("maxTemp", tempMinAndMax[0] + "℃");
+	        	item.put("weatherLikeImage", BindDataAndResource.getWeatherIconImageResourceId( oneObject.get("weather").toString() ) );
+	        	item.put("wind", oneObject.get("wind").toString() );
+	        	items.add(item);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
         }
         
 		SimpleAdapter adapter = new SimpleAdapter(this,  
@@ -203,104 +273,169 @@ public class WeatherMainActivity extends BaseActivity {
 		fiveDaysWeatherGV.setAdapter(adapter);
 	}
 	
-	void setTodayWeatherSuggestionView ( String weatherSuggestionStr ) {
-		String [] suggestionArray = weatherSuggestionStr.split("\n");
+	void setTodayWeatherSuggestionView ( JSONArray weatherSuggestionArray ) {
 		
 		TextView suggestionTV01 = (TextView) findViewById(R.id.suggestionTV01);
-		suggestionTV01.setText( suggestionArray[1].split("。")[0].replace("：", " ") );
-		
 		TextView suggestionTV02 = (TextView) findViewById(R.id.suggestionTV02);
-		suggestionTV02.setText( suggestionArray[3].split("。")[0].replace("：", " ") );
-
 		TextView suggestionTV03 = (TextView) findViewById(R.id.suggestionTV03);
-		suggestionTV03.setText( suggestionArray[5].split("。")[0].replace("：", " ") );
-		
 		TextView suggestionTV04 = (TextView) findViewById(R.id.suggestionTV04);
-		suggestionTV04.setText( suggestionArray[8].split("。")[0].replace("：", " ") );
-		
+		try {
+			suggestionTV01.setText( weatherSuggestionArray.getJSONObject(0).getString("tipt") + " " + weatherSuggestionArray.getJSONObject(0).getString("zs") );
+			suggestionTV02.setText( weatherSuggestionArray.getJSONObject(3).getString("tipt") + " " + weatherSuggestionArray.getJSONObject(3).getString("zs") );
+			suggestionTV03.setText( weatherSuggestionArray.getJSONObject(4).getString("tipt") + " " + weatherSuggestionArray.getJSONObject(4).getString("zs") );
+			suggestionTV04.setText( weatherSuggestionArray.getJSONObject(5).getString("tipt").substring(0, 5) + " " + weatherSuggestionArray.getJSONObject(5).getString("zs") );
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			suggestionTV01.setText("网络通信故障，\n无法获取4日天气预报");
+			e.printStackTrace();
+		}
+
 		suggestionTV01 = null;
 		suggestionTV02 = null;
 		suggestionTV03 = null;
 		suggestionTV04 = null;
 	}
 	
-	void setSecAndThirdWeatherCitiesView () {
-		// TODO 从数据库获取天气城市数据，显示在底部的view
+	ArrayList<String> getWeatherCitiesData () {
+		
 		userDataDb.open();
 		Cursor citiesCursor = userDataDb.getAllWeatherCitiesDatas();
-		
-		if ( citiesCursor.moveToFirst() != false && citiesCursor != null ) {
-			citiesCursor.moveToNext();
-			String secCityStr = citiesCursor.getString( citiesCursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_CONTENT ) );
-			TextView secCityTV = (TextView) findViewById (R.id.secWeatherCityTV);
-			secCityTV.setText(secCityStr);
-			
-			if ( !citiesCursor.isLast() && citiesCursor != null ) {
-				citiesCursor.moveToNext();
-				String thridCityStr = citiesCursor.getString( citiesCursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_CONTENT ) );
-				TextView thridCityTV = (TextView) findViewById (R.id.thirdWeatherCityTV);
-				thridCityTV.setText(thridCityStr);
-			}
+
+		if ( citiesCursor.moveToFirst() == false || citiesCursor == null ) {
+			return null;
 		}
 		
+		weatherCities = new ArrayList<String>();
+		
+		for ( citiesCursor.moveToFirst() ; !citiesCursor.isLast() ; citiesCursor.moveToNext() ) {
+			
+			String cityStr = citiesCursor.getString( citiesCursor.getColumnIndex( UserDataDBAdapter.KEY_DATA_CONTENT ) );
+			if ( cityStr != null )
+				weatherCities.add(cityStr);
+			
+			if ( citiesCursor.isLast() )
+				break;
+			
+		}
+
 		citiesCursor.close();
 		userDataDb.close();
+		
+		if ( weatherCities.size() == 0 )
+			return null;
+		else 
+			return weatherCities;
+	}
+	
+	void setSecAndThirdWeatherCitiesView (ArrayList<String> weatherCities, JSONArray weatherArray) {
+		// TODO 
+		int citiesIds [] = { R.id.secWeatherCityTV, R.id.thirdWeatherCityTV };
+		int weatherIds [] = { R.id.secWeather, R.id.thirdWeather };
+		int imageIds [] = { R.id.secWeatherImage, R.id.thirdWeatherImage };
+		int layoutIds [] = { R.id.secWeatherCity, R.id.thirdWeatherCity };
+		
+		if ( weatherCities != null ) {
+			for ( int i = 0, j = 0 ; i < weatherCities.size() || j < citiesIds.length ; i++ ) {
+				if ( i == weatherCityNum) {
+					continue;
+				} else {
+					try {
+						TextView cityTV = (TextView) findViewById ( citiesIds[j] );
+						cityTV.setText( weatherCities.get( i ) );
+						
+						JSONObject oneObject = weatherArray.getJSONObject( i ).getJSONArray("weather_data").getJSONObject(0);
+						
+						String tempStr = oneObject.get("temperature").toString();
+						String weatherStr = oneObject.get("weather").toString();
+						TextView weatherTV = (TextView) findViewById ( weatherIds[j] );
+						weatherTV.setText(weatherStr + " " + tempStr);
+						ImageView weatherImage = (ImageView) findViewById ( imageIds[j] );
+						weatherImage.setBackgroundResource( BindDataAndResource.getWeatherIconImageResourceId( oneObject.get("weather").toString() ) );
+						
+						LinearLayout layout = (LinearLayout) findViewById (layoutIds[j]);
+						final int cityNum = i;
+						layout.setOnClickListener(new OnClickListener () {
 
+							@Override
+							public void onClick(View v) {
+								// TODO Auto-generated method stub
+								Intent intent = new Intent(WeatherMainActivity.this, WeatherMainActivity.class);
+								intent.putExtra("weatherCity", cityNum);
+								weatherCityNum = cityNum;
+								Toast.makeText(getApplicationContext(), "Clicked " + cityNum, Toast.LENGTH_SHORT).show();
+								startActivity(intent);
+							}
+							
+						});
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						Toast.makeText(getApplicationContext(), "Error.", Toast.LENGTH_SHORT).show();
+						e.printStackTrace();
+					}
+					j++;
+				}
+				
+			}
+		}
+			
+		
 	}
 	
 	void setFiveDaysWeatherDataInDb ( ArrayList<String> weatherList ) {
 		
 	}
 	
-	void setFiveDaysWeatherAndSuggestion (String response) {
-		
-		ArrayList<String> weatherList = new ArrayList<String>();
-		
-		try {
-			XmlPullParser parser = Xml.newPullParser();
-			Log.v(TAG, ">>>>" + response);
-			InputStream inputStreamWithResponse = new ByteArrayInputStream(response.getBytes("UTF-8"));
-			parser.setInput(inputStreamWithResponse, "utf-8");
-			int event = parser.getEventType();
-
-			while ( event != XmlPullParser.END_DOCUMENT ) {
-				switch ( event ) {
-				case XmlPullParser.START_TAG:
-					if ( "string".equals( parser.getName() ) ) {
-						String item = parser.nextText();
-						weatherList.add(item);
-					} else if ( "ArrayOfString".equals( parser.getName() ) ) {
-					}
-				break;
-				
-				default: break;
-				}
-				
-				event = parser.next();
-			}
-			
-			if ( weatherList.size() > 20 ) {
-				setFiveDaysWeatherView(weatherList);
-				setFiveDaysWeatherDataInDb(weatherList);
-				setTodayWeatherSuggestionView( weatherList.get(6) );
-				setSecAndThirdWeatherCitiesView();
-			}
-			
-		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			Log.v(TAG, "XmlPullParserException: " + e.toString());
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	void setFiveDaysWeatherAndSuggestion (String response) {
+//		
+//		ArrayList<String> weatherList = new ArrayList<String>();
+//		
+//		try {
+//			XmlPullParser parser = Xml.newPullParser();
+//			Log.v(TAG, ">>>>" + response);
+//			InputStream inputStreamWithResponse = new ByteArrayInputStream(response.getBytes("UTF-8"));
+//			parser.setInput(inputStreamWithResponse, "utf-8");
+//			int event = parser.getEventType();
+//
+//			while ( event != XmlPullParser.END_DOCUMENT ) {
+//				switch ( event ) {
+//				case XmlPullParser.START_TAG:
+//					if ( "string".equals( parser.getName() ) ) {
+//						String item = parser.nextText();
+//						weatherList.add(item);
+//					} else if ( "ArrayOfString".equals( parser.getName() ) ) {
+//						
+//					}
+//				break;
+//				
+//				default: break;
+//				}
+//				
+//				event = parser.next();
+//			}
+//			
+//			if ( weatherList.size() > 20 ) {
+////				setFiveDaysWeatherView(weatherList);
+////				setFiveDaysWeatherDataInDb(weatherList);
+////				setTodayWeatherSuggestionView( weatherList.get(6) );
+////				setSecAndThirdWeatherCitiesView();
+//			}
+//			
+//		} catch (XmlPullParserException e) {
+//			// TODO Auto-generated catch block
+//			Log.v(TAG, "XmlPullParserException: " + e.toString());
+//			e.printStackTrace();
+//		} catch (UnsupportedEncodingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private void setWeatherView(String ptimeStr, String weatherStr,
-			String nowTempStr) {
+			String nowTempStr, String weatherCity) {
 		// TODO Auto-generated method stub
 		
 		TextView updateTimeText = (TextView) findViewById(R.id.updateTimeText);
@@ -308,7 +443,7 @@ public class WeatherMainActivity extends BaseActivity {
 		TextView weatherLikeText = (TextView) findViewById(R.id.weatherLikeText);
 		
 		updateTimeText.setText(ptimeStr + " 发布");
-		tempText.setText(nowTempStr);
+		tempText.setText(weatherCity + " " + nowTempStr);
 		weatherLikeText.setText(weatherStr);
 		
 		ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
@@ -348,7 +483,8 @@ public class WeatherMainActivity extends BaseActivity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		this.unbindService(conn);
+//		this.unbindService(conn);
+//		networkTaskThread.quit();
 	}
 
 }
