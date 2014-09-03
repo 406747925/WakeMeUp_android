@@ -2,6 +2,7 @@ package cn.jlu.ge.getup.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,15 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.getup.R;
 import cn.jlu.ge.getup.tools.BaseActivity;
 import cn.jlu.ge.getup.tools.MenuFragment;
+
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class SignInUsersActivity extends BaseActivity {
 
 	private ArrayList<HashMap<String, Object>> listItems;
+	private ListView usersList;
 	
 	public SignInUsersActivity() {
 		super("积分排行");
@@ -58,13 +62,27 @@ public class SignInUsersActivity extends BaseActivity {
 	
 	public void dataInit () {
 		// TODO 如果数据库有最新数据则从数据库中获取最新数据
-		
+
 		// TODO 数据库中不包含最新数据则联网更新数据
+		
+		// Test
+		listItems = new ArrayList<HashMap<String, Object>> ();
+		HashMap<String, Object> item;
+		
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			item = new HashMap<String, Object> ();
+			item.put("username", "路人甲" + i);
+			item.put("userRank", "" + i);
+			listItems.add(item);
+		}
 		
 	}
 	
 	public void setSignInUsersView () {
 		// TODO 加载数据显示 View 
+        usersList = (ListView) findViewById(R.id.signInUsers);
+        UsersAdapter listAdapter = new UsersAdapter(this);
+        usersList.setAdapter(listAdapter);
 	}
 	
 	class UsersAdapter extends BaseAdapter {
@@ -123,7 +141,7 @@ public class SignInUsersActivity extends BaseActivity {
 			clickViews.usernameTV.setText( listItems.get(position).get("username").toString() );
 			clickViews.rankTV.setText( listItems.get(position).get("userRank").toString() );
 			
-			return null;
+			return convertView;
 		}
 		
 	}

@@ -20,7 +20,7 @@
 			    android:id="@+id/alarm"
 			    android:layout_width="fill_parent"
 			    android:layout_height="@dimen/activity_main_big_title"
-			    android:background="#EC1717"
+			    android:background="#ec4b2e"
 			    >
 				
 			    <LinearLayout 
