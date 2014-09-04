@@ -2,35 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-<!--     <TimePicker -->
-<!--         android:id="@+id/timePicker" -->
-<!--         android:layout_width="fill_parent" -->
-<!--         android:layout_height="@dimen/activity_change_alarm_timepicker_height" -->
-<!--         android:scrollbarSize="@dimen/activity_change_alarm_timepicker_bar_size" -->
-<!--         android:scrollbarFadeDuration="80" -->
-<!--         android:scrollbarStyle="outsideOverlay" -->
-<!--         /> -->
+    android:orientation="vertical"
+    >
+
 	<LinearLayout
 	    android:layout_marginTop="20dp"
 	    android:background="#FFFFFF"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content">
-	<cn.jlu.ge.knightView.KnightNumberPicker 
-	    android:id="@+id/hourNumberPicker"
-	    android:layout_width="0dp"
-	    android:layout_weight="1"
-	    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
-	    android:paddingLeft="20dp"
-	    />
-	<cn.jlu.ge.knightView.KnightNumberPicker 
-	    android:id="@+id/minsNumberPicker"
-	    android:layout_width="0dp"
-	    android:layout_weight="1"
-	    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
-	    android:paddingRight="20dp"
-	    />
-	
+		<cn.jlu.ge.knightView.KnightNumberPicker 
+		    android:id="@+id/hourNumberPicker"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+		    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
+		    android:paddingLeft="20dp"
+		    />
+		<cn.jlu.ge.knightView.KnightNumberPicker 
+		    android:id="@+id/minsNumberPicker"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+		    android:layout_height="@dimen/activity_change_alarm_timepicker_height"
+		    android:paddingRight="20dp"
+		    />
 	</LinearLayout>
 	
 	<LinearLayout
@@ -41,7 +34,8 @@
 		android:layout_marginLeft="@dimen/activity_change_alarm_day_btn_margin_left_max"
 		android:layout_marginRight="@dimen/activity_change_alarm_day_btn_margin_left_max"
 	    >
-	    <Button 
+		
+	    <Button
 	        android:id="@+id/monday"
         	android:layout_width="0dp"
         	android:layout_weight="1"

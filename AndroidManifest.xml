@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.jlu.ge.getup"
+    package="cn.jlu.ge.dreamclock"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -18,75 +18,75 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:process="gestudio.wakeup.main"
+        android:process="gestudio.dreamclock.main"
          >
         <activity
-            android:name="cn.jlu.ge.getup.activity.MainActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
 			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.WakeUpActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.WakeUpActivity"
             android:launchMode="singleTop"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity
-            android:name="cn.jlu.ge.getup.activity.ChangeAlarmActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.ChangeAlarmActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.AlarmListActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.AlarmListActivity"
             android:launchMode="singleTask"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.SignInActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.SignInActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.WeatherCitiesSettingActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.WeatherCitiesSettingActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.WeatherMainActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.WeatherMainActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.SignInUsersActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.SignInUsersActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.main">
+            android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.getup.activity.WebPageActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.WebPageActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.wakeup.webpage">
+            android:process="gestudio.dreamclock.webpage">
         </activity>
 		<service 
-		    android:name="cn.jlu.ge.getup.service.ForegroundService"
+		    android:name="cn.jlu.ge.dreamclock.service.ForegroundService"
 		    android:priority="1000"
 		    android:persistent="true"
-		    android:process="gestudio.wakeup.server">
+		    android:process="gestudio.dreamclock.server">
 		</service>
 		<service 
-		    android:name="cn.jlu.ge.getup.service.UserNetworkService"
+		    android:name="cn.jlu.ge.dreamclock.service.UserNetworkService"
 		    android:exported="false"
-		    android:process="gestudio.wakeup.network">
+		    android:process="gestudio.dreamclock.network">
 			<intent-filter>
-				<action android:name="cn.jlu.ge.getup.service.UserNetworkService"/>
+				<action android:name="cn.jlu.ge.dreamclock.service.UserNetworkService"/>
 		    </intent-filter>
 		</service>
 
-		<receiver android:name="cn.jlu.ge.getup.tools.AlarmReceiver" android:process=":remote" />
-        <receiver android:name="cn.jlu.ge.getup.tools.BootBroadcastReceiver" android:process=":remote" />
+		<receiver android:name="cn.jlu.ge.dreamclock.tools.AlarmReceiver" android:process=":remote" />
+        <receiver android:name="cn.jlu.ge.dreamclock.tools.BootBroadcastReceiver" android:process=":remote" />
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>

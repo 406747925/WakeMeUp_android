@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/sliding_menu_user_setting_height"
     android:gravity="center_horizontal"
+    android:layout_marginBottom="80dp"
     android:orientation="vertical" >
     
     <ImageView
@@ -16,7 +17,7 @@
         android:id="@+id/user_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textColor="#F2EBBF"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/sliding_menu_username_size"
         android:padding="@dimen/sliding_menu_username_padding"/>
     

@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.jlu.ge.getup.R;
+import cn.jlu.ge.dreamclock.R;
 
 public class KnightNumberPicker extends LinearLayout {
 

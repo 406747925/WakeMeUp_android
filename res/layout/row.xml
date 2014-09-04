@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:textColor="#F2EBBF"
+        android:textColor="#FFFFFF"
         android:textSize="@dimen/sliding_menu_text_size"
         android:padding="@dimen/sliding_menu_item_padding"/>
          
