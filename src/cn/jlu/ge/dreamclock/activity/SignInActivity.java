@@ -141,7 +141,7 @@ public class SignInActivity extends BaseActivity {
 		mySignInRank = rankNum;
 		myUserNameStr = userName;
 		mySignInTimeStr = signInTimeStr;
-		timeStr = getUsersListLastTimeStr;
+//		timeStr = getUsersListLastTimeStr;
 		UIDStr = UID;
 		
 		if ( signInOrNot ) {
@@ -225,7 +225,7 @@ public class SignInActivity extends BaseActivity {
 		myUserNameStr = signInTimeStr;
 		myUserNameStr = userName;
 		mySignInTimeStr = signInTimeStr;
-		timeStr = getUsersListLastTimeStr;
+//		timeStr = getUsersListLastTimeStr;
 		
 	}
 	
@@ -340,8 +340,9 @@ public class SignInActivity extends BaseActivity {
 	void getSignInUsersListFromNet ( String UID , String timeStr ) {
 		
 		client = new AsyncHttpClient();
+		timeStr = timeStr.replaceAll(" ", "%20");
 		String signInUsersListUrl = String.format( Const.HOST + Const.GET_USERS_SIGN_IN_LIST_URL, UID, timeStr );
-		
+		Log.d(TAG, signInUsersListUrl);
 		client.get( signInUsersListUrl , new AsyncHttpResponseHandler () {
 
 			@Override
@@ -408,7 +409,7 @@ public class SignInActivity extends BaseActivity {
 		map.put("jeerOrNot", "-1");
 		map.put("avatarUrl", myAvatarUrl);
 		
-		signInUsersList.add(mySignInRank - 1, map);
+		signInUsersList.add(map);
 	}
 	
 	
@@ -421,7 +422,7 @@ public class SignInActivity extends BaseActivity {
 		signInUsersNum = length + 1;
 		try {
 			JSONObject object;
-			for ( int i = 0 ; i < length ; i++ ) {
+			for ( int i = 0, rank = 0 ; i < length ; i++ ) {
 				object = array.getJSONObject(i);
 				String userName = object.getString("nickname");
 				String friendId = object.getString("friend_id");
@@ -431,9 +432,18 @@ public class SignInActivity extends BaseActivity {
 				String contentStr = object.getString("content");
 				String avatarUrl = object.getString("pic_url");
 				int jeerOrNot = object.getInt("type");
-				addItemToList( i, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
+				
+				Log.d(TAG, ">>> i : " + i + ", mySignInRank : " + mySignInRank);
+				
+				if ( i == mySignInRank - 1 ) {
+					addUserInAllUsersList();
+					rank = i + 1;
+				}
+				
+				addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
+				rank = rank + 1;
+				
 			}
-			addUserInAllUsersList();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

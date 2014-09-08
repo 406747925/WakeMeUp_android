@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -85,6 +84,8 @@ public class BitmapCache {
 			
 			bitmap = bitmapSR.get();
 			
+			Log.d(TAG, "bitmapSR is not null.");
+			
 			if ( bitmap == null ) {
 				Log.v(TAG, "bitmap is null");
 				return null;
@@ -150,6 +151,9 @@ public class BitmapCache {
 			out.flush();
 			out.close();
 			Log.i(TAG, keyStr + " -> 已经保存");
+			
+			bitmapSR = new SoftReference< Bitmap > (bitmap);
+			imageCache.put(keyStr, bitmapSR);
 			
 		} catch (FileNotFoundException e) { 
 			// TODO Auto-generated catch block 

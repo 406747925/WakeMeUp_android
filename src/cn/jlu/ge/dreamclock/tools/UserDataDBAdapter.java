@@ -10,6 +10,13 @@ import android.util.Log;
 
 public class UserDataDBAdapter {
 
+	private static final String TAG = "UserDataDBAdapter";
+	private static final String DATABASE_NAME = "bnl_user";
+	private static final String DATABASE_USER_DATA_TABLE = "user_data";
+	private static final String DATABASE_WEATHER_INFO_TABLE = "weather_data";
+	private static final String DATABASE_USERS_SIGN_IN_TABLE = "users_sign_in";
+	private static final int DATABASE_VERSION = 1;
+	
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_DATA_TYPE = "data_type";
 	public static final String KEY_DATA_CONTENT = "data_content";
@@ -28,11 +35,17 @@ public class UserDataDBAdapter {
 	public static final String KEY_SD = "sd";
 	public static final String KEY_INSERT_DATE = "insert_date";
 	
-	private static final String TAG = "UserDataDBAdapter";
-	private static final String DATABASE_NAME = "bnl_user";
-	private static final String DATABASE_USER_DATA_TABLE = "user_data";
-	private static final String DATABASE_WEATHER_INFO_TABLE = "weather_data";
-	private static final int DATABASE_VERSION = 1;
+	public static final String KEY_USER_ID = "_id";
+	public static final String KEY_NICKNAME = "nickname";
+	public static final String KEY_USER_RANK = "user_rank";
+	public static final String KEY_USER_SIGN_IN_TIME = "user_sign_in_time";
+	public static final String KEY_USER_JEER_OR_NOT = "jeer_or_not";
+	public static final String KEY_USER_INFO = "user_info";
+	public static final String KEY_USER_AVATAR_URL = "avatar_url";
+	public static final String CREATE_USERS_SIGN_IN_TABLE = 
+				"create table " + DATABASE_USERS_SIGN_IN_TABLE + "(_id text primary key, " + 
+				KEY_USER_SIGN_IN_TIME + " text";
+	
 	private static final String CREATE_USER_DATA_TABLE = 
 			"create table " + DATABASE_USER_DATA_TABLE + " (_id integer primary key autoincrement, " +
 					"data_type text not null, " +
