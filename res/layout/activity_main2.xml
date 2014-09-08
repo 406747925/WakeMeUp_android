@@ -1,224 +1,209 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E8E8E8"
+    android:orientation="vertical"
     tools:context=".MainActivity" >
 
-	<ScrollView
-		android:id="@+id/sv_value_activity"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-		<LinearLayout 
-		    android:orientation="vertical"
-	   		android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-		    >
-			<LinearLayout 
-			    android:id="@+id/alarm"
-			    android:layout_width="fill_parent"
-			    android:layout_height="@dimen/activity_main_big_title"
-			    android:background="#ec4b2e"
-			    >
-				
-			    <LinearLayout 
-		            android:layout_height="match_parent"
-		            android:layout_width="0dp"
-		            android:layout_weight="5"
-		            android:orientation="vertical"
-			        >
-			        
-				    <TextView
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-			   	        android:textColor="#FFFFFF"
-				        android:textSize="@dimen/activity_main_alarm_desc_str_size"
-						android:layout_marginTop="@dimen/activity_main_margin_top_max"
-						android:layout_marginLeft="@dimen/activity_main_margin_mid"
-				        android:id="@+id/discAlarmTime"
-				        android:clickable="false"
-				        />
-			
-				    <TextView 
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-				        android:id="@+id/alarmTime"
-				        android:textColor="#FFFFFF"
-				        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-				        android:textSize="@dimen/activity_main_time_str_size"
-				        android:textStyle="normal"
-				        android:clickable="false"
-				        />
-			
-				    <TextView 
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-				        android:id="@+id/welcomeStr"
-				        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-			   	        android:textColor="#FFFFFF"
-				        android:textSize="@dimen/activity_main_welcome_str_size"
-				        android:clickable="false"
-				        />
-			    </LinearLayout>
-			    
-			    <LinearLayout 
-		            android:layout_height="match_parent"
-		            android:layout_width="0dp"
-		            android:layout_weight="3"
-		            android:orientation="vertical"
-		            android:layout_gravity="center"
-		            android:id="@+id/weatherLayout"
-			        >
-				    
-				    <TextView 
-				        android:id="@+id/cityName"
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-				        android:layout_marginTop="@dimen/activity_main_margin_top_max"
-				        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-				        android:layout_marginRight="@dimen/activity_main_margin_min"
-				        android:gravity="center"
-			   	        android:textColor="#FFFFFF"
-				        android:textSize="@dimen/activity_main_cityname_size"
-				        android:clickable="false"
-				        />
-			
-				    <ImageView 
-				        android:id="@+id/weatherIcon"
-				        android:layout_width="@dimen/activity_main_weather_icon_size"
-				        android:layout_height="@dimen/activity_main_weather_icon_size"
-				        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-				        android:clickable="false"
-				        />
-			
-				    <TextView 
-				        android:id="@+id/weatherStr"
-				        android:layout_width="match_parent"
-				        android:layout_height="wrap_content"
-			   	        android:textColor="#FFFFFF"
-				        android:textSize="@dimen/activity_main_weatherstr_size"
-				        android:gravity="center"
-				        android:layout_marginRight="@dimen/activity_main_margin_mid"
-				        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-				        android:clickable="false"
-				        />
-			        
-			    </LinearLayout>
-		
-			</LinearLayout>
-			
-			<LinearLayout
-			    android:id="@+id/signInLayout"
-			    android:layout_width="fill_parent"
-			    android:layout_height="80dp"
-			    android:background="#FFFFFF"
-			    android:gravity="center_vertical"
-			    android:orientation="horizontal"
-		   		>
-			    <ImageView 
-			        android:id="@+id/signInIcon"
-			        android:layout_width="70dp"
-			        android:layout_height="60dp"
-			        android:layout_marginLeft="10dp"
-			        android:layout_marginRight="20dp"
-			        android:background="@drawable/checkbox"
-			        />
-			    <TextView 
-			        android:id="@+id/signInText"
-			        android:textColor="#000000"
-			        android:textSize="22sp"
-			        android:layout_width="0dp"
-			        android:layout_weight="1"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:text="早起\n签到"
-			        />
-			    <TextView 
-			        android:id="@+id/signInInfo"
-			        android:layout_width="0dp"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:layout_weight="2"
-			        android:textSize="16sp"
-			        android:textColor="#CCCCCC"
-			        android:text="上次签到排名 15 名\n连续签到天数 20 天"
-			        />
-		    </LinearLayout>
-		    
-			<LinearLayout 
-			    android:id="@+id/positiveLayout"
-			    android:layout_width="fill_parent"
-			    android:layout_height="80dp"
-			    android:background="#FFFFFF"
-			    >
-			    <ImageView
-			        android:id="@+id/positiveIcon"
-			        android:layout_width="70dp"
-			        android:layout_height="60dp"
-			        android:layout_marginLeft="10dp"
-			        android:layout_marginRight="20dp"
-			        android:background="@drawable/battery"
-			        />
-			    <TextView 
-			        android:id="@+id/positiveText"
-			        android:textColor="#000000"
-			        android:textSize="22sp"
-			        android:layout_width="0dp"
-			        android:layout_weight="1"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:text="正能\n量站"
-			        />
-			    <TextView 
-			        android:id="@+id/positiveInfo"
-			        android:layout_width="0dp"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:layout_weight="2"
-			        android:textSize="16sp"
-			        android:textColor="#CCCCCC"
-			        android:text="送给那些毕业生！\n我也不知道该写啥了"
-			        />
-		    </LinearLayout>
-		    
-			<LinearLayout 
-			    android:id="@+id/otherInfoLayout"
-			    android:layout_width="fill_parent"
-			    android:layout_height="80dp"
-			    android:background="#FFFFFF"
-			    >
-			    <ImageView
-			        android:id="@+id/otherInfoIcon"
-			        android:layout_width="70dp"
-			        android:layout_height="60dp"
-			        android:layout_marginLeft="10dp"
-			        android:layout_marginRight="20dp"
-			        android:background="@drawable/command"
-			        />
-			    <TextView 
-			        android:id="@+id/otherInfoText"
-			        android:textColor="#000000"
-			        android:textSize="22sp"
-			        android:layout_width="0dp"
-			        android:layout_weight="1"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:text="板块\n订阅"
-			        />
-			    <TextView 
-			        android:id="@+id/otherInfo"
-			        android:layout_width="0dp"
-			        android:gravity="center_vertical"
-			        android:layout_height="match_parent"
-			        android:layout_weight="2"
-			        android:textSize="16sp"
-			        android:textColor="#CCCCCC"
-			        android:text="梦想闹钟纳新\n我也不知道该写啥了"
-			        />
-		    </LinearLayout>
-	    
-		</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/alarm"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/activity_main_big_title"
+                android:background="#ec4b2e">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/discAlarmTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:layout_marginTop="@dimen/activity_main_margin_top_max"
+                        android:clickable="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activity_main_alarm_desc_str_size" />
+
+                    <TextView
+                        android:id="@+id/alarmTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:clickable="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activity_main_time_str_size"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/welcomeStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:clickable="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activity_main_welcome_str_size" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/weatherLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="3"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/cityName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:layout_marginRight="@dimen/activity_main_margin_min"
+                        android:layout_marginTop="@dimen/activity_main_margin_top_max"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activity_main_cityname_size" />
+
+                    <ImageView
+                        android:id="@+id/weatherIcon"
+                        android:layout_width="@dimen/activity_main_weather_icon_size"
+                        android:layout_height="@dimen/activity_main_weather_icon_size"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:clickable="false" />
+
+                    <TextView
+                        android:id="@+id/weatherStr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
+                        android:layout_marginRight="@dimen/activity_main_margin_mid"
+                        android:clickable="false"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="@dimen/activity_main_weatherstr_size" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signInLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:background="#FFFFFF"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:id="@+id/signInIcon"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/checkbox" />
+
+                <TextView
+                    android:id="@+id/signInText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="早起\n签到"
+                    android:textColor="#000000"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/signInInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:text="上次签到排名 15 名\n连续签到天数 20 天"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/positiveLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:background="#FFFFFF" >
+
+                <ImageView
+                    android:id="@+id/positiveIcon"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/battery" />
+
+                <TextView
+                    android:id="@+id/positiveText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="正能\n量站"
+                    android:textColor="#000000"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/positiveInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:text="送给那些毕业生！\n我也不知道该写啥了"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/otherInfoLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:background="#FFFFFF" >
+
+                <ImageView
+                    android:id="@+id/otherInfoIcon"
+                    android:layout_width="70dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/command" />
+
+                <TextView
+                    android:id="@+id/otherInfoText"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="板块\n订阅"
+                    android:textColor="#000000"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/otherInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center_vertical"
+                    android:text="梦想闹钟纳新\n我也不知道该写啥了"
+                    android:textColor="#CCCCCC"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
+
 </LinearLayout>

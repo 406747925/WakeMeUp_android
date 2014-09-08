@@ -31,7 +31,7 @@
 	<string name="sliding_menu_friends_setting">好友设置</string>
 	<string name="sliding_menu_communicate">联系我们</string>
 	
-	<string name="scores_and_ranking">积分排行</string>
+	<string name="sign_in_rank">签到排行</string>
 	<string name="sign_in_informations">收到嘲笑</string>
 	<string name="about_sign_in">签到规则</string>
 	

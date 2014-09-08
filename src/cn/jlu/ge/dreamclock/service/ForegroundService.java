@@ -514,7 +514,6 @@ public class ForegroundService extends Service {
 				// TODO Auto-generated method stub
 				super.onFailure(arg0, arg1);
 				weatherNeedUpdateOrNot = true;
-				Log.v(TAG, arg1);
 			}
 
 			@Override

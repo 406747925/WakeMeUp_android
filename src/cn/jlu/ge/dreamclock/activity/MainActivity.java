@@ -284,6 +284,7 @@ public class MainActivity extends BaseActivity {
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.menu_frame2, new MenuFragment()).commit();
 		getSlidingMenu().setBehindCanvasTransformer(mTransformer);
+		
 	}
 	
 	void startService () {

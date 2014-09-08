@@ -128,8 +128,8 @@ public class SignInUsersActivity extends BaseActivity {
 				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
 			} else {
 				clickViews = new ListClickGroup();
-				convertView = inflater.inflate(R.layout.user_item, null);
-				clickViews.avatarIV = (ImageButton) convertView.findViewById(R.id.avatar);
+				convertView = inflater.inflate(R.layout.earlier_user_item, null);
+//				clickViews.avatarIV = (ImageButton) convertView.findViewById(R.id.avatar);
 				clickViews.usernameTV = (TextView) convertView.findViewById(R.id.userName);
 				clickViews.rankTV = (TextView) convertView.findViewById(R.id.userRank);
 			}
