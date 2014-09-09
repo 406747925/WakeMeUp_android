@@ -4,39 +4,44 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical" >
-    
+
     <TextView
         android:id="@+id/headObject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#AAAAAA"
         android:gravity="center"
-        ></TextView>
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="#EFFFEF">
-	    <TextView
-	        android:id="@+id/centerObject"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:layout_weight="4"
-	        ></TextView>
-	    <TextView
-	        android:id="@+id/centerObjectDesc"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:paddingRight="10dp"
-	        android:gravity="center"
-	        android:layout_weight="1"
-	        ></TextView>
+        android:textColor="#AAAAAA" >
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EFFFEF" >
+
+        <TextView
+            android:id="@+id/centerObject"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:gravity="center" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/centerObjectDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingRight="10dp" >
+        </TextView>
     </LinearLayout>
+
     <TextView
         android:id="@+id/tailObject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#AAAAAA"
         android:gravity="center"
-        ></TextView>
+        android:textColor="#AAAAAA" >
+    </TextView>
+
 </LinearLayout>

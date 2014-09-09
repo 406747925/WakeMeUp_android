@@ -7,33 +7,37 @@
     tools:context=".MainActivity" >
 
     <ScrollView
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical" >
 
             <LinearLayout
                 android:id="@+id/alarm"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/activity_main_big_title"
-                android:background="#ec4b2e">
+                android:background="#ec4b2e"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_main_margin_mid"
+                android:paddingRight="@dimen/activity_main_margin_mid"
+                android:paddingTop="@dimen/activity_main_margin_mid" >
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/discAlarmTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-                        android:layout_marginTop="@dimen/activity_main_margin_top_max"
                         android:clickable="false"
+                        android:gravity="center"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/activity_main_alarm_desc_str_size" />
 
@@ -41,8 +45,8 @@
                         android:id="@+id/alarmTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
                         android:clickable="false"
+                        android:gravity="center"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/activity_main_time_str_size"
                         android:textStyle="normal" />
@@ -51,49 +55,68 @@
                         android:id="@+id/welcomeStr"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
                         android:clickable="false"
+                        android:gravity="center"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/activity_main_welcome_str_size" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/weatherLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="3"
-                    android:orientation="vertical" >
+                    android:orientation="horizontal" >
 
-                    <TextView
-                        android:id="@+id/cityName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-                        android:layout_marginRight="@dimen/activity_main_margin_min"
-                        android:layout_marginTop="@dimen/activity_main_margin_top_max"
-                        android:clickable="false"
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/activity_main_cityname_size" />
+                        android:orientation="horizontal" >
 
-                    <ImageView
-                        android:id="@+id/weatherIcon"
-                        android:layout_width="@dimen/activity_main_weather_icon_size"
-                        android:layout_height="@dimen/activity_main_weather_icon_size"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-                        android:clickable="false" />
+                        <ImageView
+                            android:id="@+id/PMIcon"
+                            android:layout_width="@dimen/activity_main_weather_icon_size"
+                            android:layout_height="@dimen/activity_main_weather_icon_size"
+                            android:clickable="false"
+                            android:src="@drawable/ic_launcher"
+                            android:textSize="30sp" />
 
-                    <TextView
-                        android:id="@+id/weatherStr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_main_margin_mid"
-                        android:layout_marginRight="@dimen/activity_main_margin_mid"
-                        android:clickable="false"
+                        <TextView
+                            android:id="@+id/PMStr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:text="轻度污染\n57"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/activity_main_cityname_size" />
+                        
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
                         android:gravity="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/activity_main_weatherstr_size" />
+                        android:orientation="horizontal" >
+
+                        <ImageView
+                            android:id="@+id/weatherIcon"
+                            android:layout_width="@dimen/activity_main_weather_icon_size"
+                            android:layout_height="@dimen/activity_main_weather_icon_size"
+                            android:clickable="false" />
+
+                        <TextView
+                            android:id="@+id/weatherStr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false"
+                            android:gravity="center"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/activity_main_weatherstr_size" />
+                        
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -107,9 +130,9 @@
 
                 <ImageView
                     android:id="@+id/signInIcon"
-                    android:layout_width="70dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/checkbox" />
 
@@ -138,13 +161,14 @@
                 android:id="@+id/positiveLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="80dp"
-                android:background="#FFFFFF" >
+                android:background="#FFFFFF"
+                android:gravity="center_vertical" >
 
                 <ImageView
                     android:id="@+id/positiveIcon"
-                    android:layout_width="70dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/battery" />
 
@@ -173,13 +197,14 @@
                 android:id="@+id/otherInfoLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="80dp"
-                android:background="#FFFFFF" >
+                android:background="#FFFFFF"
+                android:gravity="center_vertical" >
 
                 <ImageView
                     android:id="@+id/otherInfoIcon"
-                    android:layout_width="70dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:background="@drawable/command" />
 

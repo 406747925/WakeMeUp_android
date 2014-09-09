@@ -1,129 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_item"
     android:layout_width="fill_parent"
-	android:layout_height="@dimen/alarm_item_height"
-    android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal"
+    android:layout_height="@dimen/alarm_item_height"
     android:baselineAligned="false"
-    android:id="@+id/alarm_item" >
-    
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal" >
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_weight="4"
-        android:paddingTop="@dimen/alarm_item_min_margin_left"
+        android:gravity="center"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/alarm_item_min_margin_left"
-        >
-        <TextView 
+        android:paddingTop="@dimen/alarm_item_min_margin_left" >
+
+        <TextView
             android:id="@+id/alarmTime"
-            android:textSize="@dimen/alarm_item_time_text_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/alarm_item_mid_margin_left"
-            />
-		
-        <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="horizontal"
-	        android:gravity="center"
-            >
-		    <Button 
-		        android:id="@+id/monday"
-		        android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/enable_button_shape_circle"
-		        android:text="@string/monday"
-		        android:textColor="#FFFFFF"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-		    <Button 
-		        android:id="@+id/tuesday"
-		        android:layout_marginLeft="4dp"
-		        android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/enable_button_shape_circle"
-		        android:text="@string/tuesday"
-		        android:textColor="#FFFFFF"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-		    <Button 
-		        android:id="@+id/wednesday"
-		        android:layout_marginLeft="4dp"
-				android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/enable_button_shape_circle"
-		        android:text="@string/wednesday"
-		        android:textColor="#FFFFFF"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-	   	    <Button 
-		        android:id="@+id/thursday"
-		        android:layout_marginLeft="4dp"
-		        android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/enable_button_shape_circle"
-				android:text="@string/thursday"
-		        android:textColor="#FFFFFF"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-	   	    <Button 
-		        android:id="@+id/friday"
-		        android:layout_marginLeft="4dp"
-		        android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/enable_button_shape_circle"
-		        android:text="@string/friday"
-		        android:textColor="#FFFFFF"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-	   	    <Button 
-		        android:id="@+id/saturday"
-				android:layout_marginLeft="4dp"
-		        android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:background="@drawable/disable_button_shape_circle"
-		        android:text="@string/saturday"
-		        android:textColor="#2087FC"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-	   	    <Button 
-		        android:id="@+id/sunday"
-				android:layout_width="@dimen/alarm_item_day_btn_size"
-		        android:layout_height="@dimen/alarm_item_day_btn_size"
-		        android:layout_marginLeft="4dp"
-		        android:background="@drawable/disable_button_shape_circle"
-		        android:text="@string/sunday"
-		        android:textColor="#2087FC"
-		        android:textSize="@dimen/alarm_item_day_text_size"
-		        android:clickable="false"
-		        />
-        </LinearLayout>
+            android:textSize="@dimen/alarm_item_time_text_size" />
 
-	</LinearLayout>
-		
-   	<LinearLayout 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/monday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:background="@drawable/enable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/monday"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/tuesday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/enable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/tuesday"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/wednesday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/enable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/wednesday"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/thursday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/enable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/thursday"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/friday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/enable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/friday"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/saturday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/disable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/saturday"
+                android:textColor="#2087FC"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+
+            <Button
+                android:id="@+id/sunday"
+                android:layout_width="@dimen/alarm_item_day_btn_size"
+                android:layout_height="@dimen/alarm_item_day_btn_size"
+                android:layout_marginLeft="4dp"
+                android:background="@drawable/disable_button_shape_circle"
+                android:clickable="false"
+                android:text="@string/sunday"
+                android:textColor="#2087FC"
+                android:textSize="@dimen/alarm_item_day_text_size" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_weight="1"
-   	    >
-        <ImageButton 
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <ImageButton
             android:id="@+id/changeActive"
-            android:background="#FFFFFF"
             android:layout_width="@dimen/alarm_item_set_alarm_btn_size"
             android:layout_height="@dimen/alarm_item_set_alarm_btn_size"
-            />
-   	</LinearLayout>
-
+            android:background="#FFFFFF" />
+    </LinearLayout>
 
 </LinearLayout>

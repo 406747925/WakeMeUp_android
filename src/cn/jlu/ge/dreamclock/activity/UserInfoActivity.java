@@ -1,30 +1,42 @@
 package cn.jlu.ge.dreamclock.activity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
-import android.content.Context;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.dreamclock.R;
+import cn.jlu.ge.dreamclock.tools.BitmapCache;
+import cn.jlu.ge.dreamclock.tools.Const;
+import cn.jlu.ge.dreamclock.tools.FriendsDBAdapter;
 import cn.jlu.ge.dreamclock.tools.MenuFragment;
+import cn.jlu.ge.knightView.CircleImageView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 public class UserInfoActivity extends BaseActivity {
 
-	private ArrayList<HashMap<String, Object>> listItems;
-	private ListView usersList;
+	private BitmapCache bitmapCache;
+	private AsyncHttpClient client;
+	private String userName;
+	private String uid;
+	private String avatarUrl;
 	
 	public UserInfoActivity() {
-		super("积分排行");
+		super("用户信息");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -32,14 +44,38 @@ public class UserInfoActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		bitmapCache = new BitmapCache( getApplicationContext() );
+		
+		intentDataInit();
+		
 		init();
 	}
 	
 	
-	public void init() {
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		// 设置 ActionBar 的背景色
+		this.getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg_main));
+		super.onResume();
+	}
+
+	public void intentDataInit () {
+		
+		Intent intent = this.getIntent();
+		Bundle bundle = intent.getExtras();
+		userName = bundle.getString("userName", "error");
+		uid = bundle.getString("uid", "-1");
+		avatarUrl = bundle.getString("avatarUrl", "default");
+		
+	}
+	
+	
+	public void init () {
         
 		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-		setContentView(R.layout.activity_sign_in_users);
+		setContentView(R.layout.activity_user_info);
 		
 		viewInit();
 		
@@ -54,95 +90,170 @@ public class UserInfoActivity extends BaseActivity {
 	
 	public void viewInit () {
 		// TODO 如果已经联网，如果更新过数据则直接从数据库显示数据，否则联网更新数据
-		dataInit();
+
+		setDatasAndViewsFromNet(uid);
+		
 		// TODO 如果没有联网则显示曾经数据
-		setSignInUsersView();
-	}
-	
-	public void dataInit () {
-		// TODO 如果数据库有最新数据则从数据库中获取最新数据
-
-		// TODO 数据库中不包含最新数据则联网更新数据
+		setDatasFromDB();
 		
-		// Test
-		listItems = new ArrayList<HashMap<String, Object>> ();
-		HashMap<String, Object> item;
 		
-		for ( int i = 0 ; i < 10 ; i++ ) {
-			item = new HashMap<String, Object> ();
-			item.put("username", "路人甲" + i);
-			item.put("userRank", "" + i);
-			listItems.add(item);
-		}
 		
 	}
 	
-	public void setSignInUsersView () {
-		// TODO 加载数据显示 View 
-        usersList = (ListView) findViewById(R.id.signInUsers);
-        UsersAdapter listAdapter = new UsersAdapter(this);
-        usersList.setAdapter(listAdapter);
+
+	public void setDatasFromDB () {
+		FriendsDBAdapter friendsDb = new FriendsDBAdapter(getApplicationContext());
+		
+		
+		
+		friendsDb.close();
+		
+//		setUserAvatar ( avatarUrl );
 	}
 	
-	class UsersAdapter extends BaseAdapter {
-
-		LayoutInflater inflater;
-	    public Context context;
-	    public UsersAdapter (Context c) {
-	    	context = c;
-	    	inflater = LayoutInflater.from(c);
-	    }
-	    
-		class ListClickGroup {  
-		    public ImageButton avatarIV;
-		    public TextView usernameTV;
-		    public TextView rankTV;
-		    public int uid;
-		    public int position;
-		}
+	public void setDatasAndViewsFromNet ( String UID ) {
 		
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return listItems.size();
-		}
+		// 刷新用户数据
+		
+		client = new AsyncHttpClient();
+		
+		String userInfoUrl = Const.HOST + Const.GET_USER_INFO_URL + UID;
+		
+		client.get( userInfoUrl, new AsyncHttpResponseHandler() {
 
-		@Override
-		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+			@Override
+			public void onFailure(Throwable throwable, String failResponse) {
+				// TODO Auto-generated method stub
+				super.onFailure(throwable, failResponse);
+			}
 
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
-			ListClickGroup clickViews = null;
-			if ( convertView != null ) {
-				clickViews = (ListClickGroup) convertView.getTag();
-				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
-			} else {
-				clickViews = new ListClickGroup();
-				convertView = inflater.inflate(R.layout.earlier_user_item, null);
-//				clickViews.avatarIV = (ImageButton) convertView.findViewById(R.id.avatar);
-				clickViews.usernameTV = (TextView) convertView.findViewById(R.id.userName);
-				clickViews.rankTV = (TextView) convertView.findViewById(R.id.userRank);
+			@Override
+			public void onSuccess(int responseCode, String response) {
+				// TODO Auto-generated method stub
+				try {
+					JSONObject responseObject = new JSONObject(response);
+					setUserInfoFromJSON ( responseObject.getJSONObject("model") );
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				super.onSuccess(responseCode, response);
 			}
 			
-			clickViews.position = position;
+		});
+		
+		client = null;
+	}
+		
+		
+	void setUserInfoFromJSON (JSONObject userInfoObject) {
+		try {
+			String userName = userInfoObject.getString("nickname");
+			String UIDStr = userInfoObject.getString("id");
+			String collegeStr = userInfoObject.optString("college");
+			String realNameStr = userInfoObject.optString("realname");
+			String schoolStr = userInfoObject.optString("school");
+			String avatarUrl = userInfoObject.optString("pic_url");
+			String signInTimeStr = userInfoObject.optString("get_up_time_today");
+			String genderStr = userInfoObject.optString("gender");
 			
-			clickViews.avatarIV.setBackgroundResource(R.drawable.ic_launcher);
-			clickViews.usernameTV.setText( listItems.get(position).get("username").toString() );
-			clickViews.rankTV.setText( listItems.get(position).get("userRank").toString() );
+			int rankInFriendsNum = userInfoObject.optInt("rank_in_friends_today", 0);
+			int rankInSchoolNum = userInfoObject.optInt("rank_in_school_today", 0);
+			int rankInCollegeNum = userInfoObject.optInt("rank_in_college_today", 0);
+			int continuousDaysSum = userInfoObject.optInt("continuous", 0);
+			int jeerNum = userInfoObject.optInt("num_jeer_today", 0);
+			int scoreNum = userInfoObject.optInt("score", 0);
 			
-			return convertView;
+			setUserInfoInDb( userName, UIDStr, collegeStr, realNameStr, avatarUrl, signInTimeStr, schoolStr, genderStr,
+					rankInFriendsNum, rankInSchoolNum, scoreNum, rankInCollegeNum, continuousDaysSum, jeerNum );
+			
+			setUserInfoView( userName, collegeStr, signInTimeStr, schoolStr, genderStr,
+					rankInSchoolNum, continuousDaysSum );
+			
+			setUserAvatar ( avatarUrl );
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	void setUserAvatar ( String avatarUrl ) {
+		CircleImageView avatarIv = (CircleImageView) findViewById(R.id.userAvatar);
+		Bitmap avatarBM = bitmapCache.getBitmapFromCache( avatarUrl );
+		if ( avatarBM != null ) {
+			
+			BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
+			avatarIv.setImageDrawable(avatarDrawable);
+			
+		}
+		else {
+			bitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
+		}
+	}
+
+	private void setUserInfoView(String userName, String collegeStr, 
+			String signInTimeStr, String schoolStr, String genderStr, 
+			int rankInSchoolNum, int continuousDaysSum ) {
+		// TODO Auto-generated method stub
+		TextView userNameTv = (TextView) findViewById(R.id.userName);
+		TextView collegeTv = (TextView) findViewById(R.id.college);
+		TextView signInTimeTv = (TextView) findViewById(R.id.recentGetUpTime);
+		TextView schoolTv = (TextView) findViewById(R.id.school);
+		TextView genderTv = (TextView) findViewById(R.id.gender);
+		TextView rankInSchoolTv = (TextView) findViewById(R.id.recentRank);
+		TextView continuousDaysTv = (TextView) findViewById(R.id.continueDay);
+		
+		userNameTv.setText(userName);
+		schoolTv.setText(schoolStr);
+		
+		if ( genderStr != null ) {
+			if ( genderStr.equals("m") )
+				genderTv.setText("男的");
+			else 
+				genderTv.setText("女的");
 		}
 		
+		if ( rankInSchoolNum != 0 )
+			rankInSchoolTv.setText("第 " + rankInSchoolNum + " 名");
+		else 
+			rankInSchoolTv.setText("最近起不来");
+		
+		if ( continuousDaysSum != 0 )
+			continuousDaysTv.setText("共 " + continuousDaysSum + " 天");
+		else 
+			continuousDaysTv.setText("名落孙山");
+		
+		if ( collegeStr != null )
+			collegeTv.setText(collegeStr);
+		else
+			collegeTv.setText("未填写学院");
+		
+		if ( signInTimeStr != null ) {
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+				Date date = sdf.parse(signInTimeStr);
+				sdf = new SimpleDateFormat("M月d日 h点m分", Locale.CHINA);
+				signInTimeStr = sdf.format(date);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			signInTimeTv.setText(signInTimeStr);
+		}
+		else 
+			signInTimeTv.setText("最近比较懒");
 	}
+
+	private void setUserInfoInDb(String userName, String uIDStr,
+			String collegeStr, String realNameStr, String avatarUrl,
+			String signInTimeStr, String schoolStr, String genderStr, 
+			int rankInFriendsNum, int rankInSchoolNum, int scoreNum, 
+			int rankInCollegeNum, int continuousDaysSum, int jeerNum) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	
 }

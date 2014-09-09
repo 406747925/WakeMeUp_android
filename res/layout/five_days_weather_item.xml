@@ -2,44 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-	android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
     <TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:padding="2dp"
-		android:id="@+id/date"
-		android:textSize="18sp"
-		android:textColor="#FFFFFF"
-		/>
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
     <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:id="@+id/maxTemp"
-       android:padding="2dp"
-       android:textSize="18sp"
-       android:textColor="#FFFFFF"
-       />
+        android:id="@+id/maxTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
     <TextView
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:padding="2dp"
-       android:id="@+id/minTemp"
-       android:textSize="18sp"
-       android:textColor="#FFFFFF"
-       />
+        android:id="@+id/minTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
     <ImageView
-		android:layout_width="@dimen/activity_weather_main_weather_like_image_size"
-		android:layout_height="@dimen/activity_weather_main_weather_like_image_size"
-		android:id="@+id/weatherLikeImage"
-		android:contentDescription="@string/weather_icon"
-        />
-    <TextView 
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/wind"
-		android:padding="2dp"
-		android:textSize="18sp"
-		android:textColor="#FFFFFF"
-        />
+        android:id="@+id/weatherLikeImage"
+        android:layout_width="@dimen/activity_weather_main_weather_like_image_size"
+        android:layout_height="@dimen/activity_weather_main_weather_like_image_size"
+        android:contentDescription="@string/weather_icon" />
+
+    <TextView
+        android:id="@+id/wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
+
 </LinearLayout>

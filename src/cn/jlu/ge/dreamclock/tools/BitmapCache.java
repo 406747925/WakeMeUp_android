@@ -48,6 +48,8 @@ public class BitmapCache {
 	
 	public Bitmap getBitmapFromCache (final String key) {
 		
+		if ( key == null )		return null;
+		
 		Bitmap bitmap = null;
 		String keyStr = key.replace("/", "-");
 		
@@ -61,23 +63,17 @@ public class BitmapCache {
 		if ( bitmapSR == null ) {
 			
 			Log.v(TAG, "bitmapSR is null");
-			try {
 				
-				bitmap = readFileToBitmap(keyStr);
-				if ( bitmap != null ) {
-					Log.v(TAG, "文件名：" + keyStr + " , 文件大小： " + bitmap.getByteCount() );
-					Log.v(TAG, "读取本地文件为bitmap");
-					bitmapSR = new SoftReference< Bitmap >(bitmap);
-					putBitmapSRToCache( key , bitmapSR );
-					return bitmap;
-				}
-				else {
-					Log.v(TAG, "error when read file.");
-				}
-				
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			bitmap = readFileToBitmap(keyStr);
+			if ( bitmap != null ) {
+				Log.v(TAG, "文件名：" + keyStr + " , 文件大小： " + bitmap.getByteCount() );
+				Log.v(TAG, "读取本地文件为bitmap");
+				bitmapSR = new SoftReference< Bitmap >(bitmap);
+				putBitmapSRToCache( key , bitmapSR );
+				return bitmap;
+			}
+			else {
+				Log.v(TAG, "error when read file.");
 			}
 			
 		} else {
@@ -91,7 +87,7 @@ public class BitmapCache {
 				return null;
 			}
 			else
-				return bitmap;			
+				return bitmap;	
 		}
 		
 		return null;
@@ -117,10 +113,16 @@ public class BitmapCache {
 		return newbmp;
 	}
 	
-	public Bitmap readFileToBitmap( String fileName ) throws FileNotFoundException {
-		FileInputStream fis = new FileInputStream(path + "/" + fileName.replaceAll("/", "-") );
-		Bitmap bitmap  = BitmapFactory.decodeStream(fis);
-		return bitmap;
+	public Bitmap readFileToBitmap( String fileName ) {
+		try {
+			FileInputStream fis = new FileInputStream(path + "/" + fileName.replaceAll("/", "-") );
+			Bitmap bitmap  = BitmapFactory.decodeStream(fis);
+			return bitmap;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public int storeBitmapToFile (final String key, final String fileName) {
@@ -169,39 +171,49 @@ public class BitmapCache {
 	
 	public int getImageFromNet ( final String url, final String key, final int width, final int height, final ImageView IV ) {
 		
+		if ( url == null || key == null )		return -1;
+		
 		String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
 		
 		AsyncHttpClient imageClient = new AsyncHttpClient();
 		
-		imageClient.get(Const.HOST + url, new BinaryHttpResponseHandler ( allowedContentTypes ) {
-
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onFailure(Throwable responseCode, byte[] data) {
-				// TODO Auto-generated method stub
-				Toast.makeText(context, "获取图片失败", Toast.LENGTH_SHORT).show();
-				super.onFailure(responseCode, data);
-			}
-
-			@Override
-			public void onSuccess(int responseCode, byte[] data) {
-				Log.v(TAG, "hehe.");
-				Bitmap avatar = BytesToBitmap( data );
-				Bitmap zoomAvatar = zoomBitmap( avatar, width, height);
-				SoftReference<Bitmap> zoomBitmapSR = new SoftReference<Bitmap>(zoomAvatar);
-				Log.v(TAG, zoomBitmapSR.toString() );
-				putBitmapSRToCache( key, zoomBitmapSR );
-				if ( imageCache.containsKey( key.replaceAll("/", "-") ) ) {
-					storeBitmapToFile(key, url);
-				}
-				BitmapDrawable avatarDrawable = new BitmapDrawable(context.getApplicationContext().getResources(), zoomAvatar);
-				IV.setImageDrawable(avatarDrawable);
-				avatar.recycle();
-				avatarDrawable = null;
-				super.onSuccess(responseCode, data);
-			}
+		try{
 			
-		});
+			imageClient.get(Const.HOST + url, new BinaryHttpResponseHandler ( allowedContentTypes ) {
+
+				@SuppressWarnings("deprecation")
+				@Override
+				public void onFailure(Throwable responseCode) {
+					// TODO Auto-generated method stub
+					Toast.makeText(context, "获取图片失败", Toast.LENGTH_SHORT).show();
+					super.onFailure(responseCode);
+				}
+				
+				@Override
+				public void onSuccess(int responseCode, byte[] data) {
+					Log.v(TAG, "hehe.");
+					super.onSuccess(responseCode, data);
+					Bitmap avatar = BytesToBitmap( data );
+					Bitmap zoomAvatar = zoomBitmap( avatar, width, height);
+					SoftReference<Bitmap> zoomBitmapSR = new SoftReference<Bitmap>(zoomAvatar);
+					Log.v(TAG, zoomBitmapSR.toString() );
+					putBitmapSRToCache( key, zoomBitmapSR );
+					if ( imageCache.containsKey( key.replaceAll("/", "-") ) ) {
+						storeBitmapToFile(key, url);
+					}
+					BitmapDrawable avatarDrawable = new BitmapDrawable(context.getApplicationContext().getResources(), zoomAvatar);
+					IV.setImageDrawable(avatarDrawable);
+					avatar.recycle();
+					avatarDrawable = null;
+				}
+				
+			});
+			
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+		
+
 		
 		imageClient = null;
 		return 0;

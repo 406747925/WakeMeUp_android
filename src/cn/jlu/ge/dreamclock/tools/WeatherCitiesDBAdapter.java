@@ -50,7 +50,7 @@ public class WeatherCitiesDBAdapter {
 	
 	//�����ݿ�
 	public WeatherCitiesDBAdapter open() throws SQLException {
-		String DATABASE_PATH = "/data/data/cn.jlu.ge.getup/lib/";
+		String DATABASE_PATH = "/data/data/" + context.getPackageName() + "/lib/";
 		db = SQLiteDatabase.openDatabase(DATABASE_PATH + DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);    
 		return this;
 	}

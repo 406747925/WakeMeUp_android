@@ -296,6 +296,7 @@ public class WeatherMainActivity extends BaseActivity {
 	ArrayList<String> getWeatherCitiesData () {
 		
 		userDataDb.open();
+		
 		Cursor citiesCursor = userDataDb.getAllWeatherCitiesDatas();
 
 		if ( citiesCursor.moveToFirst() == false || citiesCursor == null ) {

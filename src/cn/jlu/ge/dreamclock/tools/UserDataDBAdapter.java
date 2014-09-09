@@ -16,14 +16,23 @@ public class UserDataDBAdapter {
 	private static final String DATABASE_WEATHER_INFO_TABLE = "weather_data";
 	private static final String DATABASE_USERS_SIGN_IN_TABLE = "users_sign_in";
 	private static final int DATABASE_VERSION = 1;
-	
+
+	// 模糊用户数据表
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_DATA_TYPE = "data_type";
 	public static final String KEY_DATA_CONTENT = "data_content";
 	public static final String KEY_DATA_DESC = "data_desc";
 	public static final String KEY_DATA_COUNT = "data_count";
 	public static final String KEY_DATA_UNIT = "data_unit";
+	private static final String CREATE_USER_DATA_TABLE = 
+			"create table " + DATABASE_USER_DATA_TABLE + " (_id integer primary key autoincrement, " +
+					"data_type text not null, " +
+					"data_content text not null, " +
+					"data_desc text not null, " +
+					"data_count integer not null, " +
+					"data_unit text not null);";
 	
+	// 天气数据表
 	public static final String KEY_CITY = "city";
 	public static final String KEY_TEMP1 = "temp1";
 	public static final String KEY_TEMP2 = "temp2";
@@ -34,7 +43,53 @@ public class UserDataDBAdapter {
 	public static final String KEY_WSE = "wse";
 	public static final String KEY_SD = "sd";
 	public static final String KEY_INSERT_DATE = "insert_date";
+	private static final String CREATE_WEATHER_DATA_TABLE = 
+			"create table " + DATABASE_WEATHER_INFO_TABLE + " (_id integer primary key autoincrement, " +
+					"city text not null, " +
+					"temp1 integer not null, " +
+					"temp2 integer not null, " +
+					"weather text not null, " +
+					"ptime text not null, " +
+					"wd text not null, " +
+					"ws integer not null, " +
+					"wse integer not null, " + 
+					"sd integer not null, " +
+					"insert_date DATETIME);";
 	
+	
+	// 用户好友表
+	public static final String DATABASE_USER_FIRENDS_TABLE = "user_friends";
+	public static final String KEY_USER_FRIEND_ID = "_id";
+	public static final String KEY_REALNAME = "realname";
+	public static final String KEY_SCHOOL = "school";
+	public static final String KEY_FRIEND_NICKNAME = "nickname";
+	public static final String KEY_PHONE = "phone";
+	public static final String KEY_GENDER = "gender";
+	public static final String KEY_JEER_NUM_TODAY = "num_jeer_today";
+	public static final String KEY_ENCOURAGE_TODAY = "num_encourage_today";
+	public static final String KEY_RANK_IN_COLLEGE_TODAY = "rank_in_college_today";
+	public static final String KEY_RANK_IN_FRIENDS_TODAY = "rank_in_school_today";
+	public static final String KEY_GET_UP_TIME = "get_up_time_today";
+	public static final String KEY_PIC_URL = "pic_url";
+	public static final String KEY_USER_SCORE = "score";
+	public static final String KEY_CONTINUOUS_DAY = "continuous_day";
+	public static final String CREATE_USER_FRIENDS_TABLE = 
+				"create table " + DATABASE_USER_FIRENDS_TABLE + "(_id text primary key," +
+						KEY_FRIEND_NICKNAME + " text not null," +
+						KEY_REALNAME + "text not null," +
+						KEY_SCHOOL + " text not null," +
+						KEY_PHONE + " text not null," +
+						KEY_GENDER + " text not null," +
+						KEY_JEER_NUM_TODAY + " integer not null," +
+						KEY_ENCOURAGE_TODAY + " integer not null," +
+						KEY_RANK_IN_FRIENDS_TODAY + " integer not null," +
+						KEY_RANK_IN_COLLEGE_TODAY + " integer not null," +
+						KEY_GET_UP_TIME + " text not null," +
+						KEY_PIC_URL + " text not null," +
+						KEY_USER_SCORE + " text not null," +
+						KEY_CONTINUOUS_DAY + " integer not null);";
+	
+	// 早起签到表
 	public static final String KEY_USER_ID = "_id";
 	public static final String KEY_NICKNAME = "nickname";
 	public static final String KEY_USER_RANK = "user_rank";
@@ -51,26 +106,7 @@ public class UserDataDBAdapter {
 						KEY_USER_AVATAR_URL + " text not null, " +
 						KEY_USER_RANK + " integer not null);";
 	
-	private static final String CREATE_USER_DATA_TABLE = 
-			"create table " + DATABASE_USER_DATA_TABLE + " (_id integer primary key autoincrement, " +
-					"data_type text not null, " +
-					"data_content text not null, " +
-					"data_desc text not null, " +
-					"data_count integer not null, " +
-					"data_unit text not null);";
 	
-	private static final String CREATE_WEATHER_DATA_TABLE = 
-			"create table " + DATABASE_WEATHER_INFO_TABLE + " (_id integer primary key autoincrement, " +
-					"city text not null, " +
-					"temp1 integer not null, " +
-					"temp2 integer not null, " +
-					"weather text not null, " +
-					"ptime text not null, " +
-					"wd text not null, " +
-					"ws integer not null, " +
-					"wse integer not null, " + 
-					"sd integer not null, " +
-					"insert_date DATETIME);";
 	
 	private Context context;
 	private DatabaseHelper databaseHelper;
@@ -102,6 +138,7 @@ public class UserDataDBAdapter {
 			db.execSQL(CREATE_USER_DATA_TABLE);
 			db.execSQL(CREATE_WEATHER_DATA_TABLE);
 			db.execSQL(CREATE_USERS_SIGN_IN_TABLE);
+			db.execSQL(CREATE_USER_FRIENDS_TABLE);
 		}
 
 		@Override
@@ -125,6 +162,62 @@ public class UserDataDBAdapter {
 		databaseHelper.close();
 	}
 	
+	public Cursor getUserById ( String uid ) {
+		
+		Cursor mCursor = db.query(true, DATABASE_USER_FIRENDS_TABLE, new String[] {
+				KEY_USER_FRIEND_ID,
+				KEY_REALNAME,
+				KEY_SCHOOL,
+				KEY_FRIEND_NICKNAME,
+				KEY_PHONE,
+				KEY_GENDER,
+				KEY_JEER_NUM_TODAY,
+				KEY_ENCOURAGE_TODAY,
+				KEY_RANK_IN_COLLEGE_TODAY,
+				KEY_RANK_IN_FRIENDS_TODAY,
+				KEY_GET_UP_TIME,
+				KEY_PIC_URL,
+				KEY_USER_SCORE,
+				KEY_CONTINUOUS_DAY
+		}, 
+		KEY_USER_FRIEND_ID + "=" + "'" + uid + "'",
+		null,
+		null,
+		null,
+		null,
+		null);
+		
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		
+		return mCursor;
+	}
+	
+	public long insertOrUpdateFriendUser(String userID, String timeStr, String nickName, String jeerOrNot, String userInfo, String avatarUrl, int userRank) {
+		
+		ContentValues values = new ContentValues();
+		values.put(KEY_USER_FRIEND_ID, userID);
+//		values.put(KEY_REALNAME, 
+//		KEY_SCHOOL
+//		KEY_FRIEND_NICKNAME
+//		KEY_PHONE
+//		KEY_GENDER
+//		KEY_JEER_NUM_TODAY
+//		KEY_ENCOURAGE_TODAY
+//		KEY_RANK_IN_COLLEGE_TODAY
+//		KEY_RANK_IN_FRIENDS_TODAY
+//		KEY_GET_UP_TIME
+//		KEY_PIC_URL
+//		KEY_USER_SCORE
+//		KEY_CONTINUOUS_DAY
+		int insertSuccess = (int) db.insertWithOnConflict(DATABASE_USER_FIRENDS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+		if ( insertSuccess == -1 ) { 
+			return db.update(DATABASE_USER_FIRENDS_TABLE, values, KEY_USER_ID + "=?", new String[]{ userID });
+		} else { 
+			return insertSuccess;
+		}
+	}
 	
 	public Cursor getAllUsers() {
 		

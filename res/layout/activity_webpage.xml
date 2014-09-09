@@ -4,45 +4,44 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical" >
-    
-    <WebView 
+
+    <WebView
         android:id="@+id/webPage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        />
+        android:orientation="vertical" />
 
     <LinearLayout
         android:id="@+id/bottomBarLayout"
-        android:background="#FFFFFF"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_bar_height"
-        >
+        android:background="#FFFFFF"
+        android:orientation="horizontal" >
+
         <Button
-        	android:layout_height="wrap_content"
-        	android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_gravity="center_vertical"
-        	android:id="@+id/firstBottomBarBtn"
-        	android:text="@string/bottom_bar_first"    
-        />
+            android:id="@+id/firstBottomBarBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/bottom_bar_first" />
+
         <Button
-        	android:layout_height="wrap_content"
-        	android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_gravity="center_vertical"
-        	android:id="@+id/secBottomBarBtn"
-        	android:text="@string/bottom_bar_first"    
-        />
+            android:id="@+id/secBottomBarBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/bottom_bar_first" />
+
         <Button
-        	android:layout_height="wrap_content"
-        	android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_gravity="center_vertical"
-        	android:id="@+id/thirdBottomBarBtn"
-        	android:text="@string/bottom_bar_first"    
-        />
+            android:id="@+id/thirdBottomBarBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/bottom_bar_first" />
     </LinearLayout>
+
 </LinearLayout>

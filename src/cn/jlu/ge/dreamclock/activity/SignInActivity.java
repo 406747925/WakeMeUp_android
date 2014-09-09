@@ -19,8 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -48,14 +53,12 @@ public class SignInActivity extends BaseActivity {
 	final String TAG = "SignInActivity";
 	private int mySignInRank;
 	private int signInUsersNum;
-	private ListView usersList;
+	private ExpandableListView usersList;
 	private AsyncHttpClient client;
 	private SharedPreferences appInfo;
 	private Bitmap zoomAvatar;
 	private ArrayList< HashMap<String, Object> > signInUsersList;
 	private BitmapCache bitmapCache;
-	private int invisableLayoutHeight = 0;
-	private int normalLayoutHeight;
 	String UIDStr = "123456789";
 	String timeStr = "2014-09-08%2004:00:00";
 	String myUserNameStr = null;
@@ -63,15 +66,24 @@ public class SignInActivity extends BaseActivity {
 	String myAvatarUrl = null;
 	private UserDataDBAdapter userDataDb;
 	boolean isGoingToSignInBool = false;
+	LinearLayout userLayout;
+	LinearLayout rankLayout;
+	LinearLayout signInActivityLayout;
+	Animation flyOutAnimation;
+	Animation flyInAnimation;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		
+		flyOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_out_item);
+		flyInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_in_item);
+		
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
 		signInUsersList = new ArrayList< HashMap<String, Object> > ();
+		
 		init();
 	}
 	
@@ -121,21 +133,49 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	void signInUsersRankViewInit () {
+
+		signInActivityLayout = (LinearLayout) findViewById(R.id.signInActivityLayout);
+		
+		userLayout = (LinearLayout) findViewById(R.id.userLayout);
+		
+		rankLayout = (LinearLayout) findViewById(R.id.rankLayout);
+		
 		TextView signInRankTv = (TextView) findViewById(R.id.signInRank);
+		
 		signInRankTv.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				ViewGroup parent = (ViewGroup)v.getParent().getParent();
-				View userLayout = (View)parent.findViewById(R.id.userLayout);
-				if ( userLayout.getVisibility() == View.VISIBLE )
-					userLayout.setVisibility(View.GONE);
-				else 
-					userLayout.setVisibility(View.VISIBLE);
+				if ( userLayout.getVisibility() == View.VISIBLE ) {
+					signInActivityLayout.startAnimation(flyOutAnimation);
+					v.postDelayed(new Runnable () {
+
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							userLayout.setVisibility(View.GONE);
+						}
+						
+					}, 450);
+				}
+				else {
+					signInActivityLayout.startAnimation(flyInAnimation);
+					v.postDelayed(new Runnable () {
+
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							userLayout.setVisibility(View.VISIBLE);
+						}
+						
+					}, 250);
+					
+				}
 			}
 			
 		});
+		
 	}
 	
 	public void dataAndViewInit () {
@@ -171,10 +211,12 @@ public class SignInActivity extends BaseActivity {
 		UIDStr = UID;
 		
 		if ( signInOrNot ) {
+			
 			setUserSignInViews(userName, continuousDaysSum, jeerNum, scoreNum, rankNum);
 			getSignInUsersListFromNet( UIDStr, timeStr );
 			// 已经签到过，就先从数据库中获得数据
 			getUsersInfromFromDB();
+			
 		} else {
 			
 			Button signInBtn = (Button) findViewById(R.id.signInBtn);
@@ -323,7 +365,7 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 	
-	//
+	// 
 	
 	void setUserInfoFromJSON (JSONObject userInfoObject) {
 		try {
@@ -548,30 +590,7 @@ public class SignInActivity extends BaseActivity {
 			public void onFailure(Throwable throwable, String failResponse) {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "刷新签到列表失败 T-T", Toast.LENGTH_SHORT).show();
-
-//				String responseStr = "[{'nickname':'1234', 'friend_id': '1234', 'get_up_time_today': '2014-09-08 04:00:00', " +
-//						"'content': '我勒个去我勒个去我勒个去我勒个去', 'pic_url': '', 'jeerOrNot': '0'}," +
-//						"{'nickname':'1235', 'friend_id': '1235', 'get_up_time_today': '2014-09-08 05:00:00', " +
-//						"'content': '我勒个去我勒个去我勒个去我勒个去', 'pic_url': '', 'jeerOrNot': '0'}]";
-//				responseStr = responseStr.replaceAll("'", "\"");
-//				String timeStr = "2014-09-08 05:00:00";
-//				try {
-//					JSONArray usersListArray = new JSONArray(responseStr);
-//					int rankStart = signInUsersNum;
-//					setUsersListDataFromJSON( usersListArray );
-//					signInUsersNum += usersListArray.length();
-					setSignInUsersView();
-//					appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
-//					SharedPreferences.Editor editor = appInfo.edit();
-//					editor.putString(Const.GET_USERS_LIST_LAST_TIME, timeStr);
-//					Log.d( TAG, ">>>> " + timeStr);
-//					editor.putInt(Const.SIGN_IN_RANK_NUM, signInUsersNum);
-//					editor.commit();
-//					addUsersToDB(rankStart, signInUsersNum);
-//				} catch (JSONException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				setSignInUsersView();
 				super.onFailure(throwable, failResponse);
 			}
 
@@ -626,8 +645,8 @@ public class SignInActivity extends BaseActivity {
 		userDataDb.open();
 		
 		signInUsersNum = signInUsersNum < signInUsersList.size() ? signInUsersNum : signInUsersList.size();
-		
-		for ( int i = rankStart - 1 ; i < signInUsersNum - 1 ; i++ ) {
+
+		for ( int i = rankStart - 1 ; i < signInUsersNum && i >= 0 ; i++ ) {
 			
 			userHM = signInUsersList.get(i);
 			int userRank = Integer.parseInt( userHM.get("userRank").toString() );
@@ -662,6 +681,7 @@ public class SignInActivity extends BaseActivity {
 		map.put("jeerOrNot", jeerOrNot);
 		map.put("avatarUrl", avatarUrl);
 		
+		Log.d(TAG, "userRank : " + rank + ", userName : " + userName);
 		signInUsersList.add(map);
 		
 	}
@@ -671,7 +691,7 @@ public class SignInActivity extends BaseActivity {
 	
 	void addUserInAllUsersList () {
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		
+
 		map.put("userRank", mySignInRank);
 		map.put("userName", myUserNameStr);
 		map.put("uid", UIDStr);
@@ -680,6 +700,7 @@ public class SignInActivity extends BaseActivity {
 		map.put("jeerOrNot", "-1");
 		map.put("avatarUrl", myAvatarUrl);
 		
+		Log.d(TAG, "User -> userRank : " + mySignInRank + ", userName : " + myUserNameStr);
 		signInUsersList.add(map);
 	}
 	
@@ -697,12 +718,12 @@ public class SignInActivity extends BaseActivity {
 			for ( int i = 0, rank = 1 ; i < length ; i++ ) {
 				
 				object = array.getJSONObject(i);
-				String userName = object.getString("nickname");
-				String friendId = object.getString("friend_id");
-				String getUpTimeStr = object.getString("get_up_time_today");
-				String contentStr = object.getString("content");
-				String avatarUrl = object.getString("pic_url");
-				int jeerOrNot = object.getInt("type");
+				String userName = object.optString("nickname");
+				String friendId = object.optString("friend_id");
+				String getUpTimeStr = object.optString("get_up_time_today");
+				String contentStr = object.optString("content");
+				String avatarUrl = object.optString("pic_url");
+				int jeerOrNot = object.optInt("type", -1);
 				// TODO 需要安全性更高的时间格式化方法
 				getUpTimeStr = getUpTimeStr.split(" ")[1].substring(0, 5);
 				
@@ -740,7 +761,6 @@ public class SignInActivity extends BaseActivity {
 			
 			BitmapDrawable avatarDrawable = new BitmapDrawable( getApplicationContext().getResources(), avatarBM );
 			avatarView.setImageDrawable(avatarDrawable);
-//			avatarView.setOnClickListener();
 		}
 		else {
 			bitmapCache.getImageFromNet ( avatarUrl, avatarUrl, width, height, avatarView );
@@ -748,25 +768,48 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	
-	// 头像点击事件
-//	OnClickListener 
-	
-	
 	// 加载用户好友们的签到信息 
 	
 	public void setSignInUsersView () {
 		// TODO 加载数据显示 View 
-        usersList = (ListView) findViewById(R.id.signInUserList);
-//        usersList.getViewTreeObserver().addOnGlobalLayoutListener(usersListLayoutListener);
+        usersList = (ExpandableListView) findViewById(R.id.signInUserList);
         UsersSignInAdapter listAdapter = new UsersSignInAdapter(this);
         usersList.setAdapter(listAdapter);
-        normalLayoutHeight = usersList.getHeight();
+        
+		usersList.setOnScrollListener(new OnScrollListener() {
+
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				// TODO Auto-generated method stub
+				if ( firstVisibleItem == 0 ) 	return;
+				if ( userLayout.getVisibility() != View.GONE ) {
+					signInActivityLayout.startAnimation(flyOutAnimation);
+					view.postDelayed(new Runnable () {
+
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							userLayout.setVisibility(View.GONE);
+						}
+						
+					}, 450);
+				}
+			}
+
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 	}
 	
 	
 	// 用户签到列表适配器
 	
-	class UsersSignInAdapter extends BaseAdapter {
+	class UsersSignInAdapter extends BaseExpandableListAdapter {
 
 		LayoutInflater inflater;
 	    public Context context;
@@ -775,90 +818,134 @@ public class SignInActivity extends BaseActivity {
 	    	inflater = LayoutInflater.from(c);
 	    }
 	    
-		class ListClickGroup {  
+		class ListClickGroup {
 		    public CircleImageView avatarIV;
 		    public TextView usernameTV;
 		    public TextView rankTV;
 		    public TextView timeTV;
-		    public TextView infoTV;
 		    public Button showInfoBtn;
 		    public int uid;
 		    public int position;
 		    public boolean goneOrNot;
 		}
 		
-		@Override
-		public int getCount() {
-			// TODO Auto-generated method stub
-			return signInUsersList.size();
+		class ListJeerItem {
+			public TextView jeerTV;
 		}
 
 		@Override
-		public Object getItem(int position) {
+		public Object getChild(int groupPosition, int childPosition) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
-		public long getItemId(int position) {
+		public long getChildId(int groupPosition, int childPosition) {
 			// TODO Auto-generated method stub
-			return position;
+			return groupPosition;
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getChildView(int groupPosition, int childPosition,
+                boolean isLastChild, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+			ListJeerItem clickView = null;
+			if ( convertView != null ) {
+				clickView = (ListJeerItem) convertView.getTag();
+			}
+			else {
+				clickView = new ListJeerItem();
+				convertView = inflater.inflate(R.layout.jeer_item, null);
+				clickView.jeerTV = (TextView) convertView.findViewById(R.id.info);
+				String text = signInUsersList.get(groupPosition).get("info").toString();
+				clickView.jeerTV.setText(text);
+				convertView.setTag(clickView);
+			}
+			return convertView;
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			// TODO Auto-generated method stub
+			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
+			if ( jeerOrNot.equals( "-1" ) ) {
+				return 0;
+			}
+			else {
+				return 1;
+			}
+		}
+
+		@Override
+		public Object getGroup(int groupPosition) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int getGroupCount() {
+			// TODO Auto-generated method stub
+			return signInUsersList.size();
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			// TODO Auto-generated method stub
+			return groupPosition;
+		}
+
+		@Override
+		public View getGroupView(final int groupPosition, boolean isExpanded,
+                View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			ListClickGroup clickViews = null;
 			if ( convertView != null ) {
 				clickViews = (ListClickGroup) convertView.getTag();
-				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
+				Log.v("tag", "positon " + groupPosition + " convertView is not null, "  + clickViews);
 			} else {
 				clickViews = new ListClickGroup();
 				convertView = inflater.inflate(R.layout.earlier_user_item, null);
 				clickViews.avatarIV = (CircleImageView) convertView.findViewById(R.id.avatar);
 				clickViews.usernameTV = (TextView) convertView.findViewById(R.id.userName);
 				clickViews.rankTV = (TextView) convertView.findViewById(R.id.userRank);
-				clickViews.infoTV = (TextView) convertView.findViewById(R.id.info);
 				clickViews.timeTV = (TextView) convertView.findViewById(R.id.time);
 				clickViews.showInfoBtn = (Button) convertView.findViewById(R.id.showInfo);
 				convertView.setTag(clickViews);
 			}
 			
-			clickViews.position = position;
-			Log.v("SignInActivity", "positon : " + position);
+			clickViews.position = groupPosition;
+			Log.v("SignInActivity", "positon : " + groupPosition);
 			
-			if ( position < signInUsersNum ) {
+			if ( groupPosition < signInUsersNum ) {
 				
-				clickViews.usernameTV.setText( signInUsersList.get(position).get("userName").toString() );
-				clickViews.rankTV.setText( signInUsersList.get(position).get("userRank").toString() );
-				clickViews.infoTV.setText( signInUsersList.get(position).get("info").toString() );
-				clickViews.timeTV.setText( signInUsersList.get(position).get("time").toString() );
-				LinearLayout infoLayout = (LinearLayout) clickViews.infoTV.getParent();
+				clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
+				clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
+				clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
 				
-//				ViewTreeObserver vto = infoLayout.getViewTreeObserver();
-//				vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//					
-//					@Override
-//					public boolean onPreDraw() {
-//						// TODO Auto-generated method stub
-//						int height = infoLayout.getMeasuredHeight();
-//						int width = infoLayout.getMeasuredWidth();
-//						return true;
-//					}
-//					
-//				});
-				
-				if ( infoLayout.getVisibility() == View.GONE ) {
-					invisableLayoutHeight = infoLayout.getHeight();
-					Log.d(TAG, "invisableLayoutHeight: " + invisableLayoutHeight);
-				}
-				
-				String jeerOrNot = signInUsersList.get(position).get("jeerOrNot").toString();
+				String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
 				if ( jeerOrNot.equals("-1") ) {
 					clickViews.showInfoBtn.setVisibility(View.INVISIBLE);
 				} else if ( jeerOrNot.equals("0") ) {
 					clickViews.showInfoBtn.setVisibility(View.VISIBLE);
 				}
+				
+				OnClickListener showJeerClickListener = new OnClickListener () {
+
+					@Override
+					public void onClick(View view) {
+						// TODO Auto-generated method stub
+						if ( usersList.isGroupExpanded(groupPosition) ) {
+							usersList.collapseGroup(groupPosition);
+							view.setBackgroundColor(R.drawable.click_button);
+							((Button)view).setText("查看");
+						} else {
+							usersList.expandGroup(groupPosition);
+							view.setBackgroundColor(R.drawable.unclick_button);
+							((Button)view).setText("收起");
+						}
+					}
+					
+				};
 				
 				clickViews.showInfoBtn.setOnClickListener(showJeerClickListener);
 				
@@ -866,53 +953,75 @@ public class SignInActivity extends BaseActivity {
 				
 				clickViews.rankTV.setText("-");
 				clickViews.timeTV.setText("未起床");
-				clickViews.usernameTV.setText( signInUsersList.get(position).get("userName").toString() );
+				clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
+				clickViews.showInfoBtn.setText("嘲笑他");
+				clickViews.showInfoBtn.setOnClickListener(new OnClickListener () {
+
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 				
 			}
 			
-			String avatarUrl = signInUsersList.get(position).get("avatarUrl").toString();
+			// 头像点击事件
+			OnClickListener avatarClickListener = new OnClickListener () {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(SignInActivity.this, UserInfoActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putString("userName", signInUsersList.get(groupPosition).get("userName").toString() );
+					bundle.putString("uid", signInUsersList.get(groupPosition).get("uid").toString() );
+					bundle.putString("avatarUrl", signInUsersList.get(groupPosition).get("avatarUrl").toString() );
+					intent.putExtras(bundle);
+					startActivity(intent);
+				}
+
+			};
+
+			clickViews.avatarIV.setOnClickListener(avatarClickListener);
+			String avatarUrl = signInUsersList.get(groupPosition).get("avatarUrl").toString();
 			setUserAvatar ( avatarUrl, 45, 45, clickViews.avatarIV );
 			
 			return convertView;
 		}
 		
-	}
-	
-	
-	
-	
-
-	OnClickListener showJeerClickListener = new OnClickListener () {
 
 		@Override
-		public void onClick(View view) {
+		public void onGroupCollapsed(int groupPosition) {
 			// TODO Auto-generated method stub
-			LinearLayout layout = (LinearLayout) view.getParent().getParent();
-			TextView infoTv = (TextView) layout.findViewById(R.id.info);
-			View jeerContentLayout = (View) layout.findViewById(R.id.jeerContent);
-			int height;
-			if ( jeerContentLayout.getVisibility() == View.GONE ) {
-				(( Button ) view).setText("收起");
-				view.setBackgroundResource(R.drawable.unclick_button);
-				jeerContentLayout.setVisibility(View.VISIBLE);
-//				normalLayoutHeight = usersList.getHeight();
-//				invisableLayoutHeight = ( (ViewGroup)infoTv.getParent() ).getMeasuredHeight();
-//				invisableLayoutHeight = ( invisableLayoutHeight == 0 ) ? ( 3 * layout.getHeight()/5 ) : ( invisableLayoutHeight );
-//				height = usersList.getHeight() + invisableLayoutHeight;
-				Log.v(TAG, "infoTv view gone to visible. Height: " + invisableLayoutHeight);
-			} else {
-				(( Button ) view).setText("查看");
-				view.setBackgroundResource(R.drawable.click_button);
-//				invisableLayoutHeight = ( (ViewGroup)infoTv.getParent() ).getMeasuredHeight();
-//				height = usersList.getHeight() - invisableLayoutHeight;
-				jeerContentLayout.setVisibility(View.GONE);
-				Log.v(TAG, "infoTv view visible to gone.Height: " + invisableLayoutHeight);
-			}
-			
+			super.onGroupCollapsed(groupPosition);
 		}
 		
-	};
+		
 
+		@Override
+		public void onGroupExpanded(int groupPosition) {
+			// TODO Auto-generated method stub
+			for ( int i = 0 ; i < this.getGroupCount() ; i++ ) {
+				
+			}
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
+	}
+	
 	
 	public void setListViewHeightBasedOnChildren(ListView listView) {
 
@@ -945,15 +1054,14 @@ public class SignInActivity extends BaseActivity {
 		// TODO Auto-generated method stub
         
 		switch(item.getItemId()) {
-        
-        case R.id.alarm_list:
-        	Intent newIntent = new Intent(getApplicationContext(), AlarmListActivity.class);
-        	startActivity(newIntent);
-            break;
-		case android.R.id.home:
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-			break;
+	        case R.id.alarm_list:
+	        	Intent newIntent = new Intent(getApplicationContext(), AlarmListActivity.class);
+	        	startActivity(newIntent);
+	            break;
+			case android.R.id.home:
+				Intent intent = new Intent(this, MainActivity.class);
+				startActivity(intent);
+				break;
         }
 		
 		return super.onOptionsItemSelected(item);

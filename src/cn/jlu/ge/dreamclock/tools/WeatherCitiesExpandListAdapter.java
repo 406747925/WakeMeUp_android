@@ -141,7 +141,6 @@ public class WeatherCitiesExpandListAdapter extends BaseExpandableListAdapter {
 		if (convertView != null) {
 			thisView = (ListClickGroup) convertView.getTag();
 			Log.v("tag", "positon " + groupPos + " convertView is not null, "  + thisView);
-
 		} else {
 			thisView = new ListClickGroup();
 			convertView = inflater.inflate(R.layout.activity_weather_cities_group_title, null);

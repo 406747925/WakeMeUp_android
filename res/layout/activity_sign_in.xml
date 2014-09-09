@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#E8E8E8"
     android:orientation="vertical"
+    android:id="@+id/signInActivityLayout"
     tools:context=".MainActivity" >
 
     <LinearLayout
@@ -89,9 +90,9 @@
                 android:id="@+id/signInBtn"
                 android:layout_width="@dimen/activity_wakeup_signin_button_width"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 android:background="@drawable/unclick_button"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
                 android:text="点击签到"
                 android:textColor="#FFFFFF"
                 android:textSize="@dimen/activity_wakeup_mid_text_size"
@@ -117,11 +118,12 @@
             android:textSize="18sp" >
         </TextView>
 
-        <ListView
+        <ExpandableListView
             android:id="@+id/signInUserList"
+            android:groupIndicator="@null"
+            android:layoutAnimation="@anim/layout_anim"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </LinearLayout>

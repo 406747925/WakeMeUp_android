@@ -404,10 +404,8 @@ public class MainActivity extends BaseActivity {
 			String dayTempStr) {
 		// TODO Auto-generated method stub
 
-		TextView cityName = (TextView) findViewById(R.id.cityName);
 		TextView weatherStrTV = (TextView) findViewById(R.id.weatherStr);
-		cityName.setText(weatherCity);
-		weatherStrTV.setText(dayTempStr + "\n" + weatherStr);
+		weatherStrTV.setText(weatherCity + "\n" + dayTempStr);
 		
 		ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 		int drawableResource = BindDataAndResource.getWeatherIconImageResourceId(weatherStr);
