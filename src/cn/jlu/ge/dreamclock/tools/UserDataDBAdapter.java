@@ -44,7 +44,12 @@ public class UserDataDBAdapter {
 	public static final String KEY_USER_AVATAR_URL = "avatar_url";
 	public static final String CREATE_USERS_SIGN_IN_TABLE = 
 				"create table " + DATABASE_USERS_SIGN_IN_TABLE + "(_id text primary key, " + 
-				KEY_USER_SIGN_IN_TIME + " text";
+						KEY_NICKNAME + " text not null, " + 
+						KEY_USER_SIGN_IN_TIME + " text not null, " + 
+						KEY_USER_JEER_OR_NOT + " text not null, " +
+						KEY_USER_INFO + " text not null, " +
+						KEY_USER_AVATAR_URL + " text not null, " +
+						KEY_USER_RANK + " integer not null);";
 	
 	private static final String CREATE_USER_DATA_TABLE = 
 			"create table " + DATABASE_USER_DATA_TABLE + " (_id integer primary key autoincrement, " +
@@ -96,6 +101,7 @@ public class UserDataDBAdapter {
 			Log.v("DB Helper", "Create table.");
 			db.execSQL(CREATE_USER_DATA_TABLE);
 			db.execSQL(CREATE_WEATHER_DATA_TABLE);
+			db.execSQL(CREATE_USERS_SIGN_IN_TABLE);
 		}
 
 		@Override
@@ -117,6 +123,52 @@ public class UserDataDBAdapter {
 	
 	public void close() {
 		databaseHelper.close();
+	}
+	
+	
+	public Cursor getAllUsers() {
+		
+		Cursor mCursor = db.query(true, DATABASE_USERS_SIGN_IN_TABLE, new String[] {
+				KEY_USER_ID,
+				KEY_NICKNAME,
+				KEY_USER_SIGN_IN_TIME,
+				KEY_USER_JEER_OR_NOT,
+				KEY_USER_INFO,
+				KEY_USER_AVATAR_URL,
+				KEY_USER_RANK
+		}, 
+		null,
+		null,
+		null,
+		null,
+		KEY_USER_RANK,
+		null);
+		
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		
+		return mCursor;
+		
+	}
+	
+	public long insertOrUpdateUser(String userID, String timeStr, String nickName, String jeerOrNot, String userInfo, String avatarUrl, int userRank) {
+		
+		ContentValues values = new ContentValues();
+		values.put(KEY_USER_ID, userID);
+		values.put(KEY_NICKNAME, nickName);
+		values.put(KEY_USER_SIGN_IN_TIME, timeStr);
+		values.put(KEY_USER_JEER_OR_NOT, jeerOrNot);
+		values.put(KEY_USER_INFO, userInfo);
+		values.put(KEY_USER_AVATAR_URL, avatarUrl);
+		values.put(KEY_USER_RANK, userRank);
+		Log.v(TAG, "User: " + nickName + " ;" + "userRank : " + userRank + " ;");
+		int insertSuccess = (int) db.insertWithOnConflict(DATABASE_USERS_SIGN_IN_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+		if ( insertSuccess == -1 ) { 
+			return db.update(DATABASE_USERS_SIGN_IN_TABLE, values, KEY_USER_ID + "=?", new String[]{ userID });
+		} else { 
+			return insertSuccess;
+		}
 	}
 	
 	

@@ -61,7 +61,7 @@
             android:process="gestudio.dreamclock.main">
         </activity>
         <activity 
-            android:name="cn.jlu.ge.dreamclock.activity.SignInUsersActivity"
+            android:name="cn.jlu.ge.dreamclock.activity.UserInfoActivity"
             android:launchMode="singleInstance"
             android:process="gestudio.dreamclock.main">
         </activity>

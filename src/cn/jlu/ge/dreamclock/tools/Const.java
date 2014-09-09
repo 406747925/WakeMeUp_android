@@ -3,9 +3,11 @@ package cn.jlu.ge.dreamclock.tools;
 public class Const {
 	public static final String APP_INFO_PREFERENCE = ident("app_info");
 
+//	public static final String HOST = ident("http://192.168.1.200:8081/naozhong-dwp/");
 	public static final String HOST = ident("http://192.168.1.200:8080/");
+	public static final String USER_SIGN_IN_URL = ident("search.action?claseName=UserSrvImpl&invokeMethod=update&param.flag=signup&param.id=%s&param.score=%s");
 	public static final String GET_USER_INFO_URL = ident("search.action?claseName=UserSrvImpl&invokeMethod=load&pageNum=0&param.id=");
-	public static final String GET_USERS_SIGN_IN_LIST_URL = ident("search.action?claseName=FriendsSrvImpl&invokeMethod=loadSignUpFriends&param.user_id=%s&param.start_time=%s");
+	public static final String GET_USERS_SIGN_IN_LIST_URL = ident("search.action?claseName=FriendsSrvImpl&invokeMethod=loadSignUpFriends&param.flag=0&param.user_id=%s&param.start_time=%s");
 	public static final String USER_SIGN_IN_OR_NOT = ident("userSignInOrNot");
 	
 	// USER INFORMATION CONST KEY
@@ -18,6 +20,7 @@ public class Const {
 	public static final String USER_ID = ident("uid");
 	public static final String USER_SIGN_IN_TIME = ident("userSignInTime");
 	public static final String GET_USERS_LIST_LAST_TIME = ident("getUsersListLastTime");
+	public static final String SIGN_IN_RANK_NUM = ident("signInRankNum");
 	
 	// KEY 
 	public static final String FIRST_CITY_KEY = ident("city01");
