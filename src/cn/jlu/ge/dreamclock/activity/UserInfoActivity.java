@@ -2,9 +2,7 @@ package cn.jlu.ge.dreamclock.activity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.json.JSONException;
@@ -14,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.BitmapCache;

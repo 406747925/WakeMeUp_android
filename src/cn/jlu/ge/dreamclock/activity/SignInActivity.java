@@ -21,11 +21,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -71,6 +73,10 @@ public class SignInActivity extends BaseActivity {
 	LinearLayout signInActivityLayout;
 	Animation flyOutAnimation;
 	Animation flyInAnimation;
+	Animation loadingAnimation;
+	ImageView loadingIM;
+	
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,9 @@ public class SignInActivity extends BaseActivity {
 		
 		flyOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_out_item);
 		flyInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_in_item);
+		loadingAnimation = new RotateAnimation( 0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		loadingAnimation.setDuration(3000);
+		loadingAnimation.setRepeatCount(10);
 		
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
@@ -87,20 +96,7 @@ public class SignInActivity extends BaseActivity {
 		init();
 	}
 	
-//	ViewTreeObserver.OnGlobalLayoutListener usersListLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-//
-//		@Override
-//		public void onGlobalLayout() {
-//			// TODO Auto-generated method stub
-//			int usersListHeight = usersList.getHeight();
-//			ViewGroup.LayoutParams params = usersList.getLayoutParams();
-//			params.height = usersListHeight + invisableLayoutHeight;
-//			Log.d(TAG, "usersListHeight: " + usersListHeight + ", invisableLayoutHeight: " + invisableLayoutHeight);
-//			
-//		}
-//		
-//	};
-	
+
 	
 	@Override
 	protected void onResume() {
@@ -110,11 +106,16 @@ public class SignInActivity extends BaseActivity {
 		super.onResume();
 	}
 
+	
+	
 	public void init() {
         
 		getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		
 		setContentView(R.layout.activity_sign_in);
+		
+		loadingIM = (ImageView) findViewById(R.id.loadingIM);
+		loadingIM.startAnimation(loadingAnimation);
 		
 		viewInit();
 		
@@ -127,10 +128,14 @@ public class SignInActivity extends BaseActivity {
 				.replace(R.id.menu_frame2, new MenuFragment()).commit();
 	}
 	
+	
+	
 	public void viewInit () {
 		dataAndViewInit();
 		signInUsersRankViewInit();
 	}
+	
+	
 	
 	void signInUsersRankViewInit () {
 
@@ -178,6 +183,8 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 	
+	
+	
 	public void dataAndViewInit () {
 		// TODO 如果数据库有最新数据则从数据库中获取最新数据
 		
@@ -185,6 +192,8 @@ public class SignInActivity extends BaseActivity {
 		// TODO 数据库中不包含最新数据则联网更新数据
 		
 	}
+	
+	
 	
 	void setUserSignInViewsWithCache () {
 		appInfo = getSharedPreferences( Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS );
@@ -238,6 +247,8 @@ public class SignInActivity extends BaseActivity {
 		setUserAvatar ( avatarUrl );
 		
 	}
+	
+	
 	
 	OnClickListener signInBtnOnClickListener = new OnClickListener () {
 
@@ -591,6 +602,10 @@ public class SignInActivity extends BaseActivity {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "刷新签到列表失败 T-T", Toast.LENGTH_SHORT).show();
 				setSignInUsersView();
+				
+				loadingAnimation.cancel();
+				loadingIM.setVisibility(View.GONE);
+				
 				super.onFailure(throwable, failResponse);
 			}
 
@@ -606,7 +621,9 @@ public class SignInActivity extends BaseActivity {
 					int rankStart = signInUsersNum;
 					setUsersListDataFromJSON( usersListArray );
 					signInUsersNum += usersListArray.length();
+					
 					setSignInUsersView();
+					
 					appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
 					SharedPreferences.Editor editor = appInfo.edit();
 					editor.putString(Const.GET_USERS_LIST_LAST_TIME, timeStr);
@@ -772,6 +789,9 @@ public class SignInActivity extends BaseActivity {
 	
 	public void setSignInUsersView () {
 		// TODO 加载数据显示 View 
+		loadingIM.clearAnimation();
+		loadingIM.setVisibility(View.GONE);
+		
         usersList = (ExpandableListView) findViewById(R.id.signInUserList);
         UsersSignInAdapter listAdapter = new UsersSignInAdapter(this);
         usersList.setAdapter(listAdapter);

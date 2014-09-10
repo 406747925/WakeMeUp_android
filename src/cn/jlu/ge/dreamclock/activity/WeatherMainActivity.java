@@ -333,7 +333,7 @@ public class WeatherMainActivity extends BaseActivity {
 		int layoutIds [] = { R.id.secWeatherCity, R.id.thirdWeatherCity };
 		
 		if ( weatherCities != null ) {
-			for ( int i = 0, j = 0 ; i < weatherCities.size() || j < citiesIds.length ; i++ ) {
+			for ( int i = 0, j = 0 ; i < weatherCities.size() && j < citiesIds.length ; i++ ) {
 				if ( i == weatherCityNum) {
 					continue;
 				} else {

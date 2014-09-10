@@ -15,8 +15,18 @@ public class FriendsDBAdapter {
     private Context context; 
     public static final String PHONE_NUMBER="num";
     public static final String NICK_NAME="name";
-    public static  final String PIC_URL="url";
+    public static final String PIC_URL="url";
     public static final String USER_ID="id";
+    
+    public static final String USER_JEER_CONTENT = "jeer_content";
+    
+    public static final String STRANGER_USERS_TABLE = "stranger_users";
+    public static final String CREATE_STRANGER_USERS_TABLE = 
+    			"create table " + STRANGER_USERS_TABLE + "(id text primary key," + 
+    			NICK_NAME + " text not null, " + 
+    			PHONE_NUMBER + " text not null, " +
+    			PIC_URL + " text not null, " +
+    			USER_JEER_CONTENT + " text not null);";
     
 	public FriendsDBAdapter(Context ctx) {
 		this.context = ctx;
@@ -50,6 +60,7 @@ public class FriendsDBAdapter {
 					+ ",id text);";
 		
 			db.execSQL(CREATE_TABLE);
+			db.execSQL(CREATE_STRANGER_USERS_TABLE);
 			
 		}
 
