@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="15" />
+    
 	<supports-screens
 	    android:largeScreens="true"
 		android:normalScreens="true"
@@ -65,11 +66,30 @@
             android:launchMode="singleInstance"
             android:process="gestudio.dreamclock.main">
         </activity>
-        <activity 
+        <activity
             android:name="cn.jlu.ge.dreamclock.activity.WebPageActivity"
             android:launchMode="singleInstance"
-            android:process="gestudio.dreamclock.webpage">
+            android:process="gestudio.dreamclock.webpage" >
         </activity>
+        <activity android:name="cn.jlu.ge.dreamclock.activity.PositiveEnergyActivity" >
+        </activity>
+        <activity
+            android:name="cn.jlu.ge.dreamclock.activity.SignUpActivity"
+            android:launchMode="singleInstance" >
+        </activity>
+        <activity
+            android:name="cn.jlu.ge.dreamclock.activity.LoginActivity"
+            android:launchMode="singleInstance" >
+        </activity>
+        <activity
+            android:name="cn.jlu.ge.dreamclock.activity.FriendListActivity"
+            android:launchMode="singleInstance" >
+        </activity>
+        <activity
+            android:name="cn.jlu.ge.dreamclock.activity.ActivityStrangers"
+            android:launchMode="singleInstance" >
+        </activity>
+
 		<service 
 		    android:name="cn.jlu.ge.dreamclock.service.ForegroundService"
 		    android:priority="1000"

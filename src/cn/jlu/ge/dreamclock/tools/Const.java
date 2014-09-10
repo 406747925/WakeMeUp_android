@@ -21,6 +21,14 @@ public class Const {
 	public static final String USER_SIGN_IN_TIME = ident("userSignInTime");
 	public static final String GET_USERS_LIST_LAST_TIME = ident("getUsersListLastTime");
 	public static final String SIGN_IN_RANK_NUM = ident("signInRankNum");
+	public static final String USER_PHONE_NUMBER = ident("userphonenumber");
+	public static final String USER_PASSWD = ident("userpasswd");
+	public static final String USER_CITY = ident("usercity");
+	public static final String USER_SCHOOL = ident("userschool");
+	public static final String USER_COLLEGE = ident("usercollege");
+	public static final String USER_SEX = ident("usersex");
+	public static final String USER_DEVICE_ID = ident("userdeviceid");
+	
 	
 	// KEY 
 	public static final String FIRST_CITY_KEY = ident("city01");

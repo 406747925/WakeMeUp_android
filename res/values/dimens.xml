@@ -13,6 +13,9 @@
     <dimen name="sliding_menu_item_padding">10dp</dimen>
     <dimen name="sliding_menu_text_size">16sp</dimen>
     
+    <dimen name="text_height">33sp</dimen>
+    <dimen name="image_height">150dp</dimen>
+    
     <!-- MainActivity -->
     <dimen name="activity_main_big_title">220dp</dimen>
     <dimen name="activity_main_mid_title">150dp</dimen>

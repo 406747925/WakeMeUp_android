@@ -1,0 +1,226 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+     >
+
+    <TextView
+        android:id="@+id/textViewsignin"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:gravity="right"
+        android:text="新账号注册"
+        android:textColor="#ffffff" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="梦想闹钟"
+            android:textColor="#ffffff"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Dream Nauting"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60sp"
+            android:layout_marginRight="60sp"
+            android:orientation="vertical"
+            android:gravity="center" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff" >
+
+                <EditText
+                    android:id="@+id/editTextphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="      电     话"
+                    android:inputType="phone" />
+
+                <ImageView
+                    android:id="@+id/syncOperatorImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/tel" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff" >
+
+                <EditText
+                    android:id="@+id/editTextpasswd"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="  密   码"
+                    android:inputType="textPassword" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/password" />
+
+            </RelativeLayout>
+
+             <Button
+                 android:id="@+id/buttonsignin"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_alignParentTop="true"
+                 android:layout_centerHorizontal="true"
+                 android:layout_marginTop="12sp"
+                 android:text="登陆" />
+
+             <TextView
+                 android:id="@+id/textView3"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:text="登陆遇到问题?"
+                 android:gravity="right"
+                 android:textColor="#999999" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff"
+                android:visibility="invisible" >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="      昵     称"
+                    android:inputType="textPersonName" >
+
+                    <requestFocus />
+                </EditText>
+
+                <ImageView
+                    android:id="@+id/syncOperatorImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/editText1"
+                    android:layout_alignRight="@+id/editText1"
+                    android:layout_alignTop="@+id/editText1"
+                    android:src="@drawable/users" />
+
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff"
+                android:visibility="invisible" >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="      学     校"
+                    android:inputType="textPersonName" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/editText2"
+                    android:layout_alignRight="@+id/editText2"
+                    android:layout_alignTop="@+id/editText2"
+                    android:src="@drawable/school" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff"
+                android:visibility="invisible" >
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff"
+                android:visibility="invisible" >
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="性别"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:layout_width="74dp"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="男" />
+
+                    <RadioButton
+                        android:layout_width="92dp"
+                        android:layout_height="wrap_content"
+                        android:text="女" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12sp"
+                android:background="#ffffff"
+                android:visibility="invisible" >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="  密码确认"
+                    android:inputType="textPassword" />
+
+                <ImageView
+                    android:id="@+id/syncOperatorImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/editText5"
+                    android:layout_alignRight="@+id/editText5"
+                    android:layout_alignTop="@+id/editText5"
+                    android:src="@drawable/password" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+    
+</LinearLayout>
