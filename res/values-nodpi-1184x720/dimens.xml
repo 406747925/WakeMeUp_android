@@ -20,7 +20,7 @@
     <dimen name="activity_main_margin_mid">20dp</dimen>
     <dimen name="activity_main_margin_min">10dp</dimen>
     <dimen name="activity_main_time_str_size">64sp</dimen>
-    <dimen name="activity_main_weather_icon_size">70dp</dimen>
+    <dimen name="activity_main_weather_icon_size">60dp</dimen>
     <dimen name="activity_main_margin_top_max">30dp</dimen>
     <dimen name="activity_main_margin_top_min">10dp</dimen>
     <dimen name="activity_main_cityname_size">16sp</dimen>

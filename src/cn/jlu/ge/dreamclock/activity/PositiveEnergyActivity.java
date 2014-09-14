@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.CavansImageTask;
+import cn.jlu.ge.dreamclock.tools.Const;
 import cn.jlu.ge.dreamclock.tools.ReadParseClass;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -32,7 +33,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class PositiveEnergyActivity extends ListActivity{
-	public static final String UrlHead="http://192.168.1.200:8080/";
+	public static final String UrlHead = Const.HOST;
 	static final int MENU_MANUAL_REFRESH = 0;
 	static final int MENU_DISABLE_SCROLL = 1;
 	static final int MENU_SET_MODE = 2;
@@ -43,7 +44,7 @@ public class PositiveEnergyActivity extends ListActivity{
 	private SimpleAdapter adapter;
 	private HashMap<String,Object> map;
 	private ArrayList<HashMap<String,Object>> list;
-	private int page=1;
+	private int page = 1;
     
     //每一个HashMap 对应ListView 中 每一个 item 的数据
 	@Override

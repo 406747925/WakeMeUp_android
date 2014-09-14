@@ -39,7 +39,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class FriendListActivity extends Activity{
+public class FriendListActivity extends Activity {
 
 	private PullToRefreshListView mListView;
 	private SimpleAdapter adapter;

@@ -73,14 +73,15 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp" >
 
                         <ImageView
                             android:id="@+id/PMIcon"
                             android:layout_width="@dimen/activity_main_weather_icon_size"
                             android:layout_height="@dimen/activity_main_weather_icon_size"
                             android:clickable="false"
-                            android:src="@drawable/ic_launcher"
+                            android:src="@drawable/pm25_icon"
                             android:textSize="30sp" />
 
                         <TextView
@@ -88,10 +89,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:clickable="false"
-                            android:text="轻度污染\n57"
+                            android:text="暂未\n获得数据"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/activity_main_cityname_size" />
-                        
                     </LinearLayout>
 
                     <LinearLayout
@@ -99,7 +99,8 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp" >
 
                         <ImageView
                             android:id="@+id/weatherIcon"
@@ -111,11 +112,10 @@
                             android:id="@+id/weatherStr"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
                             android:clickable="false"
-                            android:gravity="center"
                             android:textColor="#FFFFFF"
                             android:textSize="@dimen/activity_main_weatherstr_size" />
-                        
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -152,7 +152,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center_vertical"
-                    android:text="上次签到排名 15 名\n连续签到天数 20 天"
                     android:textColor="#CCCCCC"
                     android:textSize="16sp" />
             </LinearLayout>

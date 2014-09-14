@@ -52,6 +52,7 @@ public class BaseActivity extends SlidingFragmentActivity {
             frag = this.getSupportFragmentManager().findFragmentById(R.id.menu_frame2);
         }
         
+        
         SlidingMenu menu = this.getSlidingMenu();
         menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
         menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);

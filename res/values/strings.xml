@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">梦想闹钟</string>
-	<string name="alarm_setting">查看闹钟</string>
+	<string name="alarm_setting">闹钟设置</string>
 	
 	<string name="add_alarm">添加闹钟</string>
 	<string name="change_alarm">保存闹钟</string>

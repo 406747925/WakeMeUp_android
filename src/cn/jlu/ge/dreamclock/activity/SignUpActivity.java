@@ -1,27 +1,11 @@
 package cn.jlu.ge.dreamclock.activity;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.zip.Inflater;
-
-import javax.crypto.spec.PSource;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import cn.jlu.ge.dreamclock.R;
-import cn.jlu.ge.dreamclock.tools.Const;
-import cn.jlu.ge.dreamclock.tools.GetContects;
-import cn.jlu.ge.dreamclock.tools.ReadParseClass;
-import cn.jlu.ge.dreamclock.tools.UploadPhoneNumberTask;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -30,17 +14,21 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
 import android.widget.Toast;
+import cn.jlu.ge.dreamclock.R;
+import cn.jlu.ge.dreamclock.tools.Const;
+import cn.jlu.ge.dreamclock.tools.ReadParseClass;
+import cn.jlu.ge.dreamclock.tools.UploadPhoneNumberTask;
 
 public class SignUpActivity extends Activity {
 	private String musername;
@@ -51,11 +39,15 @@ public class SignUpActivity extends Activity {
 	private String mphonenum;
 	private String mcollage;
 	private ProgressDialog mDialog;
+	final String TAG = "SignUpActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		// 注册登陆
+		checkSignUpOrNot();
+		
 		setContentView(R.layout.activity_sign_up);
 		getActionBar().hide();
 		msex="m";
@@ -134,9 +126,21 @@ public class SignUpActivity extends Activity {
 			}
 		});
 	}
+	
+	public void checkSignUpOrNot () {
+		SharedPreferences appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+		boolean signUpOrNot = appInfo.getBoolean(Const.USER_LOG_IN_OR_NOT, false);
+		
+		appInfo = null;
+		
+		if ( signUpOrNot != true ) {
+			Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+			startActivity(intent);
+			this.finish();
+		}
+	}
 
-	private class RegisterTask extends AsyncTask<Void, Void, JSONObject>
-	{
+	private class RegisterTask extends AsyncTask<Void, Void, JSONObject> {
 		
 		@Override
 		protected JSONObject doInBackground(Void... arg0) {
@@ -153,15 +157,20 @@ public class SignUpActivity extends Activity {
 					+"&param.college="+mcollage
 					+"&param.device_id="+tm.getDeviceId()
 					+"&param.gender="+msex;
+			
+			Log.v(TAG, path);
+			
 			try{
 				byte[] data =  ReadParseClass.readParse(path);
 				String s=new String(data);
+				Log.v(TAG, s);
 				json = new JSONObject(s);
 
 				return json;
 			}catch(Exception e){}
 			return null;
 		}
+		
 		@Override
 		protected void onPostExecute(JSONObject result) {
 			mDialog.cancel();
@@ -175,14 +184,22 @@ public class SignUpActivity extends Activity {
 				if(result.getInt("statusCode")==200)
 	//			if(true)
 				{
-				Toast.makeText(getApplicationContext(), result.getString("message"), Toast.LENGTH_LONG).show();
-				SharedPreferences pre=getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
-				Editor editor=pre.edit();
-				editor.putString(Const.USER_ID, result.getString("id"));
-				editor.commit();
-				////////////////////上传手机列表
-                new UploadPhoneNumberTask(getApplicationContext()).execute();
-				////////////////////
+					Log.v(TAG, result.toString());
+					Toast.makeText(getApplicationContext(), result.getString("message"), Toast.LENGTH_LONG).show();
+					SharedPreferences pre = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+					Editor editor=pre.edit();
+					editor.putString( Const.USER_ID, result.getString("id") );
+					editor.putString(Const.USER_NAME, musername);
+					editor.putBoolean( Const.USER_LOG_IN_OR_NOT, true );
+					editor.commit();
+					////////////////////上传手机列表
+	                new UploadPhoneNumberTask(getApplicationContext()).execute();
+					////////////////////
+	                
+	                // 跳转到 主界面
+	                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+	                startActivity(intent);
+                
 				}else
 				{
 					Toast.makeText(getApplicationContext(), result.getString("message"), Toast.LENGTH_LONG).show();
@@ -218,7 +235,21 @@ public class SignUpActivity extends Activity {
                 hexValue.append("0");  
             hexValue.append(Integer.toHexString(val));  
         }  
-        return hexValue.toString();  
+        return hexValue.toString();
   
-    } 
+    }
+    
+
+    
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		Log.v(TAG, "finish()");
+		
+		ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		am.killBackgroundProcesses(getPackageName());
+		
+		super.finish();
+		
+	}
 }

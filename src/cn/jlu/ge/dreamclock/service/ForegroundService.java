@@ -442,7 +442,7 @@ public class ForegroundService extends Service {
 			appInfoEditor = null;
 			appInfo = null;
 			
-			Toast.makeText(getApplicationContext(), "One Hour 's average: " + averageOneHour, Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "One Hour 's average: " + averageOneHour + ", 24 Hours' average: " + average24Hours, Toast.LENGTH_SHORT).show();
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

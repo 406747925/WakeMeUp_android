@@ -8,10 +8,10 @@ package com.handmark.pulltorefresh.library;
 
 public final class R {
 	public static final class anim {
-		public static final int slide_in_from_bottom = 0x7f040006;
-		public static final int slide_in_from_top = 0x7f040007;
-		public static final int slide_out_to_bottom = 0x7f040008;
-		public static final int slide_out_to_top = 0x7f040009;
+		public static final int slide_in_from_bottom = 0x7f04000a;
+		public static final int slide_in_from_top = 0x7f04000b;
+		public static final int slide_out_to_bottom = 0x7f04000c;
+		public static final int slide_out_to_top = 0x7f04000d;
 	}
 	public static final class attr {
 		public static final int ptrAdapterViewBackground = 0x7f010010;
@@ -42,11 +42,11 @@ public final class R {
 		public static final int indicator_right_padding = 0x7f060000;
 	}
 	public static final class drawable {
-		public static final int default_ptr_flip = 0x7f020081;
-		public static final int default_ptr_rotate = 0x7f020082;
-		public static final int indicator_arrow = 0x7f02008d;
-		public static final int indicator_bg_bottom = 0x7f02008e;
-		public static final int indicator_bg_top = 0x7f02008f;
+		public static final int default_ptr_flip = 0x7f02007f;
+		public static final int default_ptr_rotate = 0x7f020080;
+		public static final int indicator_arrow = 0x7f020089;
+		public static final int indicator_bg_bottom = 0x7f02008a;
+		public static final int indicator_bg_top = 0x7f02008b;
 	}
 	public static final class id {
 		public static final int both = 0x7f050003;
