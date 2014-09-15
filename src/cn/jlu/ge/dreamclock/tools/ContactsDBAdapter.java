@@ -47,14 +47,20 @@ public class ContactsDBAdapter {
 		   ContentValues contentValue=new ContentValues();
 		   contentValue.put("phonenumber", num);
 		   contentValue.put("name", name);
-		   return   db.insert("contacts", null, contentValue);
-		   
+		   long insertSuccess = db.insertWithOnConflict("contacts", null, contentValue, SQLiteDatabase.CONFLICT_IGNORE);
+		   if ( (int)insertSuccess == -1 ) {
+			   return db.update("contacts", contentValue, "phonenumber" + "=?", new String[]{ num });
+		   } else {
+			   return insertSuccess;
+		   }
 	   }
+	   
 	   public void clearAllRows()
 	   {
 		   String sql="delete from friendlist";
 		   db.execSQL(sql);
 	   }
+	   
 	   public Cursor findFromNum(String num)
 	   {
 		   Cursor cursor=db.query("contacts",new String[] {

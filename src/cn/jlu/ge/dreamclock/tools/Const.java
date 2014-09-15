@@ -4,7 +4,7 @@ public class Const {
 	public static final String APP_INFO_PREFERENCE = ident("app_info");
 
 //	public static final String HOST = ident("http://192.168.1.200:8081/naozhong-dwp/");
-	public static final String HOST = ident("http://192.168.1.200:8080/");
+	public static final String HOST = ident("http://182.92.214.171/");
 	public static final String USER_SIGN_IN_URL = ident("search.action?claseName=UserSrvImpl&invokeMethod=update&param.flag=signup&param.id=%s&param.score=%s");
 	public static final String GET_USER_INFO_URL = ident("search.action?claseName=UserSrvImpl&invokeMethod=load&pageNum=0&param.id=");
 	public static final String GET_USERS_SIGN_IN_LIST_URL = ident("search.action?claseName=FriendsSrvImpl&invokeMethod=loadSignUpFriends&param.flag=0&param.user_id=%s&param.start_time=%s");
@@ -28,6 +28,7 @@ public class Const {
 	public static final String USER_COLLEGE = ident("usercollege");
 	public static final String USER_SEX = ident("usersex");
 	public static final String USER_DEVICE_ID = ident("userdeviceid");
+	public static final String USER_LOG_IN_OR_NOT = ident("signUpOrNot");
 	
 	
 	// KEY 

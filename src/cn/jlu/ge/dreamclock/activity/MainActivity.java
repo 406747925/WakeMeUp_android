@@ -61,7 +61,9 @@ public class MainActivity extends BaseActivity {
 	String wdStr;
 	String windStr;
 	String tempStr;
-	String averageOneHourPM25Str;
+	int averageOneHourPM25;
+	int continuousDaysSum;
+	int rankNum;
 	
 	String dateStr;
 	String sharedDateStr;
@@ -131,12 +133,13 @@ public class MainActivity extends BaseActivity {
 			weatherStr = savedInstanceState.getString(Const.FIRST_WEATHER_KEY, "");
 			dayTempStr = savedInstanceState.getString(Const.FIRST_DAY_TEMP_KEY, "");
 			
-			averageOneHourPM25Str = savedInstanceState.getString(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, "");
+			averageOneHourPM25 = savedInstanceState.getInt(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, -1);
 			wetStr = savedInstanceState.getString(Const.FIRST_WET_KEY, "");
 			wdStr = savedInstanceState.getString(Const.FIRST_WD_KEY, "");
 			windStr = savedInstanceState.getString(Const.FIRST_WS_KEY, "");
 			tempStr = savedInstanceState.getString(Const.FIRST_NOW_TEMP_KEY, "");
-			
+			rankNum = savedInstanceState.getInt(Const.USER_RANK, -1);
+			continuousDaysSum = savedInstanceState.getInt(Const.USER_CONTINUOUS_SIGN_IN_DAYS, -1);
 		}
 		
 	}
@@ -172,8 +175,9 @@ public class MainActivity extends BaseActivity {
 		outState.putString(Const.FIRST_WD_KEY, wdStr);
 		outState.putString(Const.FIRST_WS_KEY, windStr);
 		outState.putString(Const.FIRST_NOW_TEMP_KEY, tempStr);
-		outState.putString(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, averageOneHourPM25Str);
-		
+		outState.putInt(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, averageOneHourPM25);
+		outState.putInt(Const.USER_RANK, rankNum);
+		outState.getInt(Const.USER_CONTINUOUS_SIGN_IN_DAYS, continuousDaysSum );		
 	}
 	
 	@Override
@@ -297,7 +301,8 @@ public class MainActivity extends BaseActivity {
 
 	public void viewInit () {
 		
-		setWeatherView(ptimeStr, weatherStr, dayTempStr);
+		setWeatherView(ptimeStr, weatherStr, dayTempStr, averageOneHourPM25);
+		setUserInfoView ( continuousDaysSum, rankNum );
 		
 		LinearLayout signInLayout = (LinearLayout) findViewById(R.id.signInLayout);
 		LinearLayout positiveLayout = (LinearLayout) findViewById(R.id.positiveLayout);
@@ -330,6 +335,7 @@ public class MainActivity extends BaseActivity {
 				// TODO Auto-generated method stub
 				Intent newIntent = new Intent(getApplicationContext(), SignInActivity.class);
 				startActivity(newIntent);
+				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 			}
         	
         });
@@ -345,6 +351,8 @@ public class MainActivity extends BaseActivity {
 				newIntent.putExtra("weatherCity", 0);
 				
 				startActivity(newIntent);
+				
+				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 			}
 			
 		});
@@ -354,9 +362,10 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent newIntent = new Intent(MainActivity.this, WebPageActivity.class);
-				newIntent.putExtra("url", "positive_energy");
+				Intent newIntent = new Intent(MainActivity.this, PositiveEnergyActivity.class);
+//				newIntent.putExtra("url", "positive_energy");
 				startActivity(newIntent);
+				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 			}
 			
 		});
@@ -377,6 +386,14 @@ public class MainActivity extends BaseActivity {
 	public void viewDataInit () {
 		
 		SharedPreferences appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+		
+		String userName = appInfo.getString(Const.USER_NAME, "Me");
+		String UID = appInfo.getString(Const.USER_ID, "123456789");
+		boolean signUpOrNot = appInfo.getBoolean(Const.USER_LOG_IN_OR_NOT, false);
+		
+		continuousDaysSum = appInfo.getInt(Const.USER_CONTINUOUS_SIGN_IN_DAYS, 0);
+		rankNum = appInfo.getInt(Const.USER_RANK, 0);
+
 		sharedDateStr = appInfo.getString(Const.WEATHER_DATE_KEY, Const.WEATHER_KEY_ERROR_DEFAULT);
 		weatherCity = appInfo.getString(Const.FIRST_CITY_KEY, Const.FIRST_CITY_DEFAULT);
 		
@@ -393,19 +410,32 @@ public class MainActivity extends BaseActivity {
 		wdStr = appInfo.getString(Const.FIRST_WD_KEY, "");
 		windStr = appInfo.getInt(Const.FIRST_WS_KEY, 0) + "级";
 		tempStr = appInfo.getString(Const.FIRST_NOW_TEMP_KEY, "");
-		int averageOneHourPM25 = appInfo.getInt(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, 0);
-		averageOneHourPM25Str = averageOneHourPM25 + "";
+		averageOneHourPM25 = appInfo.getInt(Const.PM2_5_ONE_HOUR_AVERAGE_KEY, 0);
 		
 		appInfo = null;
 		
 	}
 	
+	public void setUserInfoView ( int continuousDaysSum, int rankNum ) {
+		TextView signInInfoTv = (TextView) findViewById(R.id.signInInfo);
+		String text = "上次签到排名 %s \n连续签到天数 %s";
+		if ( rankNum == 0 ) {
+			text = String.format(text, "未更新", "未更新");
+		} else {
+			text = String.format(text, rankNum + " 名", continuousDaysSum + " 天");
+		}
+		signInInfoTv.setText(text);
+	}
+	
 	private void setWeatherView(String ptimeStr, String weatherStr,
-			String dayTempStr) {
+			String dayTempStr, int pm25) {
 		// TODO Auto-generated method stub
 
 		TextView weatherStrTV = (TextView) findViewById(R.id.weatherStr);
 		weatherStrTV.setText(weatherCity + "\n" + dayTempStr);
+		
+		TextView pm25TV = (TextView) findViewById(R.id.PMStr);
+		pm25TV.setText( BindDataAndResource.getPM25Level( pm25 )  + "\n" + pm25);
 		
 		ImageView weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 		int drawableResource = BindDataAndResource.getWeatherIconImageResourceId(weatherStr);

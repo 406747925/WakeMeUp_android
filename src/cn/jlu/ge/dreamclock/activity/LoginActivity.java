@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -27,12 +28,14 @@ public class LoginActivity extends SherlockActivity{
 	String mpasswdorigen;
 	SharedPreferences pre;
 	ProgressDialog mDialog;
+	private final String TAG = "LoginActivity";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-        pre=getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
-		setContentView(R.layout.activity_login);
+        pre = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+
+        setContentView(R.layout.activity_login);
 		getActionBar().hide();
 		
 		EditText phonenum=(EditText)findViewById(R.id.editTextphone);
@@ -50,6 +53,7 @@ public class LoginActivity extends SherlockActivity{
 				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 			}
 		});
+		
 		Button b=(Button)findViewById(R.id.buttonsignin);
 		b.setOnClickListener(new OnClickListener() {
 
@@ -60,7 +64,7 @@ public class LoginActivity extends SherlockActivity{
 				mphonenum=phonenum.getText().toString();
 				EditText passwd=(EditText)findViewById(R.id.editTextpasswd);
 				mpasswd=passwd.getText().toString();
-				mpasswdorigen=mpasswd;
+				mpasswdorigen = mpasswd;
 				mpasswd=SignUpActivity.string2MD5(mpasswd);
 				new LoginTask().execute();
 				mDialog=new ProgressDialog(LoginActivity.this);
@@ -107,8 +111,8 @@ public class LoginActivity extends SherlockActivity{
 				return;
 			}
 			try {
-				if( result.getInt("statusCode")==200)
-				{
+				if( result.getInt("statusCode") == 200 ) {
+					Log.d(TAG, result.toString());
 					Toast.makeText(getApplicationContext(), "登陆成功", Toast.LENGTH_LONG).show();
 					SharedPreferences.Editor editor = pre.edit(); 
 					editor.putString(Const.USER_PHONE_NUMBER, mphonenum);
@@ -118,8 +122,18 @@ public class LoginActivity extends SherlockActivity{
 					editor.putString(Const.USER_SCHOOL, json.getString("school"));
 					editor.putString(Const.USER_COLLEGE, json.getString("college"));
 					editor.putString(Const.USER_ID, json.getString("id"));
+					editor.putString(Const.USER_NAME, json.getString("nickname"));
+					editor.putString(Const.USER_AVATAR_URL, json.optString("pic_url"));
+					// 将用户是否登陆的判断变量置为 true
+					editor.putBoolean(Const.USER_LOG_IN_OR_NOT, true);
 					editor.commit();
-				}else
+					
+					// 跳转到 主界面 
+					Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+					startActivity(intent);
+					overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+				}
+				else
 				{
 					Toast.makeText(getApplicationContext(), result.getString("message"), Toast.LENGTH_LONG).show();
 				}

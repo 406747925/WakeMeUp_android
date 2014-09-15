@@ -33,9 +33,9 @@ public class MenuFragment extends ListFragment {
 		
 		MenuAdapter menuAdapter = new MenuAdapter(getActivity());
 		menuAdapter.add(new MenuItem(R.string.sliding_menu_user_setting, R.drawable.ic_launcher));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_friends_setting, R.drawable.ic_launcher));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_app_setting, R.drawable.ic_launcher));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_communicate, R.drawable.ic_launcher));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_friends_setting, R.drawable.default_avatar));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_app_setting, R.drawable.alarm_off));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_communicate, R.drawable.tel));
 		
 		setListAdapter(menuAdapter);
 	}
@@ -67,7 +67,7 @@ public class MenuFragment extends ListFragment {
 			} else {
 				convertView = LayoutInflater.from(getContext()).inflate(R.layout.user_row, null);
 				ImageView icon = (ImageView) convertView.findViewById(R.id.user_head);
-				icon.setImageResource(getItem(position).iconRes);
+				icon.setImageResource(R.drawable.originalhead);
 				TextView title = (TextView) convertView.findViewById(R.id.user_name);
 				title.setText(getItem(position).tagRes);
 			}

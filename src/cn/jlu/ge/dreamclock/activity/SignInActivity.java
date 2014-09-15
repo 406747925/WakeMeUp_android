@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	final String TAG = "SignInActivity";
-	private int mySignInRank;
+	private int mySignInRank = 3;
 	private int signInUsersNum;
 	private ExpandableListView usersList;
 	private AsyncHttpClient client;
@@ -88,7 +89,7 @@ public class SignInActivity extends BaseActivity {
 		loadingAnimation = new RotateAnimation( 0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 		loadingAnimation.setDuration(3000);
 		loadingAnimation.setRepeatCount(10);
-		
+
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
 		signInUsersList = new ArrayList< HashMap<String, Object> > ();
@@ -115,14 +116,16 @@ public class SignInActivity extends BaseActivity {
 		setContentView(R.layout.activity_sign_in);
 		
 		loadingIM = (ImageView) findViewById(R.id.loadingIM);
-		loadingIM.startAnimation(loadingAnimation);
+		loadingIM.setVisibility(View.GONE);
+//		loadingIM.startAnimation(loadingAnimation);
 		
 		viewInit();
-		
+
 		// 因为在父类 BaseActivity 的 onCreate 方法执行时， 所需要的 Fragment 控件必须是 子控件，
         // 方法中的 FragmentTransaction 会使用 id 资源 ( R.id.menu_frame2 ) 引用 Fragment 控件，
         // 如果未先将对应的 Fragment 控件设置为子控件进行初始化， FragmentManager 将会找不到这个子控件，
 		// 而在绘制界面时才抛出运行时异常
+		
 		getSlidingMenu().setSecondaryMenu(R.layout.menu_frame);
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.menu_frame2, new MenuFragment()).commit();
@@ -207,24 +210,26 @@ public class SignInActivity extends BaseActivity {
 		String signInTimeStr = appInfo.getString(Const.USER_SIGN_IN_TIME, "未更新");
 		String getUsersListLastTimeStr = appInfo.getString(Const.GET_USERS_LIST_LAST_TIME , "");
 		int signInUsersSum = appInfo.getInt(Const.SIGN_IN_RANK_NUM, 1);
-		boolean signInOrNot = appInfo.getBoolean(Const.USER_SIGN_IN_OR_NOT, false);
-//		boolean signInOrNot = false;
+//		boolean signInOrNot = appInfo.getBoolean(Const.USER_SIGN_IN_OR_NOT, false);
+		boolean signInOrNot = false;
 		appInfo = null;
 
 		myAvatarUrl = avatarUrl;
-		mySignInRank = rankNum;
+//		mySignInRank = rankNum;
 		myUserNameStr = userName;
 		mySignInTimeStr = signInTimeStr;
 		signInUsersNum = signInUsersSum;
 		timeStr = getUsersListLastTimeStr;
-		UIDStr = UID;
+//		UIDStr = UID;
 		
 		if ( signInOrNot ) {
 			
 			setUserSignInViews(userName, continuousDaysSum, jeerNum, scoreNum, rankNum);
-			getSignInUsersListFromNet( UIDStr, timeStr );
+			addListsDataFromLocal();
+			setSignInUsersView();
+//			getSignInUsersListFromNet( UIDStr, timeStr );
 			// 已经签到过，就先从数据库中获得数据
-			getUsersInfromFromDB();
+//			getUsersInfromFromDB();
 			
 		} else {
 			
@@ -256,8 +261,26 @@ public class SignInActivity extends BaseActivity {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			if ( !isGoingToSignInBool ) {
-				userDoSignIn ( UIDStr );
-				Toast.makeText(getApplicationContext(), "正在前往签到处～", Toast.LENGTH_SHORT).show();				
+//				userDoSignIn ( UIDStr );
+				
+				Toast.makeText(getApplicationContext(), "正在前往签到处～", Toast.LENGTH_SHORT).show();
+				
+				loadingIM.setVisibility(View.VISIBLE);				
+				loadingIM = (ImageView) findViewById(R.id.loadingIM);
+				loadingIM.startAnimation(loadingAnimation);
+
+				v.postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						addListsDataFromLocal();
+						setSignInUsersView();
+						setUserSignInViews(myUserNameStr, 3, -1, 40, 3);
+					}
+					
+				}, 3000);
+								
 			} else {
 				Toast.makeText(getApplicationContext(), "正在前往签到处，别心急咯～", Toast.LENGTH_SHORT).show();
 			}
@@ -287,6 +310,16 @@ public class SignInActivity extends BaseActivity {
 		jeerNumTv.setText( getJeerNumDescStr( jeerNum ) );
 		scoreTv.setText( getScoreDescStr( scoreNum ) );
 		
+//		signInBtn.postDelayed(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				// TODO Auto-generated method stub
+//				loadingAnimation.cancel();
+//				loadingIM.setVisibility(View.GONE);
+//			}
+//			
+//		}, 3000);
 	}
 
 	void setUserSignInInfo (String userName, int continuousDaysSum, 
@@ -311,7 +344,7 @@ public class SignInActivity extends BaseActivity {
 		
 		editor.commit();
 		
-		mySignInRank = rankNum;
+//		mySignInRank = rankNum;
 		myUserNameStr = signInTimeStr;
 		myUserNameStr = userName;
 		mySignInTimeStr = signInTimeStr;
@@ -325,16 +358,16 @@ public class SignInActivity extends BaseActivity {
 	
 	void setUserAvatar ( String avatarUrl ) {
 		CircleImageView avatarIv = (CircleImageView) findViewById(R.id.userAvatar);
-		Bitmap avatarBM = bitmapCache.getBitmapFromCache(avatarUrl);
-		if ( avatarBM != null ) {
-			
-			BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
-			avatarIv.setImageDrawable(avatarDrawable);
-			
-		}
-		else {
-			bitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
-		}
+//		Bitmap avatarBM = bitmapCache.getBitmapFromCache(avatarUrl);
+//		if ( avatarBM != null ) {
+//			
+//			BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
+//			avatarIv.setImageDrawable(avatarDrawable);
+//			
+//		}
+//		else {
+//			bitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
+//		}
 	}
 	
 	
@@ -389,7 +422,7 @@ public class SignInActivity extends BaseActivity {
 			String avatarUrl = userInfoObject.getString("pic_url");
 			String signInTimeStr = userInfoObject.getString("get_up_time_today");
 			myAvatarUrl = avatarUrl;
-			mySignInRank = rankNum;
+//			mySignInRank = rankNum;
 			
 			String getUsersListLastTimeStr = null;
 			
@@ -508,7 +541,7 @@ public class SignInActivity extends BaseActivity {
 			String signInTimeStr = getUsersListLastTimeStr;
 			String avatarUrl = userInfoObject.getString("pic_url");
 			myAvatarUrl = avatarUrl;
-			mySignInRank = rankNum;
+//			mySignInRank = rankNum;
 			
 			setUserSignInInfo(userName, continuousDaysSum, jeerNum, scoreNum,
 						rankNum, avatarUrl, signInTimeStr, UIDStr, getUsersListLastTimeStr);
@@ -558,6 +591,7 @@ public class SignInActivity extends BaseActivity {
 		String contentStr = null;
 		int jeerOrNot = 0;
 		String avatarUrl = null;
+		
 		for ( cursor.moveToFirst() ; !cursor.isLast() ; cursor.moveToNext() ) {
 			userName = cursor.getString(nickNameColumn);
 			rank = cursor.getInt(rankColumn);
@@ -695,13 +729,69 @@ public class SignInActivity extends BaseActivity {
 		map.put("uid", friendId);
 		map.put("time", getUpTimeStr);
 		map.put("info", contentStr);
-		map.put("jeerOrNot", jeerOrNot);
+		map.put("jeerOrNot", "" + jeerOrNot);
 		map.put("avatarUrl", avatarUrl);
 		
 		Log.d(TAG, "userRank : " + rank + ", userName : " + userName);
 		signInUsersList.add(map);
 		
 	}
+	
+	
+	// 
+	void addListsDataFromLocal () {
+		int rank = 1;
+		String userName = "路人甲";
+		String friendId = "123";
+		String getUpTimeStr = "06:00";
+		String contentStr = "懒猪快起来啦～";
+		String avatarUrl = "";
+		int jeerOrNot = 0;
+		
+		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
+		
+		rank = 2;
+		userName = "路人乙";
+		friendId = "123";
+		getUpTimeStr = "06:30";
+		contentStr = "太阳照到屁股了！快起来！";
+		avatarUrl = "";
+		jeerOrNot = 0;
+		
+		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
+		
+		rank = 3;
+		userName = myUserNameStr;
+		friendId = "123";
+		getUpTimeStr = "06:40";
+		contentStr = "";
+		avatarUrl = "";
+		jeerOrNot = -1;
+		
+		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
+		
+		rank = 4;
+		userName = "路人丁";
+		friendId = "123";
+		getUpTimeStr = "未起床";
+		contentStr = "";
+		avatarUrl = "";
+		int jeerOrNot2 = 2;
+		
+		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
+		
+		rank = 5;
+		userName = "路人A";
+		friendId = "123";
+		getUpTimeStr = "未起床";
+		contentStr = "";
+		avatarUrl = "";
+//		jeerOrNot = 2;
+		
+		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
+		
+	}
+	
 	
 	
 	// 将用户个人签到信息加入到签到列表中，一个全局的 ArrayList
@@ -888,11 +978,11 @@ public class SignInActivity extends BaseActivity {
 		public int getChildrenCount(int groupPosition) {
 			// TODO Auto-generated method stub
 			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
-			if ( jeerOrNot.equals( "-1" ) ) {
-				return 0;
+			if ( jeerOrNot.equals( "0" ) ) {
+				return 1;
 			}
 			else {
-				return 1;
+				return 0;
 			}
 		}
 
@@ -936,19 +1026,13 @@ public class SignInActivity extends BaseActivity {
 			clickViews.position = groupPosition;
 			Log.v("SignInActivity", "positon : " + groupPosition);
 			
-			if ( groupPosition < signInUsersNum ) {
+//			if ( groupPosition < signInUsersNum ) {
 				
 				clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
 				clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
 				clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
 				
 				String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
-				if ( jeerOrNot.equals("-1") ) {
-					clickViews.showInfoBtn.setVisibility(View.INVISIBLE);
-				} else if ( jeerOrNot.equals("0") ) {
-					clickViews.showInfoBtn.setVisibility(View.VISIBLE);
-				}
-				
 				OnClickListener showJeerClickListener = new OnClickListener () {
 
 					@Override
@@ -968,24 +1052,43 @@ public class SignInActivity extends BaseActivity {
 				};
 				
 				clickViews.showInfoBtn.setOnClickListener(showJeerClickListener);
-				
-			} else {
-				
-				clickViews.rankTV.setText("-");
-				clickViews.timeTV.setText("未起床");
-				clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
-				clickViews.showInfoBtn.setText("嘲笑他");
-				clickViews.showInfoBtn.setOnClickListener(new OnClickListener () {
+				if ( jeerOrNot.equals("-1") ) {
+					clickViews.showInfoBtn.setVisibility(View.INVISIBLE);
+				} else if ( jeerOrNot.equals("0") ) {
+					clickViews.showInfoBtn.setVisibility(View.VISIBLE);
+					clickViews.showInfoBtn.setText("查看");
+				} else if ( jeerOrNot.equals("2") ) {
+					clickViews.showInfoBtn.setVisibility(View.VISIBLE);
+					clickViews.showInfoBtn.setText("嘲笑他");
+					clickViews.showInfoBtn.setOnClickListener(new OnClickListener () {
 
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							Toast.makeText(getApplicationContext(), "成功发送嘲笑～", Toast.LENGTH_SHORT).show();
+						}
 						
-					}
-					
-				});
+					});
+				}
 				
-			}
+				
+//			} else if ( Integer.parseInt( signInUsersList.get(groupPosition).get("userRank").toString() ) > 3 ) {
+				
+//				clickViews.rankTV.setText("-");
+//				clickViews.timeTV.setText("未起床");
+//				clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
+//				clickViews.showInfoBtn.setText("嘲笑他");
+//				clickViews.showInfoBtn.setOnClickListener(new OnClickListener () {
+//
+//					@Override
+//					public void onClick(View v) {
+//						// TODO Auto-generated method stub
+//						Toast.makeText(getApplicationContext(), "成功发送嘲笑～", Toast.LENGTH_SHORT).show();
+//					}
+//					
+//				});
+//				
+//			}
 			
 			// 头像点击事件
 			OnClickListener avatarClickListener = new OnClickListener () {
@@ -1006,7 +1109,7 @@ public class SignInActivity extends BaseActivity {
 
 			clickViews.avatarIV.setOnClickListener(avatarClickListener);
 			String avatarUrl = signInUsersList.get(groupPosition).get("avatarUrl").toString();
-			setUserAvatar ( avatarUrl, 45, 45, clickViews.avatarIV );
+//			setUserAvatar ( avatarUrl, 45, 45, clickViews.avatarIV );
 			
 			return convertView;
 		}

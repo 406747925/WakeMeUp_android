@@ -5,7 +5,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.util.Log;
+
 public class ReadParseClass {
+	private final static String TAG = "ReadParseClass";
 	public static byte[] readParse(String urlPath) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] data = new byte[1024];
@@ -27,7 +30,10 @@ public class ReadParseClass {
         }
         inStream.close();
         return outStream.toByteArray();
-        }catch(Exception e){}
+        }catch(Exception e) {
+        	Log.e( TAG, e.toString() );
+        }
+
         return null;
         
 }

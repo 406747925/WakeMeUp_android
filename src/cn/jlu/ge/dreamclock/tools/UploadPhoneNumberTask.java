@@ -74,15 +74,20 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 
 			}
 
-		}catch(Exception e){}
-		String s=new String();
+		}catch(Exception e){
+			
+		}
+		
+		String s = new String();
 		int i=0;
-		Cursor cursor=adapter.getAllRows();
-		while(cursor.moveToNext())
-		{
+		Cursor cursor = adapter.getAllRows();
+
+		while( cursor.moveToNext() ) {
 			s+=cursor.getString(0);
 			i++;
 		}
+		
+		cursor.close();
 		
         if (loadLisneter != null) {
             loadLisneter.loadComplete();
