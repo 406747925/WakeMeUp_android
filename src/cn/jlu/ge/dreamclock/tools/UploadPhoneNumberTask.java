@@ -34,14 +34,14 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 		// TODO Auto-generated method stub
 		SharedPreferences pre=mContext.getSharedPreferences(Const.APP_INFO_PREFERENCE, Context.MODE_MULTI_PROCESS);
 		GetContects c=new GetContects(mContext);
-		ArrayList<String> l=c.getAllContacts();
-		String num=l.get(0);
-		String name=l.get(1);
+		ArrayList<StringBuilder> l=c.getAllContacts();
+		StringBuilder num=l.get(0);
+		StringBuilder name=l.get(1);
 		String path=PositiveEnergyActivity.UrlHead
 				+"search.action?claseName=FriendsSrvImpl&invokeMethod=filterFriend"
 				+ "&param.user_id="+pre.getString(Const.USER_ID, "")
-				+"&param.phones="+num
-				+"&param.names="+name;
+				+"&param.phones="+num.toString()
+				+"&param.names="+name.toString();
 		try{
 			byte[] data = ReadParseClass.readParse(path);
 			String s=new String(data);
