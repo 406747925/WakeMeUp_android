@@ -26,6 +26,7 @@ public GetContects(Context c) {
 	{	
         Cursor cursor = context.getContentResolver().query( ContactsContract.Contacts.CONTENT_URI, 
                 null, null, null, null);
+        ContactsDBAdapter dbadapter=new ContactsDBAdapter(context);
        int contactIdIndex = 0;
        int nameIndex = 0;
        Log.i(TAG, "1");
@@ -62,13 +63,12 @@ public GetContects(Context c) {
             //   numbers=numbers+URLEncoder.encode(phoneNumber,"UTF-8")+",";
                numbers.append(URLEncoder.encode(phoneNumber,"UTF-8")+",");
             //   names=names+URLEncoder.encode(name, "UTF-8")+",";
-               names.append(URLEncoder.encode(name, "UTF-8")+",");
-               ContactsDBAdapter dbadapter=new ContactsDBAdapter(context);
-               
+               names.append(URLEncoder.encode(name, "UTF-8")+",");    
                dbadapter.insertRow(phoneNumber,name);
                }catch(Exception e){}
            }
            Log.i(TAG, "1");
+           phones.close();
 		
 	}
     // numbers=  numbers.substring(0, numbers.length()-1);
@@ -78,6 +78,8 @@ public GetContects(Context c) {
     ArrayList<StringBuilder> l=new ArrayList<StringBuilder>();
      l.add(numbers);
      l.add(names);
+     dbadapter.close();
+     cursor.close();
 	return l;
 	}
 

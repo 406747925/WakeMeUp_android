@@ -33,6 +33,7 @@ public class ContactsDBAdapter {
 			
 		}
 
+
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int arg1, int arg2) {
 			Log.w("1", "Upgrading database from version " + arg1
@@ -79,5 +80,8 @@ public class ContactsDBAdapter {
 					"phonenumber","name"},null, null, null, null, null);		
 		   return cursor; 
 	   }
+		public void close(){
+			mDBHelper.close();
+		}
 
 }

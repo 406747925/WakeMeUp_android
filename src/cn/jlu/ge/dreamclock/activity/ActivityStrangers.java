@@ -55,16 +55,16 @@ public class ActivityStrangers extends Activity{
 				imageView.setTag(PositiveEnergyActivity.UrlHead+list.get(position).get(FriendsDBAdapter.PIC_URL));
 
 				//		Bitmap bitmap = mBitmapCache.getBitmapFromCache(list.get(position).get(FriendsDBAdapter.PIC_URL).toString());
-				Bitmap bitmap = mBitmapCache.getBitmapFromCache(null);
-				if(bitmap==null)
-				{
-					//	mBitmapCache.getImageFromNet(list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), 45, 45, imageView);
-					mBitmapCache.getImageFromNet(null,null, 45, 45, imageView);
-				}else
-				{
-					BitmapDrawable drawable=new BitmapDrawable(getApplication().getResources(),bitmap);
-					imageView.setBackgroundDrawable(drawable);
-				}
+//				Bitmap bitmap = mBitmapCache.getBitmapFromCache(null);
+//				if(bitmap==null)
+//				{
+//					//	mBitmapCache.getImageFromNet(list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), 45, 45, imageView);
+//					mBitmapCache.getImageFromNet(null,null, 45, 45, imageView);
+//				}else
+//				{
+//					BitmapDrawable drawable=new BitmapDrawable(getApplication().getResources(),bitmap);
+//					imageView.setBackgroundDrawable(drawable);
+//				}
 				TextView textview=(TextView) convertView.findViewById(R.id.textView1);
 				textview.setText(list.get(position).get("str").toString());
 				

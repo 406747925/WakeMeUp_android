@@ -54,10 +54,10 @@ public class FriendsDBAdapter {
 		public void onCreate(SQLiteDatabase db) {	
 			String CREATE_TABLE="create table friendlist"
 					+ "(_id INTEGER DEFAULT '1' NOT NULL PRIMARY KEY AUTOINCREMENT"
-					+ ",num text not null"
+					+ ",num text not null unique"
 					+ ",name text"
 					+ ",url text"
-					+ ",id text);";
+					+ ",id text unique);";
 		
 			db.execSQL(CREATE_TABLE);
 			db.execSQL(CREATE_STRANGER_USERS_TABLE);

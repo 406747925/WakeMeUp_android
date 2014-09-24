@@ -131,6 +131,7 @@ public class FriendListActivity extends Activity {
 							map.put(FriendsDBAdapter.USER_ID,cursor.getString(cursor.getColumnIndex(FriendsDBAdapter.USER_ID)));
 							list.add(map);
 						}
+						cursor.close();
 						adapter.notifyDataSetChanged();
 						mListView.onRefreshComplete();
 
@@ -146,12 +147,26 @@ public class FriendListActivity extends Activity {
 					long arg3) {
 				// TODO Auto-generated method stub
 				TextView v=(TextView)arg1.findViewById(R.id.textViewfriend);
-				Toast toast=Toast.makeText(getApplication(), "click"+v.getText().toString(), Toast.LENGTH_SHORT);
+				//Toast toast=Toast.makeText(getApplication(), "click"+v.getText().toString(), Toast.LENGTH_SHORT);
+				Toast toast=Toast.makeText(getApplication(), "click"+String.valueOf(arg2), Toast.LENGTH_SHORT);
 				toast.show();
-				Intent intent =new Intent(getApplication(),WebPageActivity.class);
-				intent.putExtra("url", "www.baidu.com");
+				Intent intent =new Intent(getApplication(),UserInfoActivity.class);
+				intent.putExtra("userName", v.getText().toString());
+			intent.putExtra("uid", list.get(arg2-1).get(FriendsDBAdapter.USER_ID).toString());
+			try{
+			if( list.get(arg2-1).containsKey(FriendsDBAdapter.PIC_URL)){
+			intent.putExtra("avatarUrl", list.get(arg2-1).get(FriendsDBAdapter.PIC_URL).toString());
+			}
+			}catch(Exception e){}
 				startActivity(intent);
+				
+//				
+//				Bundle bundle = intent.getExtras();
+//				userName = bundle.getString("userName", "error");
+//				uid = bundle.getString("uid", "-1");
+//				avatarUrl = bundle.getString("avatarUrl", "default");
 
+				
 			}
 		});
 		Cursor cursor=mDBAdapter.getAllRows();
@@ -164,6 +179,7 @@ public class FriendListActivity extends Activity {
 			map.put(FriendsDBAdapter.USER_ID,cursor.getString(cursor.getColumnIndex(FriendsDBAdapter.USER_ID)));
 			list.add(map);
 		}
+		cursor.close();
 		adapter.notifyDataSetChanged();
 		new GetDataTask().execute();
 	}
@@ -210,13 +226,15 @@ public class FriendListActivity extends Activity {
 					JSONObject j=(JSONObject)jarray.get(i);
 					if( dbadapter.findFromNum(j.getString("phone")).getCount()>0)
 					{
-						mDBAdapter.removeFromNum(j.getString("phone"));
+					//	mDBAdapter.removeFromNum(j.getString("phone"));
 						mDBAdapter.insertRow(j.optString("nickname", null), j.getString("phone"),j.optString("pic_url", null), j.getString("id"));
 						Cursor cursor=dbadapter.findFromNum(j.getString("phone"));
-						mNewFriendNames+= cursor.getString(cursor.getColumnIndex("name"));
-						mNewFriendIDs+=j.getString("id");
+						mNewFriendNames+= cursor.getString(cursor.getColumnIndex("name"))+",";
+						mNewFriendIDs+=j.getString("id")+",";
+						cursor.close();
 					}
 				}
+				dbadapter.close();
 				if(mNewFriendIDs.length()==0||mNewFriendIDs.length()==0)
 					return;
 				mNewFriendNames=mNewFriendNames.substring(0, mNewFriendNames.length()-1);
@@ -256,11 +274,18 @@ public class FriendListActivity extends Activity {
 				map.put(FriendsDBAdapter.USER_ID,cursor.getString(cursor.getColumnIndex(FriendsDBAdapter.USER_ID)));
 				list.add(map);
 			}
+			cursor.close();
 			adapter.notifyDataSetChanged();
 			mListView.onRefreshComplete();
 			super.onPostExecute(result);
 		}
 
+	}
+	@Override
+	protected void finalize() throws Throwable {
+		// TODO Auto-generated method stub
+		mDBAdapter.close();
+		super.finalize();
 	}
 
 }
