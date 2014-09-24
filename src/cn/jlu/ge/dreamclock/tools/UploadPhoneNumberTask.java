@@ -43,7 +43,7 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 				+"&param.phones="+num.toString()
 				+"&param.names="+name.toString();
 		try{
-			byte[] data = ReadParseClass.readParse(path);
+			byte[] data = ReadParseClass.readParse(path,);
 			String s=new String(data);
 			JSONObject json = new JSONObject(s);
 			return json;
