@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import cn.jlu.ge.dreamclock.activity.PositiveEnergyActivity;
 
 public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 {
 	Context mContext;
+	final static String TAG = "UploadPhoneNumberTask";
 	public isLoadDataListener loadLisneter;
 	public interface isLoadDataListener {
 		public void loadComplete();

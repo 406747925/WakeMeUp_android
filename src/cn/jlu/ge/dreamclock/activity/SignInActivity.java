@@ -74,6 +74,7 @@ public class SignInActivity extends BaseActivity {
 	Animation flyOutAnimation;
 	Animation flyInAnimation;
 	Animation loadingAnimation;
+	Animation listFlyInAnimation;
 	ImageView loadingIM;
 	
 	
@@ -104,6 +105,7 @@ public class SignInActivity extends BaseActivity {
 	void animationInit () {
 		flyOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_out_item);
 		flyInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_in_item);
+		listFlyInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.list_fly_out_item);
 		loadingAnimation = new RotateAnimation( 0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 		loadingAnimation.setDuration(3000);
 		loadingAnimation.setRepeatCount(10);
@@ -164,7 +166,9 @@ public class SignInActivity extends BaseActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if ( userLayout.getVisibility() == View.VISIBLE ) {
-					signInActivityLayout.startAnimation(flyOutAnimation);
+					userLayout.startAnimation(flyOutAnimation);
+					usersList.startAnimation(listFlyInAnimation);
+					
 					v.postDelayed(new Runnable () {
 
 						@Override
@@ -173,7 +177,7 @@ public class SignInActivity extends BaseActivity {
 							userLayout.setVisibility(View.GONE);
 						}
 						
-					}, 450);
+					}, 500);
 				}
 				else {
 					signInActivityLayout.startAnimation(flyInAnimation);

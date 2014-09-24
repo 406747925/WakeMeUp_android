@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.util.Log;
+import android.widget.Toast;
 
 public class ReadParseClass {
 	private final static String TAG = "ReadParseClass";
@@ -31,6 +32,7 @@ public class ReadParseClass {
         inStream.close();
         return outStream.toByteArray();
         }catch(Exception e) {
+        	Log.v(TAG, "wtf!");
         	Log.e( TAG, e.toString() );
         }
 

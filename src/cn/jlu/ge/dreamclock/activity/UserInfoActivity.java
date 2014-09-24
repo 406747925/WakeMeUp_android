@@ -101,8 +101,6 @@ public class UserInfoActivity extends BaseActivity {
 	public void setDatasFromDB () {
 		FriendsDBAdapter friendsDb = new FriendsDBAdapter(getApplicationContext());
 		
-		
-		
 		friendsDb.close();
 		
 //		setUserAvatar ( avatarUrl );
