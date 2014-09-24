@@ -33,6 +33,10 @@ public class ReadParseClass {
         }catch(Exception e) {
         	Log.e( TAG, e.toString() );
         }
+        finally{
+        	conn.disconnect();
+        	
+        }
 
         return null;
         

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.BitmapCache;
+import cn.jlu.ge.dreamclock.tools.CavansImageTask;
 import cn.jlu.ge.dreamclock.tools.Const;
 import cn.jlu.ge.dreamclock.tools.ContactsDBAdapter;
 import cn.jlu.ge.dreamclock.tools.FriendsDBAdapter;
@@ -86,13 +87,14 @@ public class FriendListActivity extends Activity {
 				ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView1);
 
 				imageView.setTag(PositiveEnergyActivity.UrlHead+list.get(position).get(FriendsDBAdapter.PIC_URL));
+				new CavansImageTask().execute(imageView);
 
 				//		Bitmap bitmap = mBitmapCache.getBitmapFromCache(list.get(position).get(FriendsDBAdapter.PIC_URL).toString());
 				Bitmap bitmap = mBitmapCache.getBitmapFromCache(null);
 				if(bitmap==null)
 				{
-					//	mBitmapCache.getImageFromNet(list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), 45, 45, imageView);
-					mBitmapCache.getImageFromNet(null,null, 45, 45, imageView);
+				//		mBitmapCache.getImageFromNet(list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), 45, 45, imageView);
+				//	mBitmapCache.getImageFromNet(null,null, 45, 45, imageView);
 				}else
 				{
 					BitmapDrawable drawable=new BitmapDrawable(getApplication().getResources(),bitmap);

@@ -59,6 +59,7 @@ public class SignUpActivity extends Activity {
 				Intent i=new Intent(getApplicationContext(), LoginActivity.class);
 				startActivity(i);
 				overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+				finish();
 
 			}
 		});
@@ -133,10 +134,12 @@ public class SignUpActivity extends Activity {
 		
 		appInfo = null;
 		
-		if ( signUpOrNot != true ) {
+		if ( signUpOrNot == true ) {
 			Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+			
 			startActivity(intent);
 			this.finish();
+			
 		}
 	}
 
@@ -199,6 +202,7 @@ public class SignUpActivity extends Activity {
 	                // 跳转到 主界面
 	                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
 	                startActivity(intent);
+	                finish();
                 
 				}else
 				{

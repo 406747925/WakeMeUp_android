@@ -84,7 +84,7 @@
         </activity>
         <activity
             android:name="cn.jlu.ge.dreamclock.activity.FriendListActivity"
-            android:launchMode="singleInstance" >
+             >
         </activity>
         <activity
             android:name="cn.jlu.ge.dreamclock.activity.ActivityStrangers"

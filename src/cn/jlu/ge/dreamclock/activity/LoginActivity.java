@@ -132,6 +132,7 @@ public class LoginActivity extends SherlockActivity{
 					Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 					startActivity(intent);
 					overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+					finish();
 				}
 				else
 				{

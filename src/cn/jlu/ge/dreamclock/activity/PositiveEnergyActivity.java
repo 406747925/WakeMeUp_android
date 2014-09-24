@@ -111,6 +111,8 @@ public class PositiveEnergyActivity extends ListActivity{
 //				image.setTag(UrlHead+textview.getText().toString());
 //	//			 new CavansImageTask().execute(image);
 //				return view;
+				if(convertView==null)
+				{
 				convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.pe_item, null);
 		        ImageView image = (ImageView) convertView.findViewById(R.id.imageView2);
 		 //       TextView textimageurl=(TextView)convertView.findViewById(R.id.textimageurl);
@@ -123,6 +125,7 @@ public class PositiveEnergyActivity extends ListActivity{
 		        textdescription.setText(list.get(position).get("description").toString());
 		        image.setTag(list.get(position).get("imageurl").toString());
 		        new CavansImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, image);
+				}
 		        return convertView;
 			}
 			

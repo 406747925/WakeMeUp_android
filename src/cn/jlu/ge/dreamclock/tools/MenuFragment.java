@@ -1,6 +1,7 @@
 package cn.jlu.ge.dreamclock.tools;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.DisplayMetrics;
@@ -9,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.dreamclock.R;
+import cn.jlu.ge.dreamclock.activity.FriendListActivity;
 
 public class MenuFragment extends ListFragment {
 
@@ -49,7 +52,17 @@ public class MenuFragment extends ListFragment {
 		}
 	}
 	
-
+@Override
+public void onListItemClick(ListView l, View v, int position, long id) {
+	// TODO Auto-generated method stub
+	if(position==1)
+	{
+		Intent i=new Intent(getActivity(), FriendListActivity.class);
+		startActivity(i);
+	}
+	
+	super.onListItemClick(l, v, position, id);
+}
 	
 	public class MenuAdapter extends ArrayAdapter<MenuItem> {
 		
