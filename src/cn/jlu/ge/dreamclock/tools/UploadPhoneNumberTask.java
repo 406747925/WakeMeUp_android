@@ -47,7 +47,8 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 			String s=new String(data);
 			JSONObject json = new JSONObject(s);
 			return json;
-		}catch(Exception e){}
+		}catch(Exception e){
+		}
 
 		return null;
 	}

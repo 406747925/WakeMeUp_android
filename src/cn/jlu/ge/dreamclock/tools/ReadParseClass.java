@@ -64,14 +64,27 @@ public class ReadParseClass {
         conn.getOutputStream().write(bypes);// 输入参数
    //     conn.setRequestProperty("contentType", "application/x-www-form-urlencoded; charset=utf-8");
         try{
-        InputStream inStream = conn.getInputStream();
-        while ((len = inStream.read(data)) != -1) {
-                outStream.write(data, 0, len);
-        }
-        inStream.close();
-        return outStream.toByteArray();
+        	InputStream inStream = null;
+        	try {
+        		inStream = conn.getInputStream();
+        	} catch ( Exception e ) {
+        		
+        		Log.d(TAG, ">>>> get it : " + e.toString());
+        		
+        	}
+        	
+	        while ((len = inStream.read(data)) != -1) {
+	                outStream.write(data, 0, len);
+	        }
+	        Log.e(TAG, ">>>> before close.");
+	        inStream.close();
+	        return outStream.toByteArray();
+        
         }catch(Exception e) {
-        	Log.e( TAG, e.toString() );
+        	Log.e( TAG, ">>>> outStream: " + e.toString() );
+        }
+        finally{
+        	conn.disconnect();
         }
         finally{
         	conn.disconnect();

@@ -15,14 +15,15 @@ public final class R {
         public static final int fly_in_item=0x7f040003;
         public static final int fly_out_item=0x7f040004;
         public static final int layout_anim=0x7f040005;
-        public static final int push_left_in=0x7f040006;
-        public static final int push_left_out=0x7f040007;
-        public static final int push_right_in=0x7f040008;
-        public static final int push_right_out=0x7f040009;
-        public static final int slide_in_from_bottom=0x7f04000a;
-        public static final int slide_in_from_top=0x7f04000b;
-        public static final int slide_out_to_bottom=0x7f04000c;
-        public static final int slide_out_to_top=0x7f04000d;
+        public static final int list_fly_out_item=0x7f040006;
+        public static final int push_left_in=0x7f040007;
+        public static final int push_left_out=0x7f040008;
+        public static final int push_right_in=0x7f040009;
+        public static final int push_right_out=0x7f04000a;
+        public static final int slide_in_from_bottom=0x7f04000b;
+        public static final int slide_in_from_top=0x7f04000c;
+        public static final int slide_out_to_bottom=0x7f04000d;
+        public static final int slide_out_to_top=0x7f04000e;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 

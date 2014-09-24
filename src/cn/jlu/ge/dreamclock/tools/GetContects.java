@@ -76,6 +76,11 @@ public GetContects(Context c) {
    //  names=names.substring(0,names.length()-1);
      names.deleteCharAt(names.length()-1);
     ArrayList<StringBuilder> l=new ArrayList<StringBuilder>();
+<<<<<<< HEAD
+=======
+    Log.d(TAG, ">>>> " + numbers);
+    Log.d(TAG, ">>>> " + names);
+>>>>>>> bba87026624c5598236c9d42a094cd4e762531ca
      l.add(numbers);
      l.add(names);
      dbadapter.close();
