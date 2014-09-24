@@ -231,7 +231,7 @@ public class SignInActivity extends BaseActivity {
 		mySignInTimeStr = signInTimeStr;
 		signInUsersNum = signInUsersSum;
 		timeStr = getUsersListLastTimeStr;
-//		UIDStr = UID;
+		UIDStr = UID;
 		
 		setUserSignInViewsWithCacheOrFromNet ( signInOrNot, userName, continuousDaysSum, 
 					jeerNum, scoreNum, rankNum, avatarUrl );
@@ -415,11 +415,11 @@ public class SignInActivity extends BaseActivity {
 		try {
 			String userName = userInfoObject.get("nickname").toString();
 			int continuousDaysSum = userInfoObject.getInt("continuous");
-			int jeerNum = userInfoObject.getInt("num_jeer_today");
-			int scoreNum = userInfoObject.getInt("score");
+			int jeerNum = userInfoObject.optInt("num_jeer_today", -1);
+			int scoreNum = userInfoObject.optInt("score", -1);
 			String UIDStr = userInfoObject.getString("id");
 			int rankNum = userInfoObject.getInt("rank_in_friends_today");
-			String avatarUrl = userInfoObject.getString("pic_url");
+			String avatarUrl = userInfoObject.optString("pic_url", "defualt");
 			String signInTimeStr = userInfoObject.getString("get_up_time_today");
 			myAvatarUrl = avatarUrl;
 			mySignInRank = rankNum;
@@ -460,6 +460,7 @@ public class SignInActivity extends BaseActivity {
 				try {
 					JSONObject responseObject = new JSONObject(response);
 					setUserInfoFromJSON ( responseObject.getJSONObject("model") );
+					Log.v(TAG, responseObject.toString());
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
