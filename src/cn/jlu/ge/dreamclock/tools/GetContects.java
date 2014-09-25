@@ -8,20 +8,21 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-public class GetContects{
-final String TAG="abc";
-private Context context;
-private StringBuilder names;
-private StringBuilder numbers;
-public GetContects(Context c) {
-	// TODO Auto-generated constructor stub
-	context=c;
-//	names="";
-	names=new StringBuilder("");
-//	numbers="";
-	numbers=new StringBuilder("");
-}
-	
+public class GetContects {
+	final String TAG = "abc";
+	private Context context;
+	private StringBuilder names;
+	private StringBuilder numbers;
+
+	public GetContects(Context c) {
+		// TODO Auto-generated constructor stub
+		context = c;
+		// names="";
+		names = new StringBuilder("");
+		// numbers="";
+		numbers = new StringBuilder("");
+	}
+
 	public  ArrayList<StringBuilder> getAllContacts()
 	{	
         Cursor cursor = context.getContentResolver().query( ContactsContract.Contacts.CONTENT_URI, 
@@ -72,16 +73,18 @@ public GetContects(Context c) {
 		
 	}
     // numbers=  numbers.substring(0, numbers.length()-1);
-     numbers.deleteCharAt(numbers.length()-1);
+       if ( numbers.length() < 1 ) {
+    	   return null;
+       }
+       numbers.deleteCharAt(numbers.length()-1);
    //  names=names.substring(0,names.length()-1);
-     names.deleteCharAt(names.length()-1);
-    ArrayList<StringBuilder> l=new ArrayList<StringBuilder>();
+       names.deleteCharAt(names.length()-1);
+       ArrayList<StringBuilder> l=new ArrayList<StringBuilder>();
 
-     l.add(numbers);
-     l.add(names);
-     dbadapter.close();
-     cursor.close();
-	return l;
+		l.add(numbers);
+		l.add(names);
+		dbadapter.close();
+		cursor.close();
+		return l;
 	}
-
 }

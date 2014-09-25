@@ -2,13 +2,11 @@ package cn.jlu.ge.dreamclock.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +19,6 @@ import cn.jlu.ge.dreamclock.tools.BindDataAndResource;
 import cn.jlu.ge.dreamclock.tools.Const;
 import cn.jlu.ge.dreamclock.tools.MenuFragment;
 import cn.jlu.ge.dreamclock.tools.MyGlobal;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;

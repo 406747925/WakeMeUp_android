@@ -35,6 +35,9 @@
 	<string name="sign_in_informations">收到嘲笑</string>
 	<string name="about_sign_in">签到规则</string>
 	
+	<string name="dream_clock_title">梦想闹钟</string>
+	<string name="common_clock_title">生活闹钟</string>
+	
 	<string name="weather_icon">天气图标</string>
 	<string name="bottom_bar_first">First</string>
 
