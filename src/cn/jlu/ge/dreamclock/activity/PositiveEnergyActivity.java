@@ -33,6 +33,14 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class PositiveEnergyActivity extends ListActivity{
+	private class Holder
+	{
+        ImageView image ;
+
+        TextView texttitle;
+        TextView textdate;
+        TextView textdescription;
+	}
 	public static final String UrlHead = Const.HOST;
 	static final int MENU_MANUAL_REFRESH = 0;
 	static final int MENU_DISABLE_SCROLL = 1;
@@ -103,29 +111,33 @@ public class PositiveEnergyActivity extends ListActivity{
 			@Override
 			public View getView(int position, View convertView,ViewGroup parent)
 			{
-//             final View view=super.getView(position, convertView, parent);
-//				convertView=(View)findViewById(R.layout.pe_item);
-//				
-//				ImageView image = (ImageView) convertView.findViewById(R.id.imageView2);
-//				TextView textview=(TextView)convertView.findViewById(R.id.textimageurl);
-//				image.setTag(UrlHead+textview.getText().toString());
-//	//			 new CavansImageTask().execute(image);
-//				return view;
+				Holder holder;
 				if(convertView==null)
 				{
+					holder=new Holder();
 				convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.pe_item, null);
 		        ImageView image = (ImageView) convertView.findViewById(R.id.imageView2);
+		        holder.image=image;
 		 //       TextView textimageurl=(TextView)convertView.findViewById(R.id.textimageurl);
 		//        TextView texturl=(TextView)convertView.findViewById(R.id.texturl);
 		        TextView texttitle=(TextView)convertView.findViewById(R.id.title);
+		        holder.texttitle=texttitle;
 		        TextView textdate=(TextView)convertView.findViewById(R.id.date);
+		        holder.textdate=textdate;
 		        TextView textdescription=(TextView)convertView.findViewById(R.id.description);
-		        texttitle.setText(list.get(position).get("title").toString());
-		        textdate.setText(list.get(position).get("date").toString());
-		        textdescription.setText(list.get(position).get("description").toString());
-		        image.setTag(list.get(position).get("imageurl").toString());
-		        new CavansImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, image);
+		        holder.textdescription=textdescription;
+		       
+		        convertView.setTag(holder); 
 				}
+				else
+				{
+					 holder=(Holder)convertView.getTag(); 
+				}
+				holder. texttitle.setText(list.get(position).get("title").toString());
+				holder. textdate.setText(list.get(position).get("date").toString());
+				holder. textdescription.setText(list.get(position).get("description").toString());
+				holder. image.setTag(list.get(position).get("imageurl").toString());
+			     new CavansImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, holder. image);
 		        return convertView;
 			}
 			

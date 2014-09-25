@@ -4,11 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <ImageView
+        <cn.jlu.ge.knightView.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/alarm_off" />
+        android:layout_width="69dp"
+        android:layout_height="69dp"
+        android:src="@drawable/default_avatar" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/textViewname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="姓名"
@@ -31,7 +32,7 @@
                 android:textColor="#000000" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewphone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
@@ -41,7 +42,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textViewchaoxiao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="嘲笑"
@@ -60,9 +61,8 @@
                 <Button
                     android:id="@+id/buttona"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_weight="0.1"
+                    android:layout_width="88dp"
+                    android:layout_height="30sp"
                     android:background="@drawable/acceptbutton"
                     android:text="接受" />
             </LinearLayout>
@@ -76,9 +76,8 @@
                 <Button
                     android:id="@+id/buttonr"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_weight="0.1"
+                    android:layout_width="88sp"
+                    android:layout_height="30sp"
                     android:background="@drawable/rejectbutton"
                     android:text="拒绝" />
             </LinearLayout>

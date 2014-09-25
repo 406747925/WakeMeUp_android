@@ -18,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
+import cn.jlu.ge.dreamclock.R;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
@@ -185,7 +186,8 @@ public class BitmapCache {
 				@Override
 				public void onFailure(Throwable responseCode) {
 					// TODO Auto-generated method stub
-					Toast.makeText(context, "获取图片失败", Toast.LENGTH_SHORT).show();
+				//	Toast.makeText(context, "获取图片失败", Toast.LENGTH_SHORT).show();
+					IV.setImageResource(R.drawable.default_avatar);
 					super.onFailure(responseCode);
 				}
 				

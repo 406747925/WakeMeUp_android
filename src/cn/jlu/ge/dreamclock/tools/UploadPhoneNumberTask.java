@@ -78,7 +78,7 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 			{
 				JSONObject j=(JSONObject)jarray.get(i);
 				adapter.removeFromNum(j.getString("phone"));
-				adapter.insertRow(j.optString("nickname", null), j.getString("phone"),j.optString("pic_url", null), j.getString("id"));
+				adapter.insertRow(j.optString("nickname", ""), j.getString("phone"),j.optString("pic_url", ""), j.getString("id"));
 
 			}
 
