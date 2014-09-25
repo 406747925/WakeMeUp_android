@@ -42,6 +42,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class FriendListActivity extends Activity {
+	class Holder
+	{
+		CircleImageView imageView;
+		TextView textview;
+	}
 
 	private PullToRefreshListView mListView;
 	private SimpleAdapter adapter;
@@ -80,25 +85,32 @@ public class FriendListActivity extends Activity {
 			@Override
 			public View getView(int position, View convertView,ViewGroup parent)
 			{
+				Holder holder;
 				//position=position-1;
 				if(convertView==null)
 				{
+					holder=new Holder();
 					convertView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.friend_item, null);
 					if(position%2==0)
 						//	convertView.setBackgroundResource(R.drawable.onesbackground);
 					{	convertView.setBackgroundColor(Color.rgb(0xdd, 0xdd, 0xdd));}
-			
-				
-					CircleImageView imageView=(CircleImageView) convertView.findViewById(R.id.imageView1);
-					//imageView.setTag(PositiveEnergyActivity.UrlHead+list.get(position).get(FriendsDBAdapter.PIC_URL));
-					//	new CavansImageTask().execute(imageView);
 
-					setUserAvatar( list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), imageView);
+
+					CircleImageView imageView=(CircleImageView) convertView.findViewById(R.id.imageView1);
+					holder.imageView=imageView;
+
 
 					TextView textview=(TextView) convertView.findViewById(R.id.textViewfriend);
-					textview.setText(list.get(position).get(FriendsDBAdapter.NICK_NAME).toString());
-			
+					holder.textview=textview;
+
+					convertView.setTag(holder);
 				}
+				else
+				{
+					holder=(Holder)convertView.getTag();
+				}
+				setUserAvatar( list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), holder.imageView);
+				holder.textview.setText(list.get(position).get(FriendsDBAdapter.NICK_NAME).toString());
 
 				return convertView;
 			}
@@ -150,9 +162,9 @@ public class FriendListActivity extends Activity {
 				Intent intent =new Intent(getApplication(),UserInfoActivity.class);
 				intent.putExtra("userName", v.getText().toString());
 				intent.putExtra("uid", list.get(arg2-1).get(FriendsDBAdapter.USER_ID).toString());
-					if( list.get(arg2-1).containsKey(FriendsDBAdapter.PIC_URL)){
-						intent.putExtra("avatarUrl", list.get(arg2-1).get(FriendsDBAdapter.PIC_URL).toString());
-					}
+				if( list.get(arg2-1).containsKey(FriendsDBAdapter.PIC_URL)){
+					intent.putExtra("avatarUrl", list.get(arg2-1).get(FriendsDBAdapter.PIC_URL).toString());
+				}
 
 				startActivity(intent);
 
@@ -290,8 +302,8 @@ public class FriendListActivity extends Activity {
 		if ( avatarBM != null ) {
 			try{
 
-			BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
-			avatarIv.setImageDrawable(avatarDrawable);
+				BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
+				avatarIv.setImageDrawable(avatarDrawable);
 			}catch(Exception e)
 			{
 				e.printStackTrace();
@@ -302,14 +314,14 @@ public class FriendListActivity extends Activity {
 			mBitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
 		}
 	}
-	
+
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		View v=findViewById(R.id.imageviewcircle);
-	//	if()
+		//	if()
 		{
-			
+
 		}
 		super.onResume();
 	}
