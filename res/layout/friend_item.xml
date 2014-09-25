@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
->
+    android:layout_height="wrap_content" >
 
-    <ImageView
+    <cn.jlu.ge.knightView.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imageView1"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/alarm_off" 
-        android:scaleType="center"/>
-
-    <TextView
-        android:id="@+id/textViewfriend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/imageView1"
-        android:text="Name" 
-        android:textColor="#000000"
-        android:gravity="center_vertical"
-        android:textSize="16sp"/>
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="41dp"
+        android:padding="5dp"
+        android:src="@drawable/default_avatar" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="50sp"
         android:layout_height="50sp"
-        android:layout_alignRight="@+id/textViewfriend"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="22dp"
         android:src="@drawable/checkbox" />
+
+    <TextView
+        android:id="@+id/textViewfriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/imageView1"
+        android:gravity="center_vertical"
+        android:text="Name"
+        android:textColor="#000000"
+        android:textSize="16sp" />
 
 </RelativeLayout>

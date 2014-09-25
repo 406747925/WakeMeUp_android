@@ -1447,7 +1447,7 @@ containing a value of this type.
         public static final int homeAsUp=0x7f050006;
         public static final int hourNumberPicker=0x7f050044;
         public static final int imageView1=0x7f0500cb;
-        public static final int imageView2=0x7f0500cd;
+        public static final int imageView2=0x7f0500cc;
         public static final int info=0x7f0500cf;
         public static final int itemDelete=0x7f0500a6;
         public static final int jeerContent=0x7f0500ce;
@@ -1544,7 +1544,7 @@ containing a value of this type.
         public static final int textView1=0x7f050056;
         public static final int textView2=0x7f050057;
         public static final int textView3=0x7f05005e;
-        public static final int textViewfriend=0x7f0500cc;
+        public static final int textViewfriend=0x7f0500cd;
         public static final int textViewsignin=0x7f050059;
         public static final int thirdBottomBarBtn=0x7f0500be;
         public static final int thirdWeather=0x7f0500b9;
