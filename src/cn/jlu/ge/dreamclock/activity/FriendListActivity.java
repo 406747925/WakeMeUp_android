@@ -302,5 +302,16 @@ public class FriendListActivity extends Activity {
 			mBitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
 		}
 	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		View v=findViewById(R.id.imageviewcircle);
+	//	if()
+		{
+			
+		}
+		super.onResume();
+	}
 
 }

@@ -26,9 +26,9 @@
 
         <cn.jlu.ge.knightView.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/imageView1"
-            android:layout_width="5dp"
-            android:layout_height="5dp"
+            android:id="@+id/imageviewcircle"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginRight="104dp"
