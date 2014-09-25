@@ -51,7 +51,6 @@ public class ReadParseClass {
         
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-type", "text/html");
 		conn.setConnectTimeout(3000);
 		conn.setReadTimeout(3000);
         conn.setRequestProperty("Accept-Charset", "UTF-8");
@@ -61,8 +60,17 @@ public class ReadParseClass {
         // 表单参数与get形式一样
         params.append(extra);
         byte[] bypes = params.toString().getBytes();
-        conn.getOutputStream().write(bypes);// 输入参数
+        
    //     conn.setRequestProperty("contentType", "application/x-www-form-urlencoded; charset=utf-8");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");// 请求头, 必须设置
+    //    conn.setRequestProperty("Content-Length", data.length + "");// 注意是字节长度, 不是字符长度
+        
+        try{
+        conn.getOutputStream().write(bypes);// 输入参数
+        }catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
         try{
         	InputStream inStream = null;
         	try {
@@ -86,10 +94,7 @@ public class ReadParseClass {
         finally{
         	conn.disconnect();
         }
-        finally{
-        	conn.disconnect();
-        	
-        }
+
 
         return null;
         

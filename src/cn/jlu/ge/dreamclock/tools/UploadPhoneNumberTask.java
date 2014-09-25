@@ -38,16 +38,18 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 		StringBuilder num=l.get(0);
 		StringBuilder name=l.get(1);
 		String path=PositiveEnergyActivity.UrlHead
-				+"search.action?claseName=FriendsSrvImpl&invokeMethod=filterFriend"
+				+"search.action?";
+				String extra= "claseName=FriendsSrvImpl&invokeMethod=filterFriend"
 				+ "&param.user_id="+pre.getString(Const.USER_ID, "")
 				+"&param.phones="+num.toString()
 				+"&param.names="+name.toString();
 		try{
-			byte[] data = ReadParseClass.readParse(path,);
+			byte[] data = ReadParseClass.readParse(path,extra);
 			String s=new String(data);
 			JSONObject json = new JSONObject(s);
 			return json;
 		}catch(Exception e){
+			e.printStackTrace();
 		}
 
 		return null;
@@ -58,7 +60,12 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 		// TODO Auto-generated method stub
 		FriendsDBAdapter adapter =new FriendsDBAdapter(mContext);
 		if(result==null)
+		{
+	        if (loadLisneter != null) {
+	            loadLisneter.loadComplete();
+	        }
 			return;
+		}
 		super.onPostExecute(result);
 		try{
 			if(result.getInt("statusCode")!=200)
@@ -76,7 +83,7 @@ public class  UploadPhoneNumberTask extends AsyncTask<Void, Void, JSONObject>
 			}
 
 		}catch(Exception e){
-			
+			e.printStackTrace();
 		}
 		
 		String s = new String();
