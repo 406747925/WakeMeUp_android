@@ -12,8 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +24,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import cn.jlu.ge.dreamclock.R;
@@ -59,6 +62,7 @@ public class AlarmListActivity extends BaseActivity {
 	AlarmManager alarms;
 	ListView alarmList;
 	int[] time;
+	String [] weekStr = { "一", "二", "三", "四", "五", "六", "日"};
 	
 	private ArrayList<HashMap<String, Object>> listItems;
 	
@@ -91,6 +95,75 @@ public class AlarmListActivity extends BaseActivity {
 		super.onResume();
 	}
 
+	
+	void setDreamClock() {
+		
+		LinearLayout layout = (LinearLayout) findViewById(R.id.alarm_item);
+		
+		layout.setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent(AlarmListActivity.this, ChangeAlarmActivity.class);
+				intent.putExtra("rowID", listItems.get(0).get("rowID").toString());
+				intent.putExtra("alarmTime", listItems.get(0).get("alarmTime").toString());
+				intent.putExtra("alarmKind", listItems.get(0).get("alarmKind").toString());
+				intent.putExtra("welcome", listItems.get(0).get("welcome").toString());
+				startActivity(intent);
+			}
+		} );
+
+		String welcomeStr = listItems.get(0).get("welcome").toString();
+		String weekActiveDaysStr = listItems.get(0).get("alarmKind").toString();
+		String alarmTimeStr = listItems.get(0).get("alarmTime").toString();
+		String isActiveStr = listItems.get(0).get("activeBool").toString();
+		weekActiveDaysStr = getWeekActiveDaysStr( weekActiveDaysStr.split(" ") );
+		
+		TextView alarmTimeText = (TextView) findViewById(R.id.alarmTime);
+		TextView activeDaysText = (TextView) findViewById(R.id.activeDays);
+		TextView tips = (TextView) findViewById(R.id.tips);
+		Switch switchButton = (Switch) findViewById(R.id.changeActive);
+		
+		alarmTimeText.setText(alarmTimeStr);
+		tips.setText(welcomeStr);
+		activeDaysText.setText(Html.fromHtml( weekActiveDaysStr ));
+		if ( isActiveStr.equals("1") ) {
+			switchButton.setChecked(true);
+		} else {
+			switchButton.setChecked(false);
+		}
+		
+		OnCheckedChangeListener activeListener = new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				db.open();
+				
+				if ( isChecked ) {
+					db.enableRow(Integer.parseInt(listItems.get(0).get("rowID").toString()));
+					listItems.get(0).put("activeBool", 1);
+					buttonView.setChecked(isChecked);
+					setAlarmList();
+				} else {
+					Log.v("FUCK STR!", listItems.get(0).get("activeBool").toString());
+					db.disableRow(Integer.parseInt(listItems.get(0).get("rowID").toString()));
+					listItems.get(0).put("activeBool", 0);
+					buttonView.setChecked(isChecked);
+					setAlarmList();
+				}
+
+				db.close();
+				
+				MyGlobal.ALARM_CHANGE = true;
+		        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
+		        foregroundServiceIntent.putExtra("doSth", Const.CHANGE_STATE);
+		        startService(foregroundServiceIntent);
+			}
+		};
+		
+		switchButton.setOnCheckedChangeListener(activeListener);
+	}
+	
 
 	// 设置闹钟
 	boolean setAlarmList() {
@@ -102,6 +175,9 @@ public class AlarmListActivity extends BaseActivity {
 		AlarmsData alarmsData = new AlarmsData();
 		alarmsData.setAlarmDataList();
 		
+		// 设置梦想闹钟
+		setDreamClock();
+		
 		calendar = Calendar.getInstance();
         alarmList = (ListView) findViewById(R.id.alarmList);
         MyAdapter listAdapter = new MyAdapter(this);
@@ -111,6 +187,7 @@ public class AlarmListActivity extends BaseActivity {
 			@Override
 			public void onItemClick(AdapterView<?> av, View v, int position, long arg3) {
 				// TODO Auto-generated method stub
+				position = position + 1;
 				Intent intent = new Intent(AlarmListActivity.this, ChangeAlarmActivity.class);
 				intent.putExtra("rowID", listItems.get(position).get("rowID").toString());
 				intent.putExtra("alarmTime", listItems.get(position).get("alarmTime").toString());
@@ -149,18 +226,13 @@ public class AlarmListActivity extends BaseActivity {
 				        Intent foregroundServiceIntent = new Intent(getApplicationContext(), ForegroundService.class);
 				        foregroundServiceIntent.putExtra("doSth", Const.NEW_ALRM_STATE);
 				        startService(foregroundServiceIntent);
-				        
 					}
-
-					
 				});
 				
 				delAlarmDialogBuilder.show();
 				
 				return true;
 			}
-
-
         	
 		});
 		return true;
@@ -174,18 +246,18 @@ public class AlarmListActivity extends BaseActivity {
 		int pos;
 		HashMap<String, Object> map;
 		
-		public AlarmsData() {
-			// TODO Auto-generated constructor stub
-//			db.open();
-//			cursor = db.getAllRows();
-//			db.close();
-		}
 		
 		// 
 		public boolean setAlarmDataList() {
 			
 			db.open();
 			cursor = db.getAllRows();
+			if ( cursor.getCount() == 0 ) {
+				db.close();
+				insertAlarmInDb(6, 0);
+				db.open();
+				cursor = db.getAllRows();
+			}
 			
 			if (cursor.moveToFirst() == false) {
 				return false;
@@ -360,6 +432,21 @@ public class AlarmListActivity extends BaseActivity {
 		return num_id;
 	}
 	
+	
+	String getWeekActiveDaysStr (String [] weeks) {
+		String activeDays = "周";
+		for (int i = 1; i <= 7 ;i++) {
+			Log.v("the week num: " , "" + i);
+			if (weeks[i-1].equals(""+i)) {
+				activeDays += weekStr[i - 1] + " "; 
+			} else {
+				activeDays = activeDays + "<font color=\"#CCCCCC\">" + weekStr[i - 1] + "</font>" + " ";
+			}
+		}
+		return activeDays;
+	}
+	
+	
 	public class MyAdapter extends BaseAdapter {
 		
 		LayoutInflater inflater;
@@ -370,10 +457,11 @@ public class AlarmListActivity extends BaseActivity {
 	    }
 	    
 		class ListClickGroup {  
-			public Button[] btnGroup;
-		    public ImageButton changeActive;
+		    public Switch changeActive;
 		    public TextView alarmTime;
 		    public TextView upTimes;
+		    public TextView activeDays;
+		    public TextView tips;
 		    public boolean active;
 		    public int position;
 		}
@@ -381,7 +469,7 @@ public class AlarmListActivity extends BaseActivity {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return listItems.size();
+			return listItems.size() - 1;
 		}
 
 		@Override
@@ -403,20 +491,19 @@ public class AlarmListActivity extends BaseActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
+			position = position + 1;
 			ListClickGroup clickViews = null;
 			if(convertView != null) {
-				
 				clickViews = (ListClickGroup) convertView.getTag();
 				Log.v("tag", "positon " + position + " convertView is not null, "  + clickViews);
-				
 			} else {
-
 				clickViews = new ListClickGroup();
 				convertView = inflater.inflate(R.layout.alarm_item, null);
 				Log.v("tag", "positon " + position + " convertView is null, "  + convertView); 
 				clickViews.alarmTime = (TextView) convertView.findViewById(R.id.alarmTime);
-				clickViews.changeActive = (ImageButton) convertView.findViewById(R.id.changeActive);
-				clickViews.btnGroup = setBtnGroup(convertView);
+				clickViews.changeActive = (Switch) convertView.findViewById(R.id.changeActive);
+				clickViews.activeDays = (TextView) convertView.findViewById(R.id.activeDays);
+				clickViews.tips = (TextView) convertView.findViewById(R.id.tips);
 				convertView.setTag(clickViews);
 			}
 		        
@@ -425,17 +512,11 @@ public class AlarmListActivity extends BaseActivity {
 				Log.v("tag", "positon " + position + " convertView is not null now, "  + convertView); 
 				
 				String[] weeks = listItems.get(position).get("alarmKind").toString().split(" ");
+				String activeDaysStr = getWeekActiveDaysStr(weeks);
+				clickViews.activeDays.setText(Html.fromHtml( activeDaysStr ));
 				
-				for (int i = 1; i <= 7 ;i++) {
-					Log.v("the week num: " , "" + i);
-					if (weeks[i-1].equals(""+i)) {
-						clickViews.btnGroup[i-1].setBackgroundResource(R.drawable.enable_button_shape_circle);
-						clickViews.btnGroup[i-1].setTextColor(Color.parseColor("#FFFFFF"));
-					} else {
-						clickViews.btnGroup[i-1].setBackgroundResource(R.drawable.disable_button_shape_circle);
-						clickViews.btnGroup[i-1].setTextColor(Color.parseColor("#2087FC"));
-					}
-				}
+				String welcomeStr = listItems.get(position).get("welcome").toString();
+				clickViews.tips.setText(welcomeStr);
 				
 				Log.v("What the Fuck!", listItems.get(position).toString());
 				
@@ -445,33 +526,32 @@ public class AlarmListActivity extends BaseActivity {
 				clickViews.alarmTime.setText(setTimeFormat(hour, mins));
 				
 				if (listItems.get(position).get("activeBool").toString().equals("1")) {
-					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_on);
+					clickViews.changeActive.setChecked(true);
 				} else {
-					convertView.setBackgroundColor(Color.parseColor("#EEEEEE"));
-					clickViews.changeActive.setBackgroundResource(R.drawable.alarm_off);
+					clickViews.changeActive.setChecked(false);
 				}
 				
 				final int listPos = position;
 				
-				OnClickListener activeListener = new OnClickListener() {
+				OnCheckedChangeListener activeListener = new OnCheckedChangeListener() {
 					
 					@Override
-					public void onClick(View v) {
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 						// TODO Auto-generated method stub
 
 						db.open();
 						
-						if (listItems.get(listPos).get("activeBool").toString().equals("0")) {
-					
+						if ( isChecked ) {
 							Log.v("FUCK STR!", listItems.get(listPos).get("activeBool").toString());
 							db.enableRow(Integer.parseInt(listItems.get(listPos).get("rowID").toString()));
 							listItems.get(listPos).put("activeBool", 1);
+							buttonView.setChecked(isChecked);
 							setAlarmList();
 						} else {
-						
 							Log.v("FUCK STR!", listItems.get(listPos).get("activeBool").toString());
 							db.disableRow(Integer.parseInt(listItems.get(listPos).get("rowID").toString()));
 							listItems.get(listPos).put("activeBool", 0);
+							buttonView.setChecked(isChecked);
 							setAlarmList();
 						}
 
@@ -487,26 +567,12 @@ public class AlarmListActivity extends BaseActivity {
 					
 				};
 				
-				clickViews.changeActive.setOnClickListener(activeListener);
+				clickViews.changeActive.setOnCheckedChangeListener(activeListener);
 			
 			return convertView;
 
 		}
 		
-		Button[] setBtnGroup(View convertView) {
-			Button []btnGroup = new Button[7];
-			
-	        btnGroup[0] = (Button)convertView.findViewById(R.id.monday);
-	        btnGroup[1] = (Button)convertView.findViewById(R.id.tuesday);
-	        btnGroup[2] = (Button)convertView.findViewById(R.id.wednesday);
-	        btnGroup[3] = (Button)convertView.findViewById(R.id.thursday);
-	        btnGroup[4] = (Button)convertView.findViewById(R.id.friday);
-	        btnGroup[5] = (Button)convertView.findViewById(R.id.saturday);
-	        btnGroup[6] = (Button)convertView.findViewById(R.id.sunday);
-	        
-	        return btnGroup;
-		}
-
 	}
 	
 }

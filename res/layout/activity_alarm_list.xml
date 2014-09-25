@@ -5,10 +5,33 @@
     android:animationCache="@style/AnimationActivity"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/dreamClockText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:background="#EEEEEE"
+        android:text="@string/dream_clock_title"
+        android:textSize="18sp" />
+	
+    <include layout="@layout/alarm_item" />
+    
+    <TextView
+        android:id="@+id/commonClockText"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:background="#EEEEEE"
+        android:text="@string/common_clock_title"
+        android:textSize="18sp" />
+    
     <ListView
         android:id="@+id/alarmList"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_width="match_parent"
+        android:background="#FFFFFF"
+        android:layout_height="match_parent" >
     </ListView>
 
 </LinearLayout>

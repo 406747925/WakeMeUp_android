@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\Liu\\Documents\\GitHub\\WakeMeUp_android\\src\\cn\\jlu\\ge\\dreamclock\\service\\INetworkTask.aidl
+ * Original file: /home/knight/workspace/android/WakeMeUp_android/src/cn/jlu/ge/dreamclock/service/INetworkTask.aidl
  */
 package cn.jlu.ge.dreamclock.service;
 public interface INetworkTask extends android.os.IInterface

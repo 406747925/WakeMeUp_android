@@ -61,8 +61,8 @@
     <dimen name="activity_change_alarm_day_btn_margin_left_min">4dp</dimen>
     
     <!-- SetAlarmActivity ( alarm_item ) -->
-	<dimen name="alarm_item_height">100dp</dimen>
-	<dimen name="alarm_item_time_text_size">38sp</dimen>
+<!-- 	<dimen name="alarm_item_height">100dp</dimen> -->
+	<dimen name="alarm_item_time_text_size">30sp</dimen>
 	<dimen name="alarm_item_min_margin_top">10dp</dimen>
 	<dimen name="alarm_item_mid_margin_left">20dp</dimen>
 	<dimen name="alarm_item_min_margin_left">10dp</dimen>
