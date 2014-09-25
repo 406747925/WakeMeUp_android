@@ -6,11 +6,12 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/alarm_off" />
+        android:src="@drawable/alarm_off" 
+        android:scaleType="center"/>
 
     <TextView
         android:id="@+id/textViewfriend"
@@ -27,11 +28,9 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/textViewfriend"
-        android:layout_alignRight="@id/textViewfriend"
-        android:layout_alignTop="@id/textViewfriend"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignRight="@+id/textViewfriend"
         android:src="@drawable/checkbox" />
 
 </RelativeLayout>

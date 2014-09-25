@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity {
         Locale.setDefault(Locale.SIMPLIFIED_CHINESE);
         
         // Debugging this App when it is starting.
-        Debug.startMethodTracing("startApp");
+//        Debug.startMethodTracing("startApp");
         
         setDate();
         
@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity {
         viewDataInit();
 
         // End Debug.
-        Debug.stopMethodTracing();
+//        Debug.stopMethodTracing();
         
     }
     

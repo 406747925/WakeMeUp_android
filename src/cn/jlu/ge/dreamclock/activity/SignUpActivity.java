@@ -136,8 +136,10 @@ public class SignUpActivity extends Activity {
 		
 		if ( signUpOrNot == true ) {
 			Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+			
 			startActivity(intent);
 			this.finish();
+			
 		}
 	}
 
