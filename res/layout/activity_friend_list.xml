@@ -11,14 +11,30 @@
         android:gravity="center"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/textView1"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:gravity="center"
-            android:text="陌生来访"
-            android:textColor="#999999"
-            android:textSize="20sp" />
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="陌生来访"
+                android:textColor="#999999"
+                android:textSize="20sp" />
+
+        <cn.jlu.ge.knightView.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imageView1"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="104dp"
+            android:background="@drawable/enable_button_shape_circle_red" />
+
+        </RelativeLayout>
 
         <ImageView
             android:layout_width="236dp"
@@ -33,6 +49,7 @@
             android:textColor="#999999"
             android:text="好友列表"
             android:textSize="20sp" />
+
     </LinearLayout>
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView
