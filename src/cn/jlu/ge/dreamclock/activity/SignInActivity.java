@@ -62,7 +62,7 @@ public class SignInActivity extends BaseActivity {
 	private ArrayList< HashMap<String, Object> > signInUsersList;
 	private BitmapCache bitmapCache;
 	String UIDStr = "123456789";
-	String timeStr = "2014-09-08%2004:00:00";
+	String timeStr = "2014-09-26%2004:00:00";
 	String myUserNameStr = null;
 	String mySignInTimeStr = null;
 	String myAvatarUrl = null;
@@ -77,8 +77,6 @@ public class SignInActivity extends BaseActivity {
 	Animation listFlyInAnimation;
 	ImageView loadingIM;
 	
-	
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -90,7 +88,6 @@ public class SignInActivity extends BaseActivity {
 		
 		init();
 	}
-
 	
 	@Override
 	protected void onResume() {
@@ -99,8 +96,6 @@ public class SignInActivity extends BaseActivity {
 		this.getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg_main));
 		super.onResume();
 	}
-
-	
 	
 	void animationInit () {
 		flyOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fly_out_item);
@@ -110,14 +105,12 @@ public class SignInActivity extends BaseActivity {
 		loadingAnimation.setDuration(3000);
 		loadingAnimation.setRepeatCount(10);
 	}
-	
 
 	void dataInit () {
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
 		signInUsersList = new ArrayList< HashMap<String, Object> > ();
 	}
-	
 	
 	public void init() {
         
@@ -141,14 +134,10 @@ public class SignInActivity extends BaseActivity {
 				.replace(R.id.menu_frame2, new MenuFragment()).commit();
 	}
 	
-	
-	
 	public void viewInit () {
 		viewDataAndViewInit();
 		signInUsersRankViewInit();
 	}
-	
-	
 	
 	void signInUsersRankViewInit () {
 
@@ -198,8 +187,6 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 	
-	
-	
 	public void viewDataAndViewInit () {
 		// TODO 如果数据库有最新数据则从数据库中获取最新数据
 		
@@ -207,8 +194,6 @@ public class SignInActivity extends BaseActivity {
 		// TODO 数据库中不包含最新数据则联网更新数据
 		
 	}
-	
-	
 	
 	void setUserSignInViewsDataAndViewsWithCache () {
 		appInfo = getSharedPreferences( Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS );
@@ -220,7 +205,7 @@ public class SignInActivity extends BaseActivity {
 		int rankNum = appInfo.getInt(Const.USER_RANK, 1);
 		String avatarUrl = appInfo.getString(Const.USER_AVATAR_URL, "");
 		String signInTimeStr = appInfo.getString(Const.USER_SIGN_IN_TIME, "未更新");
-		String getUsersListLastTimeStr = appInfo.getString(Const.GET_USERS_LIST_LAST_TIME , "");
+		String getUsersListLastTimeStr = appInfo.getString(Const.GET_USERS_LIST_LAST_TIME , timeStr);
 		int signInUsersSum = appInfo.getInt(Const.SIGN_IN_RANK_NUM, 1);
 		boolean signInOrNot = appInfo.getBoolean(Const.USER_SIGN_IN_OR_NOT, false);
 		appInfo = null;
@@ -276,7 +261,6 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	
-	
 	OnClickListener signInBtnOnClickListener = new OnClickListener () {
 
 		@Override
@@ -297,6 +281,7 @@ public class SignInActivity extends BaseActivity {
 		}
 		
 	};
+	
 	
 	void setUserSignInViews (String userName, int continuousDaysSum, int jeerNum, int scoreNum, int rankNum) {
 		
@@ -322,6 +307,7 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 
+	
 	void setUserSignInInfo (String userName, int continuousDaysSum, 
 				int jeerNum, int scoreNum, int rankNum, 
 				String picUrl, String signInTimeStr, String UIDStr,
@@ -650,6 +636,9 @@ public class SignInActivity extends BaseActivity {
 				Toast.makeText(getApplicationContext(), "签到列表获取成功", Toast.LENGTH_SHORT).show();
 				try {
 					JSONObject signInUsersInfoObject = new JSONObject( response );
+					
+					Log.v(TAG, response);
+					
 					String timeStr = signInUsersInfoObject.getString("time");
 					JSONArray usersListArray = signInUsersInfoObject.getJSONArray("list");
 					Log.v("SignInActivity", usersListArray.toString());
@@ -798,12 +787,13 @@ public class SignInActivity extends BaseActivity {
 	// 将用户个人签到信息加入到签到列表中，一个全局的 ArrayList
 	
 	void addUserInAllUsersList () {
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-
+		
 		map.put("userRank", mySignInRank);
 		map.put("userName", myUserNameStr);
 		map.put("uid", UIDStr);
-		map.put("time", mySignInTimeStr.split(" ")[1].substring(0, 5));
+		map.put("time", mySignInTimeStr.substring(11, 16));
 		map.put("info", "");
 		map.put("jeerOrNot", "-1");
 		map.put("avatarUrl", myAvatarUrl);
