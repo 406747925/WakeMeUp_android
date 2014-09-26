@@ -274,7 +274,7 @@ public class SignInActivity extends BaseActivity {
 				loadingIM.setVisibility(View.VISIBLE);				
 				loadingIM = (ImageView) findViewById(R.id.loadingIM);
 				loadingIM.startAnimation(loadingAnimation);
-								
+				
 			} else {
 				Toast.makeText(getApplicationContext(), "正在前往签到处，别心急咯～", Toast.LENGTH_SHORT).show();
 			}
@@ -339,17 +339,14 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 	
-	
 	// 获取和设置用户头像
 	
 	void setUserAvatar ( String avatarUrl ) {
 		CircleImageView avatarIv = (CircleImageView) findViewById(R.id.userAvatar);
 		Bitmap avatarBM = bitmapCache.getBitmapFromCache(avatarUrl);
 		if ( avatarBM != null ) {
-			
 			BitmapDrawable avatarDrawable = new BitmapDrawable(getApplicationContext().getResources(), avatarBM);
 			avatarIv.setImageDrawable(avatarDrawable);
-			
 		}
 		else {
 			bitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
