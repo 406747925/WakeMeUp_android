@@ -1,5 +1,7 @@
 package cn.jlu.ge.dreamclock.activity;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -60,7 +62,7 @@ public class ActivityStrangers extends Activity{
 				,new String[]{"str"}, new int[]{R.id.textView1})
 		{
 			@Override
-			public View getView(int position, View convertView,ViewGroup parent)
+			public View getView(final int position, View convertView,ViewGroup parent)
 			{
 				Holder holder;
 				//position=position-1;
@@ -106,7 +108,8 @@ public class ActivityStrangers extends Activity{
 					@Override
 					public void onClick(View arg0) {
 						// TODO Auto-generated method stub
-
+					new	AddFriendTask(position).execute();
+						
 					}
 				});
 				holder.buttonReject.setOnClickListener(new OnClickListener() {
@@ -114,7 +117,8 @@ public class ActivityStrangers extends Activity{
 					@Override
 					public void onClick(View arg0) {
 						// TODO Auto-generated method stub
-
+						list.remove(position);
+						adapter.notifyDataSetChanged();
 					}
 				});
 				
@@ -146,6 +150,58 @@ public class ActivityStrangers extends Activity{
 			mBitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, 100, 100, avatarIv);
 		}
 	}
+private class AddFriendTask extends AsyncTask<Integer ,Void, JSONObject>{
+	int mPosition;
+	public AddFriendTask(int position) {
+		// TODO Auto-generated constructor stub
+		mPosition=position;
+	}
+
+	@Override
+	protected JSONObject doInBackground(Integer... arg0) {
+		// TODO Auto-generated method stub
+		String path = null;
+		try {
+			path = Const.HOST
+					+"search.action?claseName=FriendsSrvImpl"
+					+ "&invokeMethod=updateName"
+					+ "&param.user_id="+getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS).getString(Const.USER_ID, null)
+					+ "&param.friend_ids="+list.get(mPosition).get("friend_id").toString()
+					+ "&param.names="+URLEncoder.encode(list.get(mPosition).get("realname").toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		byte[] data;
+		try {
+		data=	ReadParseClass.readParse(path);
+		String s=new String(data);
+		JSONObject  json = new JSONObject(s);
+		return json;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	@Override
+	protected void onPostExecute(JSONObject result) {
+		if(result==null)
+			return;
+		try {
+			if(result.getInt("statusCode")!=200)
+				return;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		list.remove(mPosition);
+		adapter.notifyDataSetChanged();
+		// TODO Auto-generated method stub
+		super.onPostExecute(result);
+	}
+	
+}
 
 
 	private class GetDataTask extends AsyncTask<Void, Void, JSONObject> {
@@ -193,6 +249,7 @@ public class ActivityStrangers extends Activity{
 					map.put("content", j.optString("content", ""));
 					map.put("phone", j.optString("phone", ""));
 					map.put("friend_id", j.optString("friend_id", ""));
+					map.put("realname", j.optString("realname", ""));
 					list.add(map);
 
 				}
