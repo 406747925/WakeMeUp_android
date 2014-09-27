@@ -11,6 +11,8 @@ public class Const {
 	public static final String USER_SIGN_IN_OR_NOT = ident("userSignInOrNot");
 	
 	// USER INFORMATION CONST KEY
+	public static final String USER_SIGN_IN_STRANGERS_NUM = ident("strangersNum"); 
+
 	public static final String USER_NAME = ident("userName");
 	public static final String USER_CONTINUOUS_SIGN_IN_DAYS = ident("continuousDaysSum");
 	public static final String USER_BEEN_JEER_NUM = ident("jeerNum");

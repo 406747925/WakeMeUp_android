@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -74,6 +75,11 @@ public class FriendListActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				
+				SharedPreferences sp=getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+				SharedPreferences.Editor editor = sp.edit(); 
+				editor.putInt(Const.USER_SIGN_IN_STRANGERS_NUM, 0);
+				editor.commit();
 				Intent newIntent = new Intent(FriendListActivity.this, ActivityStrangers.class);
 				startActivity(newIntent);		
 			}
@@ -235,11 +241,14 @@ public class FriendListActivity extends Activity {
 					if( dbadapter.findFromNum(j.getString("phone")).getCount()>0)
 					{
 						//	mDBAdapter.removeFromNum(j.getString("phone"));
-						mDBAdapter.insertRow(j.optString("nickname", null), j.getString("phone"),j.optString("pic_url", null), j.getString("id"));
-						Cursor cursor=dbadapter.findFromNum(j.getString("phone"));
-						mNewFriendNames+= cursor.getString(cursor.getColumnIndex("name"))+",";
-						mNewFriendIDs+=j.getString("id")+",";
-						cursor.close();
+						try{
+							mDBAdapter.insertRow(j.optString("nickname", ""), j.getString("phone"),j.optString("pic_url", ""), j.getString("friend_id"));
+							Cursor cursor=dbadapter.findFromNum(j.getString("phone"));
+							mNewFriendNames+= cursor.getString(cursor.getColumnIndex("name"))+",";
+							mNewFriendIDs+=j.getString("friend_id")+",";
+							cursor.close();
+						}catch(Exception e)
+						{}
 					}
 				}
 				dbadapter.close();
@@ -319,9 +328,14 @@ public class FriendListActivity extends Activity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		View v=findViewById(R.id.imageviewcircle);
-		//	if()
+		SharedPreferences sp=getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+		if(sp.getInt(Const.USER_SIGN_IN_STRANGERS_NUM, 0)<=0)
 		{
-
+			v.setVisibility(View.GONE);
+		}
+		else
+		{
+			v.setVisibility(View.VISIBLE);
 		}
 		super.onResume();
 	}
