@@ -198,7 +198,15 @@ private class AddFriendTask extends AsyncTask<Integer ,Void, JSONObject>{
 		list.remove(mPosition);
 		adapter.notifyDataSetChanged();
 		// TODO Auto-generated method stub
+		FriendsDBAdapter dbadapter = new FriendsDBAdapter(getApplicationContext());
+		try{
+		dbadapter.insertRow(list.get(mPosition).get("nickname").toString(), list.get(mPosition).get("phone").toString(), list.get(mPosition).get("pic_url").toString(), list.get(mPosition).get("friend_id").toString());
+		}catch(Exception e){}
+		dbadapter.close();
+		
+
 		super.onPostExecute(result);
+		
 	}
 	
 }
@@ -208,7 +216,7 @@ private class AddFriendTask extends AsyncTask<Integer ,Void, JSONObject>{
 
 		@Override
 		protected JSONObject doInBackground(Void... params) {
-			String path=PositiveEnergyActivity.UrlHead+"search.action?claseName=FriendsSrvImpl&invokeMethod=loadSignUpFriends&param.flag=0&param.user_id="
+			String path=PositiveEnergyActivity.UrlHead+"search.action?claseName=FriendsSrvImpl&invokeMethod=loadSignUpFriends&param.flag=2&param.user_id="
 					+getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS).getString(Const.USER_ID, null);
 			//		+"ff2d2939bc6b4937b4612d851874efa3";
 			byte[] data;
