@@ -1,7 +1,10 @@
 package cn.jlu.ge.dreamclock.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +39,7 @@ import android.widget.Toast;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.BitmapCache;
 import cn.jlu.ge.dreamclock.tools.Const;
+import cn.jlu.ge.dreamclock.tools.FriendsDBAdapter;
 import cn.jlu.ge.dreamclock.tools.MenuFragment;
 import cn.jlu.ge.dreamclock.tools.UserDataDBAdapter;
 import cn.jlu.ge.knightView.CircleImageView;
@@ -53,7 +57,7 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	final String TAG = "SignInActivity";
-	private int mySignInRank = 3;
+	private int mySignInRank;
 	private int signInUsersNum;
 	private ExpandableListView usersList;
 	private AsyncHttpClient client;
@@ -67,6 +71,7 @@ public class SignInActivity extends BaseActivity {
 	String mySignInTimeStr = null;
 	String myAvatarUrl = null;
 	private UserDataDBAdapter userDataDb;
+	private FriendsDBAdapter friendsDb;
 	boolean isGoingToSignInBool = false;
 	LinearLayout userLayout;
 	LinearLayout rankLayout;
@@ -109,7 +114,11 @@ public class SignInActivity extends BaseActivity {
 	void dataInit () {
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
+		friendsDb = new FriendsDBAdapter(getApplicationContext());
 		signInUsersList = new ArrayList< HashMap<String, Object> > ();
+		SimpleDateFormat timeFm = new SimpleDateFormat("yyyy-mm-dd");
+		timeStr = timeFm.format(new Date()) + " 04:00";
+		
 	}
 	
 	public void init() {
@@ -619,6 +628,7 @@ public class SignInActivity extends BaseActivity {
 			public void onFailure(Throwable throwable, String failResponse) {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "刷新签到列表失败 T-T", Toast.LENGTH_SHORT).show();
+				setUnSignInUsersDataInList ();
 				setSignInUsersView();
 				
 				loadingAnimation.cancel();
@@ -641,8 +651,11 @@ public class SignInActivity extends BaseActivity {
 					Log.v("SignInActivity", usersListArray.toString());
 					int rankStart = signInUsersNum;
 					setUsersListDataFromJSON( usersListArray );
+					setUnSignInUsersDataInList ();
 					signInUsersNum += usersListArray.length();
-					
+
+					loadingAnimation.cancel();
+					loadingIM.setVisibility(View.GONE);
 					setSignInUsersView();
 					
 					appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
@@ -725,59 +738,6 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	
-	// 
-//	void addListsDataFromLocal () {
-//		int rank = 1;
-//		String userName = "路人甲";
-//		String friendId = "123";
-//		String getUpTimeStr = "06:00";
-//		String contentStr = "懒猪快起来啦～";
-//		String avatarUrl = "";
-//		int jeerOrNot = 0;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 2;
-//		userName = "路人乙";
-//		friendId = "123";
-//		getUpTimeStr = "06:30";
-//		contentStr = "太阳照到屁股了！快起来！";
-//		avatarUrl = "";
-//		jeerOrNot = 0;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 3;
-//		userName = myUserNameStr;
-//		friendId = "123";
-//		getUpTimeStr = "06:40";
-//		contentStr = "";
-//		avatarUrl = "";
-//		jeerOrNot = -1;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 4;
-//		userName = "路人丁";
-//		friendId = "123";
-//		getUpTimeStr = "未起床";
-//		contentStr = "";
-//		avatarUrl = "";
-//		int jeerOrNot2 = 2;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
-//		
-//		rank = 5;
-//		userName = "路人A";
-//		friendId = "123";
-//		getUpTimeStr = "未起床";
-//		contentStr = "";
-//		avatarUrl = "";
-////		jeerOrNot = 2;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
-//		
-//	}
 	
 	
 	
@@ -860,6 +820,39 @@ public class SignInActivity extends BaseActivity {
 		else {
 			bitmapCache.getImageFromNet ( avatarUrl, avatarUrl, width, height, avatarView );
 		}
+	}
+
+	public void setUnSignInUsersDataInList () {
+		// TODO 将未签到的好友从数据库中读取出来，排列在列表中
+		String selectionArgStr = null;
+		Iterator< HashMap<String, Object> > it = signInUsersList.iterator();
+		for ( selectionArgStr = it.next().get("uid").toString() ; it.hasNext(); ) {
+			selectionArgStr += "," + it.next().get("uid").toString();
+		}
+		
+		friendsDb.open();
+		
+		Cursor cursor = friendsDb.getUsersByNotIn(selectionArgStr);
+		if ( cursor == null || cursor.moveToFirst() == false ) return ;
+		int userNameColumn = cursor.getColumnIndex("name");
+		int userAvatarColumn = cursor.getColumnIndex("url");
+		int userIdColumn = cursor.getColumnIndex("id");
+		for ( cursor.moveToFirst() ; !cursor.isLast() ; cursor.moveToNext() ) {
+			String userNameStr = cursor.getString(userNameColumn);
+			String userAvatarStr = cursor.getString(userAvatarColumn);
+			String userIdStr = cursor.getString(userIdColumn);
+			addItemToList ( -1, userNameStr, userIdStr, "未起床", "", 2, userAvatarStr );
+		}
+		
+		cursor.moveToLast();
+		String userNameStr = cursor.getString(userNameColumn);
+		String userAvatarStr = cursor.getString(userAvatarColumn);
+		String userIdStr = cursor.getString(userIdColumn);
+		addItemToList ( -1, userNameStr, userIdStr, "未起床", "", 2, userAvatarStr );
+		
+		cursor.close();
+		
+		friendsDb.close();
 	}
 	
 	
@@ -1015,10 +1008,14 @@ public class SignInActivity extends BaseActivity {
 			Log.v("SignInActivity", "positon : " + groupPosition);
 			
 			clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
-			clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
-			clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
+			if ( groupPosition < signInUsersNum ) {
+				clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
+				clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
+			} else { 
+				clickViews.rankTV.setText( "-" );
+				clickViews.timeTV.setText( "未起床" );
+			}
 			
-			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
 			OnClickListener showJeerClickListener = new OnClickListener () {
 
 				@Override
@@ -1036,6 +1033,8 @@ public class SignInActivity extends BaseActivity {
 				}
 				
 			};
+			
+			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
 			
 			clickViews.showInfoBtn.setOnClickListener(showJeerClickListener);
 			if ( jeerOrNot.equals("-1") ) {

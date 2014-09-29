@@ -1,7 +1,9 @@
 package cn.jlu.ge.dreamclock.activity;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +21,7 @@ import cn.jlu.ge.dreamclock.tools.BindDataAndResource;
 import cn.jlu.ge.dreamclock.tools.Const;
 import cn.jlu.ge.dreamclock.tools.MenuFragment;
 import cn.jlu.ge.dreamclock.tools.MyGlobal;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -265,9 +268,31 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	void setDate () {
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("M月 d日 EEEE");
 		dateStr = sdf.format(new java.util.Date());
 		sdf = null;
+		
+		SharedPreferences appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
+		String userSignInTimeStr = appInfo.getString(Const.USER_SIGN_IN_TIME, null);
+		
+		if ( userSignInTimeStr != null && !userSignInTimeStr.equals("未更新") ) {
+			SimpleDateFormat timeFm = new SimpleDateFormat("yyyy-MM-dd");
+			String dateStr = timeFm.format(new Date());
+			timeFm = null;
+			
+			Log.d(TAG, "dateStr: " + dateStr + ", userSignInTimeStr: " + userSignInTimeStr.substring(0, 10) );
+			
+			if ( dateStr.equals(userSignInTimeStr.substring(0, 10)) ) {
+				
+			} else {
+				SharedPreferences.Editor editor = appInfo.edit();
+				editor.putBoolean(Const.USER_SIGN_IN_OR_NOT, false);
+				editor.commit();
+			}
+		}
+		
+		appInfo = null;
 	}
 	
 	public void init() {

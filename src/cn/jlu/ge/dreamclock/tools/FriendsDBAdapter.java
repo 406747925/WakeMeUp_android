@@ -111,4 +111,13 @@ public class FriendsDBAdapter {
 					"id"},null, null, null, null, null);		
 		   return cursor; 
 	   }
+	   
+	   public Cursor getUsersByNotIn (String selectionArgStr) {
+		   Cursor cursor = db.query("friendlist", new String[] {
+					"num",
+					"name",
+					"url",
+					"id"}, "id not in (?)", new String[] { selectionArgStr }, null, null, null);	
+		   return cursor;
+	   }
 }

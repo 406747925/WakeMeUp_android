@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.dreamclock.R;
+import cn.jlu.ge.dreamclock.activity.AppSettingActivity;
 import cn.jlu.ge.dreamclock.activity.FriendListActivity;
 
 public class MenuFragment extends ListFragment {
@@ -59,6 +60,10 @@ public void onListItemClick(ListView l, View v, int position, long id) {
 	{
 		Intent i=new Intent(getActivity(), FriendListActivity.class);
 		startActivity(i);
+	}
+	else if ( position == 2 ) {
+		Intent intent = new Intent(getActivity(), AppSettingActivity.class);
+		startActivity(intent);
 	}
 	
 	super.onListItemClick(l, v, position, id);
