@@ -32,6 +32,9 @@ public class Const {
 	public static final String USER_DEVICE_ID = ident("userdeviceid");
 	public static final String USER_LOG_IN_OR_NOT = ident("signUpOrNot");
 	
+	// USER INFORMATION CONST KEY DEFAULT VALUE
+	public static final int DEFAULT_USER_RANK = ident(1);
+	public static final int DEFAULT_SIGN_IN_RANK_NUM = ident(1);
 	
 	// KEY 
 	public static final String FIRST_CITY_KEY = ident("city01");

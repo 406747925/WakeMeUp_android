@@ -122,7 +122,6 @@ public class UserDataDBAdapter {
 		
 	}
 	
-	
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 		
 		public DatabaseHelper(Context context) {
@@ -157,10 +156,23 @@ public class UserDataDBAdapter {
 		return this;
 	}
 	
+	private void createTable( String createSqlStr ) {
+		db.execSQL(createSqlStr);
+	}
+	
+	private void dropTable( String tableName ) {
+		db.execSQL("DROP TABLE IF EXISTS " + tableName);
+	}
 	
 	public void close() {
 		databaseHelper.close();
 	}
+	
+	public void restartRecordSignInData() {
+		dropTable(DATABASE_USERS_SIGN_IN_TABLE);
+		createTable(CREATE_USERS_SIGN_IN_TABLE);
+	}
+	
 	
 	public Cursor getUserById ( String uid ) {
 		
@@ -198,19 +210,7 @@ public class UserDataDBAdapter {
 		
 		ContentValues values = new ContentValues();
 		values.put(KEY_USER_FRIEND_ID, userID);
-//		values.put(KEY_REALNAME, 
-//		KEY_SCHOOL
-//		KEY_FRIEND_NICKNAME
-//		KEY_PHONE
-//		KEY_GENDER
-//		KEY_JEER_NUM_TODAY
-//		KEY_ENCOURAGE_TODAY
-//		KEY_RANK_IN_COLLEGE_TODAY
-//		KEY_RANK_IN_FRIENDS_TODAY
-//		KEY_GET_UP_TIME
-//		KEY_PIC_URL
-//		KEY_USER_SCORE
-//		KEY_CONTINUOUS_DAY
+
 		int insertSuccess = (int) db.insertWithOnConflict(DATABASE_USER_FIRENDS_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 		if ( insertSuccess == -1 ) { 
 			return db.update(DATABASE_USER_FIRENDS_TABLE, values, KEY_USER_ID + "=?", new String[]{ userID });
@@ -247,6 +247,9 @@ public class UserDataDBAdapter {
 	
 	public long insertOrUpdateUser(String userID, String timeStr, String nickName, String jeerOrNot, String userInfo, String avatarUrl, int userRank) {
 		
+		if ( userRank < 1 ) 
+			return -1;
+		
 		ContentValues values = new ContentValues();
 		values.put(KEY_USER_ID, userID);
 		values.put(KEY_NICKNAME, nickName);
@@ -255,9 +258,12 @@ public class UserDataDBAdapter {
 		values.put(KEY_USER_INFO, userInfo);
 		values.put(KEY_USER_AVATAR_URL, avatarUrl);
 		values.put(KEY_USER_RANK, userRank);
-		Log.v(TAG, "User: " + nickName + " ;" + "userRank : " + userRank + " ;");
+		
+		Log.e(TAG, "UserDataDBAdapter -> User: " + nickName + " ;" + "userRank : " + userRank + " ;");
+		
 		int insertSuccess = (int) db.insertWithOnConflict(DATABASE_USERS_SIGN_IN_TABLE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 		if ( insertSuccess == -1 ) { 
+			Log.e(TAG, "UserDataDBAdapter -> update the row: " + "User -> " + nickName);
 			return db.update(DATABASE_USERS_SIGN_IN_TABLE, values, KEY_USER_ID + "=?", new String[]{ userID });
 		} else { 
 			return insertSuccess;
