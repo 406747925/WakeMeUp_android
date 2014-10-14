@@ -2,11 +2,9 @@ package cn.jlu.ge.dreamclock.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,14 +20,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.BitmapCache;
-import cn.jlu.ge.dreamclock.tools.CavansImageTask;
 import cn.jlu.ge.dreamclock.tools.Const;
 import cn.jlu.ge.dreamclock.tools.ContactsDBAdapter;
 import cn.jlu.ge.dreamclock.tools.FriendsDBAdapter;
@@ -37,7 +33,6 @@ import cn.jlu.ge.dreamclock.tools.ReadParseClass;
 import cn.jlu.ge.dreamclock.tools.UploadPhoneNumberTask;
 import cn.jlu.ge.dreamclock.tools.UploadPhoneNumberTask.isLoadDataListener;
 import cn.jlu.ge.knightView.CircleImageView;
-
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -110,9 +105,7 @@ public class FriendListActivity extends Activity {
 					holder.textview=textview;
 
 					convertView.setTag(holder);
-				}
-				else
-				{
+				} else {
 					holder=(Holder)convertView.getTag();
 				}
 				setUserAvatar( list.get(position).get(FriendsDBAdapter.PIC_URL).toString(), holder.imageView);

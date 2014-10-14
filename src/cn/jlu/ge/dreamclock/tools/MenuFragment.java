@@ -6,6 +6,8 @@ import java.util.Date;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.DisplayMetrics;
@@ -17,15 +19,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import cn.jlu.ge.dreamclock.R;
+import cn.jlu.ge.dreamclock.activity.ChangeUserInfoActivity;
 import cn.jlu.ge.dreamclock.activity.FriendListActivity;
 import cn.jlu.ge.dreamclock.activity.LoginActivity;
+import cn.jlu.ge.dreamclock.activity.UserCommunicateActivity;
 import cn.jlu.ge.dreamclock.activity.WeatherCitiesSettingActivity;
+import cn.jlu.ge.knightView.CircleImageView;
 
 public class MenuFragment extends ListFragment {
 
 	public int screenHeight;
 	public int screenWidth;
-
+	private String userName;
+	private String avatarUrl;
+	BitmapCache bitmapCache;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -40,12 +47,16 @@ public class MenuFragment extends ListFragment {
 		getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
 		super.onActivityCreated(savedInstanceState);
 		
+		bitmapCache = new BitmapCache(getActivity().getApplicationContext());
+		
+		getUserInfo();
+		
 		MenuAdapter menuAdapter = new MenuAdapter(getActivity());
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_user_setting, R.drawable.ic_launcher));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_friends_setting, R.drawable.default_avatar));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_weather_setting, R.drawable.alarm_off));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_communicate, R.drawable.tel));
-		menuAdapter.add(new MenuItem(R.string.sliding_menu_quit, R.drawable.alarm_on) );
+		menuAdapter.add(new MenuItem(userName, avatarUrl));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_friends_setting, R.drawable.friends_setting));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_weather_setting, R.drawable.weather_setting));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_communicate, R.drawable.contact_us));
+		menuAdapter.add(new MenuItem(R.string.sliding_menu_quit, R.drawable.quit_app));
 		
 		setListAdapter(menuAdapter);
 	}
@@ -53,30 +64,53 @@ public class MenuFragment extends ListFragment {
 	private class MenuItem {
 		public int tagRes;
 		public int iconRes;
+		public String tagStr;
+		public String iconStr;
 		public MenuItem(int tagRes, int iconRes) {
 			this.tagRes = tagRes;
 			this.iconRes = iconRes;
+			this.tagStr = null;
+			this.iconStr = null;
+		}
+		
+		public MenuItem(String tagStr, String iconStr) {
+			this.tagStr = tagStr;
+			this.iconStr = iconStr;
+			this.tagRes = 0;
+			this.iconRes = 0;
 		}
 	}
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// TODO Auto-generated method stub
-		if (position == 1) {
-			Intent i = new Intent(getActivity(), FriendListActivity.class);
-			startActivity(i);
+		if ( position == 0 ) {
+			Intent intent = new Intent(getActivity(), ChangeUserInfoActivity.class);
+			startActivity(intent);
+		} else if ( position == 1 ) {
+			Intent intent = new Intent(getActivity(), FriendListActivity.class);
+			startActivity(intent);
 		} else if ( position == 2 ) {
 			Intent intent = new Intent(getActivity(), WeatherCitiesSettingActivity.class);
 			startActivity(intent);
 		} else if ( position == 3 ) {
-			
+			Intent intent = new Intent(getActivity(), UserCommunicateActivity.class);
+			startActivity(intent);
 		} else if ( position == 4 ) {
 			setUserInfoDefaultToQuit();
 			Intent intent = new Intent(getActivity(), LoginActivity.class);
 			startActivity(intent);
+			getActivity().finish();
 		}
 
 		super.onListItemClick(l, v, position, id);
+	}
+	
+	public void getUserInfo() {
+		SharedPreferences appInfo = getActivity().getSharedPreferences(Const.APP_INFO_PREFERENCE,  Context.MODE_MULTI_PROCESS);
+		userName = appInfo.getString(Const.USER_NAME, "未登录");
+		avatarUrl = appInfo.getString(Const.USER_AVATAR_URL, "");
+		appInfo = null;
 	}
 
 	public void setUserInfoDefaultToQuit() {
@@ -84,7 +118,9 @@ public class MenuFragment extends ListFragment {
 		SharedPreferences.Editor editor = appInfo.edit();
 		editor.putBoolean(Const.USER_LOG_IN_OR_NOT, false);
 		editor.putBoolean(Const.USER_SIGN_IN_OR_NOT, false);
-		editor.putString(Const.USER_AVATAR_URL, "default");
+		editor.putString(Const.USER_AVATAR_URL, "");
+		editor.putString(Const.USER_NAME, "未登录");
+		editor.putString(Const.USER_AVATAR_URL, "");
 		editor.putInt(Const.USER_BEEN_JEER_NUM, -1);
 		editor.putInt(Const.USER_CONTINUOUS_SIGN_IN_DAYS, -1);
 		editor.putInt(Const.USER_SCORE, -1);
@@ -107,7 +143,7 @@ public class MenuFragment extends ListFragment {
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null && position != 0) {
+			if ( position != 0 ) {
 				convertView = LayoutInflater.from(getContext()).inflate(
 						R.layout.row, null);
 				ImageView icon = (ImageView) convertView
@@ -121,10 +157,17 @@ public class MenuFragment extends ListFragment {
 						R.layout.user_row, null);
 				ImageView icon = (ImageView) convertView
 						.findViewById(R.id.user_head);
-				icon.setImageResource(R.drawable.originalhead);
+				Bitmap avatarBM = bitmapCache.getBitmapFromCache( avatarUrl );
+				if ( avatarBM != null ) {
+					BitmapDrawable avatarDrawable = new BitmapDrawable(getActivity().getApplicationContext().getResources(), avatarBM);
+					icon.setImageDrawable(avatarDrawable);
+				} else {
+					bitmapCache.getImageFromNet(avatarUrl, "100-" + avatarUrl, icon.getHeight(), icon.getWidth(), icon);
+				}
+				icon.setImageResource(R.drawable.default_avatar);
 				TextView title = (TextView) convertView
 						.findViewById(R.id.user_name);
-				title.setText(getItem(position).tagRes);
+				title.setText(userName);
 			}
 			return convertView;
 		}

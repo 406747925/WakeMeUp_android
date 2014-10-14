@@ -245,7 +245,7 @@ public class UserDataDBAdapter {
 		
 	}
 	
-	public long insertOrUpdateUser(String userID, String timeStr, String nickName, String jeerOrNot, String userInfo, String avatarUrl, int userRank) {
+	public long insertOrUpdateSignInUser(String userID, String timeStr, String nickName, String jeerOrNot, String userInfo, String avatarUrl, int userRank) {
 		
 		if ( userRank < 1 ) 
 			return -1;

@@ -73,6 +73,7 @@ public class SignInActivity extends BaseActivity {
 	private UserDataDBAdapter userDataDb;
 	private FriendsDBAdapter friendsDb;
 	boolean isGoingToSignInBool = false;
+	boolean addSelfInfoToListOrNot;
 	LinearLayout userLayout;
 	LinearLayout rankLayout;
 	LinearLayout signInActivityLayout;
@@ -223,6 +224,7 @@ public class SignInActivity extends BaseActivity {
 		signInUsersNum = signInUsersSum;
 		timeStr = getUsersListLastTimeStr;
 		UIDStr = UID;
+		addSelfInfoToListOrNot = !signInOrNot;
 		
 		setUserSignInViewsWithCacheOrFromNet ( signInOrNot, userName, continuousDaysSum, 
 					jeerNum, scoreNum, rankNum, avatarUrl );
@@ -241,10 +243,9 @@ public class SignInActivity extends BaseActivity {
 			loadingIM.startAnimation(loadingAnimation);
 			setUserSignInViews(userName, continuousDaysSum, jeerNum, scoreNum, rankNum);
 			setSignInUsersView();
-			getSignInUsersListFromNet( UIDStr, timeStr );
 			// 已经签到过，就先从数据库中获得数据
 			getUsersInfromFromDB();
-			
+			getSignInUsersListFromNet( UIDStr, timeStr);
 		} else {
 			
 			Button signInBtn = (Button) findViewById(R.id.signInBtn);
@@ -555,7 +556,6 @@ public class SignInActivity extends BaseActivity {
 	void signInFailedAndUpdateViews (JSONObject responseObject) {
 
 		
-		
 	}
 	
 	boolean getUsersInfromFromDB () {
@@ -595,8 +595,9 @@ public class SignInActivity extends BaseActivity {
 			jeerOrNot = Integer.parseInt( cursor.getString(jeerOrNotColumn) );
 			avatarUrl = cursor.getString(avatarUrlColumn);
 			addItemToList (rank, userName, uidStr, userSignInTimeStr, contentStr, jeerOrNot, avatarUrl );
-			Log.d(TAG, "rank: " + rank + ", userName: " + userName + ", userSignInTimeStr: " + userSignInTimeStr);
+			Log.d(TAG, "getUsersInfromFromDB -> rank: " + rank + ", userName: " + userName + ", userSignInTimeStr: " + userSignInTimeStr);
 		}
+		
 		
 		userName = cursor.getString(nickNameColumn);
 		rank = cursor.getInt(rankColumn);
@@ -605,7 +606,7 @@ public class SignInActivity extends BaseActivity {
 		contentStr = cursor.getString(contentStrColumn);
 		jeerOrNot = Integer.parseInt( cursor.getString(jeerOrNotColumn) );
 		avatarUrl = cursor.getString(avatarUrlColumn);
-		
+		Log.d(TAG, "getUsersInfromFromDB -> rank: " + rank + ", userName: " + userName + ", userSignInTimeStr: " + userSignInTimeStr);
 		addItemToList (rank, userName, uidStr, userSignInTimeStr, contentStr, jeerOrNot, avatarUrl );
 		
 		cursor.close();
@@ -715,11 +716,11 @@ public class SignInActivity extends BaseActivity {
 			jeerOrNot = userHM.get("jeerOrNot").toString();
 			avatarUrl = userHM.get("avatarUrl").toString();
 			
-			long id = userDataDb.insertOrUpdateUser(uid, signInTime, userName, jeerOrNot, contentStr, avatarUrl, userRank);
+			long id = userDataDb.insertOrUpdateSignInUser(uid, signInTime, userName, jeerOrNot, contentStr, avatarUrl, userRank);
 			if ( id < -1 )
-				Log.d(TAG, "num : " + i + ", insert error.");
+				Log.d(TAG, "addUserToDB -> num : " + i + ", insert error.");
 			else 
-				Log.d(TAG, "num: " + i + " , userName: " + userName);
+				Log.d(TAG, "addUserToDB -> num: " + i + " , userName: " + userName);
 		}
 		
 		userDataDb.close();
@@ -793,9 +794,10 @@ public class SignInActivity extends BaseActivity {
 				
 				Log.d(TAG, ">>> i : " + i + ", mySignInRank : " + mySignInRank);
 				
-				if ( i == mySignInRank - 1 ) {
+				if ( i == mySignInRank - 1 && addSelfInfoToListOrNot ) {
 					addUserInAllUsersList();
 					rank = rank + 1;
+					addSelfInfoToListOrNot = false;
 				}
 				
 				addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
@@ -805,8 +807,10 @@ public class SignInActivity extends BaseActivity {
 			
 			Log.d(TAG, ">>>> mySignInRank : " + mySignInRank + " , signInUsersList.size(): " + signInUsersList.size() );
 			
-			if ( length == ( mySignInRank - 1 ) && mySignInRank >= signInUsersList.size() )
+			if ( length == ( mySignInRank - 1 ) && mySignInRank >= signInUsersList.size() && addSelfInfoToListOrNot ) {
+				addSelfInfoToListOrNot = false;
 				addUserInAllUsersList();
+			}
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

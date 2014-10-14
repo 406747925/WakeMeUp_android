@@ -38,6 +38,8 @@
 	<string name="dream_clock_title">梦想闹钟</string>
 	<string name="common_clock_title">生活闹钟</string>
 	
+	<string name="change_user_info">提交修改</string>
+	
 	<string name="weather_icon">天气图标</string>
 	<string name="bottom_bar_first">First</string>
 
