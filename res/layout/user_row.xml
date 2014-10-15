@@ -11,7 +11,7 @@
         android:layout_width="@dimen/sliding_menu_user_avastar_size"
         android:layout_height="@dimen/sliding_menu_user_avastar_size"
         android:padding="@dimen/sliding_menu_user_avastar_padding"
-        android:src="@drawable/originalhead" />
+        android:src="@drawable/default_avatar" />
 
     <TextView
         android:id="@+id/user_name"

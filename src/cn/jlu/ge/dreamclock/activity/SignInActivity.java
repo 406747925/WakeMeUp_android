@@ -1,7 +1,10 @@
 package cn.jlu.ge.dreamclock.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +39,7 @@ import android.widget.Toast;
 import cn.jlu.ge.dreamclock.R;
 import cn.jlu.ge.dreamclock.tools.BitmapCache;
 import cn.jlu.ge.dreamclock.tools.Const;
+import cn.jlu.ge.dreamclock.tools.FriendsDBAdapter;
 import cn.jlu.ge.dreamclock.tools.MenuFragment;
 import cn.jlu.ge.dreamclock.tools.UserDataDBAdapter;
 import cn.jlu.ge.knightView.CircleImageView;
@@ -53,7 +57,7 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	final String TAG = "SignInActivity";
-	private int mySignInRank = 3;
+	private int mySignInRank;
 	private int signInUsersNum;
 	private ExpandableListView usersList;
 	private AsyncHttpClient client;
@@ -67,7 +71,9 @@ public class SignInActivity extends BaseActivity {
 	String mySignInTimeStr = null;
 	String myAvatarUrl = null;
 	private UserDataDBAdapter userDataDb;
+	private FriendsDBAdapter friendsDb;
 	boolean isGoingToSignInBool = false;
+	boolean addSelfInfoToListOrNot;
 	LinearLayout userLayout;
 	LinearLayout rankLayout;
 	LinearLayout signInActivityLayout;
@@ -109,7 +115,11 @@ public class SignInActivity extends BaseActivity {
 	void dataInit () {
 		bitmapCache = new BitmapCache(getApplicationContext());
 		userDataDb = new UserDataDBAdapter(getApplicationContext());
+		friendsDb = new FriendsDBAdapter(getApplicationContext());
 		signInUsersList = new ArrayList< HashMap<String, Object> > ();
+		SimpleDateFormat timeFm = new SimpleDateFormat("yyyy-MM-dd");
+		timeStr = timeFm.format(new Date()) + " 04:00";
+		
 	}
 	
 	public void init() {
@@ -135,7 +145,11 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	public void viewInit () {
-		viewDataAndViewInit();
+		// TODO 如果数据库有最新数据则从数据库中获取最新数据
+		
+		// TODO 数据库中不包含最新数据则联网更新数据
+
+		setUserSignInViewsDataAndViewsWithCache();
 		signInUsersRankViewInit();
 	}
 	
@@ -187,13 +201,6 @@ public class SignInActivity extends BaseActivity {
 		
 	}
 	
-	public void viewDataAndViewInit () {
-		// TODO 如果数据库有最新数据则从数据库中获取最新数据
-		
-		setUserSignInViewsDataAndViewsWithCache();
-		// TODO 数据库中不包含最新数据则联网更新数据
-		
-	}
 	
 	void setUserSignInViewsDataAndViewsWithCache () {
 		appInfo = getSharedPreferences( Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS );
@@ -202,11 +209,11 @@ public class SignInActivity extends BaseActivity {
 		int continuousDaysSum = appInfo.getInt(Const.USER_CONTINUOUS_SIGN_IN_DAYS, 0);
 		int jeerNum = appInfo.getInt(Const.USER_BEEN_JEER_NUM, 0);
 		int scoreNum = appInfo.getInt(Const.USER_SCORE, 0);
-		int rankNum = appInfo.getInt(Const.USER_RANK, 1);
+		int rankNum = appInfo.getInt(Const.USER_RANK, Const.DEFAULT_USER_RANK);
 		String avatarUrl = appInfo.getString(Const.USER_AVATAR_URL, "");
 		String signInTimeStr = appInfo.getString(Const.USER_SIGN_IN_TIME, "未更新");
 		String getUsersListLastTimeStr = appInfo.getString(Const.GET_USERS_LIST_LAST_TIME , timeStr);
-		int signInUsersSum = appInfo.getInt(Const.SIGN_IN_RANK_NUM, 1);
+		int signInUsersSum = appInfo.getInt(Const.SIGN_IN_RANK_NUM, Const.DEFAULT_SIGN_IN_RANK_NUM);
 		boolean signInOrNot = appInfo.getBoolean(Const.USER_SIGN_IN_OR_NOT, false);
 		appInfo = null;
 
@@ -217,6 +224,7 @@ public class SignInActivity extends BaseActivity {
 		signInUsersNum = signInUsersSum;
 		timeStr = getUsersListLastTimeStr;
 		UIDStr = UID;
+		addSelfInfoToListOrNot = !signInOrNot;
 		
 		setUserSignInViewsWithCacheOrFromNet ( signInOrNot, userName, continuousDaysSum, 
 					jeerNum, scoreNum, rankNum, avatarUrl );
@@ -235,10 +243,9 @@ public class SignInActivity extends BaseActivity {
 			loadingIM.startAnimation(loadingAnimation);
 			setUserSignInViews(userName, continuousDaysSum, jeerNum, scoreNum, rankNum);
 			setSignInUsersView();
-			getSignInUsersListFromNet( UIDStr, timeStr );
 			// 已经签到过，就先从数据库中获得数据
 			getUsersInfromFromDB();
-			
+			getSignInUsersListFromNet( UIDStr, timeStr);
 		} else {
 			
 			Button signInBtn = (Button) findViewById(R.id.signInBtn);
@@ -255,6 +262,10 @@ public class SignInActivity extends BaseActivity {
 			scoreTv.setVisibility(View.GONE);
 			rankTv.setVisibility(View.GONE);
 			
+			// 只要是用户需要点击按钮签到，就可以断定数据需要更新，需要删除签到数据表重新装载数据
+			userDataDb.open();
+			userDataDb.restartRecordSignInData();
+			userDataDb.close();
 		}
 		
 		setUserAvatar ( avatarUrl );
@@ -402,7 +413,7 @@ public class SignInActivity extends BaseActivity {
 			int scoreNum = userInfoObject.optInt("score", -1);
 			String UIDStr = userInfoObject.getString("id");
 			int rankNum = userInfoObject.getInt("rank_in_friends_today");
-			String avatarUrl = userInfoObject.optString("pic_url", "defualt");
+			String avatarUrl = userInfoObject.optString("pic_url", "");
 			String signInTimeStr = userInfoObject.getString("get_up_time_today");
 			myAvatarUrl = avatarUrl;
 			mySignInRank = rankNum;
@@ -516,16 +527,16 @@ public class SignInActivity extends BaseActivity {
 			JSONObject userInfoObject = responseObject.getJSONObject("user");
 			String userName = userInfoObject.get("nickname").toString();
 			int continuousDaysSum = userInfoObject.getInt("continuous");
-			int jeerNum = userInfoObject.getInt("num_jeer_today");
+			int jeerNum = userInfoObject.optInt("num_jeer_today", 0);
 			int scoreNum = userInfoObject.getInt("score");
 			String UIDStr = userInfoObject.getString("id");
 			int rankNum = userInfoObject.getInt("rank_in_friends_today");
 			
 			String getUsersListLastTimeStr = responseObject.getString("time");
 			String signInTimeStr = getUsersListLastTimeStr;
-			String avatarUrl = userInfoObject.getString("pic_url");
+			String avatarUrl = userInfoObject.optString("pic_url", "");
 			myAvatarUrl = avatarUrl;
-//			mySignInRank = rankNum;
+			mySignInRank = rankNum;
 			
 			setUserSignInInfo(userName, continuousDaysSum, jeerNum, scoreNum,
 						rankNum, avatarUrl, signInTimeStr, UIDStr, getUsersListLastTimeStr);
@@ -544,7 +555,6 @@ public class SignInActivity extends BaseActivity {
 	
 	void signInFailedAndUpdateViews (JSONObject responseObject) {
 
-		
 		
 	}
 	
@@ -585,7 +595,9 @@ public class SignInActivity extends BaseActivity {
 			jeerOrNot = Integer.parseInt( cursor.getString(jeerOrNotColumn) );
 			avatarUrl = cursor.getString(avatarUrlColumn);
 			addItemToList (rank, userName, uidStr, userSignInTimeStr, contentStr, jeerOrNot, avatarUrl );
+			Log.d(TAG, "getUsersInfromFromDB -> rank: " + rank + ", userName: " + userName + ", userSignInTimeStr: " + userSignInTimeStr);
 		}
+		
 		
 		userName = cursor.getString(nickNameColumn);
 		rank = cursor.getInt(rankColumn);
@@ -594,7 +606,7 @@ public class SignInActivity extends BaseActivity {
 		contentStr = cursor.getString(contentStrColumn);
 		jeerOrNot = Integer.parseInt( cursor.getString(jeerOrNotColumn) );
 		avatarUrl = cursor.getString(avatarUrlColumn);
-		
+		Log.d(TAG, "getUsersInfromFromDB -> rank: " + rank + ", userName: " + userName + ", userSignInTimeStr: " + userSignInTimeStr);
 		addItemToList (rank, userName, uidStr, userSignInTimeStr, contentStr, jeerOrNot, avatarUrl );
 		
 		cursor.close();
@@ -619,6 +631,7 @@ public class SignInActivity extends BaseActivity {
 			public void onFailure(Throwable throwable, String failResponse) {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "刷新签到列表失败 T-T", Toast.LENGTH_SHORT).show();
+				setUnSignInUsersDataInList ();
 				setSignInUsersView();
 				
 				loadingAnimation.cancel();
@@ -641,8 +654,12 @@ public class SignInActivity extends BaseActivity {
 					Log.v("SignInActivity", usersListArray.toString());
 					int rankStart = signInUsersNum;
 					setUsersListDataFromJSON( usersListArray );
+					Log.e(TAG, ">>>> get sign in users list success. " );
+					setUnSignInUsersDataInList ();
 					signInUsersNum += usersListArray.length();
-					
+
+					loadingAnimation.cancel();
+					loadingIM.setVisibility(View.GONE);
 					setSignInUsersView();
 					
 					appInfo = getSharedPreferences(Const.APP_INFO_PREFERENCE, MODE_MULTI_PROCESS);
@@ -651,6 +668,7 @@ public class SignInActivity extends BaseActivity {
 					Log.d( TAG, ">>>> " + timeStr);
 					editor.putInt(Const.SIGN_IN_RANK_NUM, signInUsersNum);
 					editor.commit();
+					Log.d(TAG, ">>>> rankStart: " + rankStart + ", signInUsersNum: " + signInUsersNum);
 					addUsersToDB(rankStart, signInUsersNum);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -669,8 +687,10 @@ public class SignInActivity extends BaseActivity {
 	// 将追加的签到的好友信息储存至数据库中
 	void addUsersToDB (int rankStart, int signInUsersNum) {
 		
-		if ( rankStart == signInUsersNum )
+		if ( rankStart == signInUsersNum && signInUsersNum != 1 ) {
+			Log.d(TAG, ">>>> Is the same -> rankStart: " + rankStart + ", signInUsersNum: " + signInUsersNum);
 			return ;
+		}
 		
 		HashMap<String, Object>userHM;
 		String userName = null, 
@@ -688,6 +708,7 @@ public class SignInActivity extends BaseActivity {
 			
 			userHM = signInUsersList.get(i);
 			int userRank = Integer.parseInt( userHM.get("userRank").toString() );
+//			if ( userRank < 1 ) continue;
 			userName = userHM.get("userName").toString();
 			uid = userHM.get("uid").toString();
 			signInTime = userHM.get("time").toString();
@@ -695,9 +716,11 @@ public class SignInActivity extends BaseActivity {
 			jeerOrNot = userHM.get("jeerOrNot").toString();
 			avatarUrl = userHM.get("avatarUrl").toString();
 			
-			long id = userDataDb.insertOrUpdateUser(uid, signInTime, userName, jeerOrNot, contentStr, avatarUrl, userRank);
+			long id = userDataDb.insertOrUpdateSignInUser(uid, signInTime, userName, jeerOrNot, contentStr, avatarUrl, userRank);
 			if ( id < -1 )
-				Log.v(TAG, "num : " + i + ", insert error.");
+				Log.d(TAG, "addUserToDB -> num : " + i + ", insert error.");
+			else 
+				Log.d(TAG, "addUserToDB -> num: " + i + " , userName: " + userName);
 		}
 		
 		userDataDb.close();
@@ -725,59 +748,6 @@ public class SignInActivity extends BaseActivity {
 	}
 	
 	
-	// 
-//	void addListsDataFromLocal () {
-//		int rank = 1;
-//		String userName = "路人甲";
-//		String friendId = "123";
-//		String getUpTimeStr = "06:00";
-//		String contentStr = "懒猪快起来啦～";
-//		String avatarUrl = "";
-//		int jeerOrNot = 0;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 2;
-//		userName = "路人乙";
-//		friendId = "123";
-//		getUpTimeStr = "06:30";
-//		contentStr = "太阳照到屁股了！快起来！";
-//		avatarUrl = "";
-//		jeerOrNot = 0;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 3;
-//		userName = myUserNameStr;
-//		friendId = "123";
-//		getUpTimeStr = "06:40";
-//		contentStr = "";
-//		avatarUrl = "";
-//		jeerOrNot = -1;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
-//		
-//		rank = 4;
-//		userName = "路人丁";
-//		friendId = "123";
-//		getUpTimeStr = "未起床";
-//		contentStr = "";
-//		avatarUrl = "";
-//		int jeerOrNot2 = 2;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
-//		
-//		rank = 5;
-//		userName = "路人A";
-//		friendId = "123";
-//		getUpTimeStr = "未起床";
-//		contentStr = "";
-//		avatarUrl = "";
-////		jeerOrNot = 2;
-//		
-//		addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot2, avatarUrl );
-//		
-//	}
 	
 	
 	
@@ -824,9 +794,10 @@ public class SignInActivity extends BaseActivity {
 				
 				Log.d(TAG, ">>> i : " + i + ", mySignInRank : " + mySignInRank);
 				
-				if ( i == mySignInRank - 1 ) {
+				if ( i == mySignInRank - 1 && addSelfInfoToListOrNot ) {
 					addUserInAllUsersList();
 					rank = rank + 1;
+					addSelfInfoToListOrNot = false;
 				}
 				
 				addItemToList( rank, userName, friendId, getUpTimeStr, contentStr, jeerOrNot, avatarUrl );
@@ -834,8 +805,12 @@ public class SignInActivity extends BaseActivity {
 				
 			}
 			
-			if ( length == ( mySignInRank - 1 ) && mySignInRank >= signInUsersList.size() )
+			Log.d(TAG, ">>>> mySignInRank : " + mySignInRank + " , signInUsersList.size(): " + signInUsersList.size() );
+			
+			if ( length == ( mySignInRank - 1 ) && mySignInRank >= signInUsersList.size() && addSelfInfoToListOrNot ) {
+				addSelfInfoToListOrNot = false;
 				addUserInAllUsersList();
+			}
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -860,6 +835,52 @@ public class SignInActivity extends BaseActivity {
 		else {
 			bitmapCache.getImageFromNet ( avatarUrl, avatarUrl, width, height, avatarView );
 		}
+	}
+
+	public void setUnSignInUsersDataInList () {
+		// TODO 将未签到的好友从数据库中读取出来，排列在列表中
+		String selectionArgStr = null;
+		Iterator< HashMap<String, Object> > it = signInUsersList.iterator();
+		if ( it.hasNext() ) {
+			for ( selectionArgStr = "'" + it.next().get("uid").toString() + "'"; it.hasNext(); ) {
+				selectionArgStr += ", '" + it.next().get("uid").toString() + "'";
+			}
+		}
+//		selectionArgStr = "'" + it.next().get("uid").toString() + "'";
+//		selectionArgStr = "1";
+		Log.e(TAG, ">>>> selectionArgStr: " + selectionArgStr);
+		
+		if ( selectionArgStr == null ) {
+			return ;
+		}
+		
+		friendsDb.open();
+		
+		Cursor cursor = friendsDb.getUsersByNotIn(selectionArgStr);
+		if ( cursor == null || cursor.moveToFirst() == false ) {
+			Log.e(TAG, ">>>> cursor error.");
+			return ;
+		}
+		int userNameColumn = cursor.getColumnIndex("name");
+		int userAvatarColumn = cursor.getColumnIndex("url");
+		int userIdColumn = cursor.getColumnIndex("id");
+		for ( cursor.moveToFirst() ; !cursor.isLast() ; cursor.moveToNext() ) {
+			String userNameStr = cursor.getString(userNameColumn);
+			String userAvatarStr = cursor.getString(userAvatarColumn);
+			String userIdStr = cursor.getString(userIdColumn);
+			addItemToList ( -1, userNameStr, userIdStr, "未起床", "", 2, userAvatarStr );
+			Log.e(TAG, "no sign in user -> UserName: " + userNameStr + ", userId: " + userIdStr );
+		}
+		
+		cursor.moveToLast();
+		String userNameStr = cursor.getString(userNameColumn);
+		String userAvatarStr = cursor.getString(userAvatarColumn);
+		String userIdStr = cursor.getString(userIdColumn);
+		addItemToList ( -1, userNameStr, userIdStr, "未起床", "", 2, userAvatarStr );
+		Log.e(TAG, "no sign in user -> UserName: " + userNameStr );
+		cursor.close();
+		
+		friendsDb.close();
 	}
 	
 	
@@ -999,7 +1020,6 @@ public class SignInActivity extends BaseActivity {
 			ListClickGroup clickViews = null;
 			if ( convertView != null ) {
 				clickViews = (ListClickGroup) convertView.getTag();
-				Log.v("tag", "positon " + groupPosition + " convertView is not null, "  + clickViews);
 			} else {
 				clickViews = new ListClickGroup();
 				convertView = inflater.inflate(R.layout.earlier_user_item, null);
@@ -1012,13 +1032,16 @@ public class SignInActivity extends BaseActivity {
 			}
 			
 			clickViews.position = groupPosition;
-			Log.v("SignInActivity", "positon : " + groupPosition);
 			
 			clickViews.usernameTV.setText( signInUsersList.get(groupPosition).get("userName").toString() );
-			clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
-			clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
+			if ( groupPosition < signInUsersNum ) {
+				clickViews.rankTV.setText( signInUsersList.get(groupPosition).get("userRank").toString() );
+				clickViews.timeTV.setText( signInUsersList.get(groupPosition).get("time").toString() );
+			} else { 
+				clickViews.rankTV.setText( "-" );
+				clickViews.timeTV.setText( "未起床" );
+			}
 			
-			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
 			OnClickListener showJeerClickListener = new OnClickListener () {
 
 				@Override
@@ -1036,6 +1059,8 @@ public class SignInActivity extends BaseActivity {
 				}
 				
 			};
+			
+			String jeerOrNot = signInUsersList.get(groupPosition).get("jeerOrNot").toString();
 			
 			clickViews.showInfoBtn.setOnClickListener(showJeerClickListener);
 			if ( jeerOrNot.equals("-1") ) {

@@ -29,7 +29,7 @@
                 android:layout_width="@dimen/activity_wakeup_avatar_size"
                 android:layout_height="@dimen/activity_wakeup_avatar_size"
                 android:background="@drawable/user_avatar"
-                android:src="@drawable/originalhead"
+                android:src="@drawable/default_avatar"
                 app:border_color="#FFFFFF"
                 app:border_width="2dp" />
 

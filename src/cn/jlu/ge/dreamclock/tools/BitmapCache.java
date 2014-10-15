@@ -116,6 +116,9 @@ public class BitmapCache {
 	
 	public Bitmap readFileToBitmap( String fileName ) {
 		try {
+			if ( fileName == null || fileName.replace(" ", "").length() < 4 )
+				return null;
+
 			FileInputStream fis = new FileInputStream(path + "/" + fileName.replaceAll("/", "-") );
 			Bitmap bitmap  = BitmapFactory.decodeStream(fis);
 			return bitmap;

@@ -90,7 +90,17 @@
             android:name="cn.jlu.ge.dreamclock.activity.ActivityStrangers"
             android:launchMode="singleInstance" >
         </activity>
-
+        <activity 
+            android:name="cn.jlu.ge.dreamclock.activity.ChangeUserInfoActivity"
+            android:launchMode="singleInstance"
+            android:process="gestudio.dreamclock.main">
+        </activity>
+        <activity 
+            android:name="cn.jlu.ge.dreamclock.activity.UserCommunicateActivity"
+            android:launchMode="singleInstance"
+            android:process="gestudio.dreamclock.main">
+        </activity>
+        
 		<service 
 		    android:name="cn.jlu.ge.dreamclock.service.ForegroundService"
 		    android:priority="1000"
