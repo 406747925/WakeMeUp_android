@@ -74,21 +74,22 @@
                 android:layout_marginTop="12sp"
                 android:background="#ffffff" >
 
-                <EditText
-                    android:id="@+id/editText2"
-                    android:layout_width="match_parent"
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTextView1"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="      学     校"
-                    android:inputType="textPersonName" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:singleLine="true"
+                    android:hint="      学     校" />
 
                 <ImageView
                     android:id="@+id/syncOperatorImg2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/editText2"
-                    android:layout_alignRight="@+id/editText2"
-                    android:layout_alignTop="@+id/editText2"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
                     android:src="@drawable/school" />
 
             </RelativeLayout>
